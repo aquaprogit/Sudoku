@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sudoku.Model
 {
@@ -20,11 +21,26 @@ namespace Sudoku.Model
             get => _value;
             set {
                 if (value < 0 || value >= 10) throw new ArgumentOutOfRangeException(nameof(value));
-                
+
                 _value = value;
             }
         }
         public bool IsGenerated { get; private set; }
         public List<int> Surmises => IsGenerated ? null : new List<int>(_surmises);
+
+        public void AddSurmise(int value)
+        {
+            if (IsGenerated) return;
+            if (value < 1 || value > 9) throw new ArgumentOutOfRangeException(nameof(value));
+            if (Surmises.Contains(value)) throw new Exception("Item already in collection");
+
+            Surmises.Add(value);
+        }
+        public void RemoveSurmise(int value)
+        {
+            if (IsGenerated) return;
+
+            Surmises.Remove(value);
+        }
     }
 }
