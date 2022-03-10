@@ -1,4 +1,10 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+
+using Sudoku.Model;
 
 namespace Sudoku
 {
@@ -10,6 +16,10 @@ namespace Sudoku
         public MainWindow()
         {
             InitializeComponent();
+
+            List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
+            Field field = new Field(allGrid);
         }
     }
 }
+    

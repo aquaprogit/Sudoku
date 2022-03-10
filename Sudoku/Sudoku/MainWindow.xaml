@@ -5,9 +5,686 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Sudoku"
-        Height="450"
+        Height="550"
         Width="800">
     <Grid>
-
+        <Grid.Resources>
+            <Style TargetType="Border">
+                <Setter Property="BorderBrush"
+                        Value="Black" />
+                <Setter Property="BorderThickness"
+                        Value="1" />
+            </Style>
+        </Grid.Resources>
+        <Grid HorizontalAlignment="Left"
+              VerticalAlignment="Center"
+              Margin="30,0,10,0">
+            <Border>
+                <Grid x:Name="Playground"
+                      Height="450"
+                      Width="450">
+                    <Grid.Resources>
+                        <Style TargetType="Grid"
+                               x:Key="BigSquare">
+                            <Setter Property="Height"
+                                    Value="150" />
+                            <Setter Property="Width"
+                                    Value="150" />
+                            <Setter Property="ShowGridLines"
+                                    Value="True" />
+                        </Style>
+                        <Style TargetType="Grid"
+                               x:Key="SmallSquare">
+                            <Setter Property="Height"
+                                    Value="50" />
+                            <Setter Property="Width"
+                                    Value="50" />
+                        </Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily"
+                                    Value="Consolas" />
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Center" />
+                            <Setter Property="VerticalAlignment"
+                                    Value="Center" />
+                            <Setter Property="TextWrapping"
+                                    Value="Wrap" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Border Grid.Column="0"
+                            Grid.Row="0">
+                        <Grid Style="{StaticResource BigSquare}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1"
+                            Grid.Row="0">
+                        <Grid Style="{StaticResource BigSquare}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="0"
+                                  x:Name="f"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="2"
+                            Grid.Row="0">
+                        <Grid Style="{StaticResource BigSquare}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="0"
+                            Grid.Row="1">
+                        <Grid Style="{StaticResource BigSquare}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1"
+                            Grid.Row="1">
+                        <Grid Style="{StaticResource BigSquare}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="2"
+                            Grid.Row="1">
+                        <Grid Style="{StaticResource BigSquare}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="0"
+                            Grid.Row="2">
+                        <Grid Style="{StaticResource BigSquare}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1"
+                            Grid.Row="2">
+                        <Grid Style="{StaticResource BigSquare}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="2"
+                            Grid.Row="2">
+                        <Grid Style="{StaticResource BigSquare}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="0"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="1"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="0"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="1"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                            <Grid Grid.Column="2"
+                                  Grid.Row="2"
+                                  Style="{StaticResource SmallSquare}">
+                                <TextBlock Text="1"
+                                           FontSize="24" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>
