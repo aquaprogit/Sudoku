@@ -37,13 +37,13 @@ namespace Sudoku.Model
             if (value < 1 || value > 9) throw new ArgumentOutOfRangeException(nameof(value));
             if (Surmises.Contains(value)) throw new Exception("Item already in collection");
 
-            Surmises.Add(value);
+            _surmises.Add(value);
         }
         public void RemoveSurmise(int value)
         {
             if (IsGenerated) return;
 
-            Surmises.Remove(value);
+            _surmises.Remove(value);
         }
 
         public void OnPropertyChanged([CallerMemberName] string name = "")
