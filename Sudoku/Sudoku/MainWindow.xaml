@@ -196,7 +196,7 @@
                                   Grid.Row="2"
                                   Style="{StaticResource SmallSquare}">
                                 <TextBlock Text="1"
-                                           FontSize="24"/>
+                                           FontSize="24" />
                             </Grid>
                         </Grid>
                     </Border>

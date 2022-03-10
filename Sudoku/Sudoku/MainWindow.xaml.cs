@@ -13,12 +13,14 @@ namespace Sudoku
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Field _field;
         public MainWindow()
         {
             InitializeComponent();
 
             List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
-            Field field = new Field(allGrid);
+            _field = new Field(allGrid);
+
         }
     }
 }

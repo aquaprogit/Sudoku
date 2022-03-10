@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 
@@ -8,6 +11,8 @@ namespace Sudoku.Model
     internal class Field
     {
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
+        private Random _random = new Random();
+        private delegate void ShuffleHandler();
 
         public Field(List<Grid> grids)
         {
@@ -22,6 +27,77 @@ namespace Sudoku.Model
                 _cellToGrids.Add(cell, grids[iter]);
             }
             FillBase();
+            Shuffle();
+        }
+
+        #region Generating field
+        public void Shuffle()
+        {
+            ShuffleColumns();
+            ShuffleRows();
+            #region jff
+            Dictionary<string, int> data = new Dictionary<string, int>();
+            foreach (var line in File.ReadAllLines("data.txt"))
+            {
+                string k = line.Split(' ')[0];
+                string count = line.Split(' ')[1];
+                data.Add(k, Convert.ToInt32(count));
+            }
+
+            string key = "";
+            foreach (var item in _cellToGrids.Keys)
+            {
+                key += item.Value;
+            }
+            if (data.ContainsKey(key))
+                data[key]++;
+            else
+                data.Add(key, 1);
+            List<string> output = new List<string>();
+            foreach (var item in data)
+            {
+                output.Add($"{item.Key} {item.Value}");
+
+            }
+            File.WriteAllLines("data.txt", output.ToArray()); 
+            #endregion
+        }
+
+        private void ShuffleColumns()
+        {
+            List<List<Cell>> columns = GetColumns(_cellToGrids.Keys.ToList()).ToList();
+            for (int area = 0; area < 3; area++)
+            {
+                int len = 3;
+                while (len > 1)
+                {
+                    int k = _random.Next(len--);
+                    for (int i = 0; i < 9; i++)
+                    {
+                        Cell c1 = columns[k + area * 3][i], c2 = columns[len + area * 3][i];
+                        (_cellToGrids.Keys.Last(c => c == c2).Value, _cellToGrids.Keys.Last(c => c == c1).Value) =
+                            (_cellToGrids.Keys.Last(c => c == c1).Value, _cellToGrids.Keys.Last(c => c == c2).Value);
+                    }
+                }
+            }
+        }
+        private void ShuffleRows()
+        {
+            List<List<Cell>> columns = GetRows(_cellToGrids.Keys.ToList()).ToList();
+            for (int area = 0; area < 3; area++)
+            {
+                int len = 3;
+                while (len > 1)
+                {
+                    int k = _random.Next(len--);
+                    for (int i = 0; i < 9; i++)
+                    {
+                        Cell c1 = columns[k + area * 3][i], c2 = columns[len + area * 3][i];
+                        (_cellToGrids.Keys.Last(c => c == c2).Value, _cellToGrids.Keys.Last(c => c == c1).Value) =
+                            (_cellToGrids.Keys.Last(c => c == c1).Value, _cellToGrids.Keys.Last(c => c == c2).Value);
+                    }
+                }
+            }
         }
         public void FillBase()
         {
@@ -36,6 +112,8 @@ namespace Sudoku.Model
                 }
             }
         }
+        #endregion
+        #region Orginize
         public IEnumerable<List<Cell>> GetSquares(List<Cell> field)
         {
             foreach (var item in field.GroupBy(c => c.Coordinate.CubeIndex))
@@ -94,6 +172,7 @@ namespace Sudoku.Model
                 }
             } while (iterator != 81);
         }
+        #endregion
 
         private void Cell_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
