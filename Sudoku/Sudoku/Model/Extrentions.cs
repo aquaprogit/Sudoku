@@ -39,8 +39,10 @@ namespace Sudoku.Model
                 {
                     if (i % 3 == 1)
                         result += "\n";
-                    if (cell.Surmises.Contains(i))
+                    if (cell.Surmises.Contains(i) && i % 3 != 0)
                         result += $"{i} ";
+                    else if (cell.Surmises.Contains(i) && i % 3 == 0)
+                        result += i.ToString();
                     else
                         result += "  ";
                 }
