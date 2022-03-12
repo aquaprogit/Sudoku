@@ -24,8 +24,9 @@ namespace Sudoku.Model
             get => _value;
             set {
                 if (value < 0 || value >= 10) throw new ArgumentOutOfRangeException(nameof(value));
-                if (IsGenerated) throw new InvalidOperationException(nameof(IsGenerated)); 
-                _value = value; 
+                if (IsGenerated) throw new InvalidOperationException(nameof(IsGenerated));
+                _value = value;
+                _surmises.Clear();
                 OnPropertyChanged();
             }
         }
@@ -86,7 +87,26 @@ namespace Sudoku.Model
 
         public override string ToString()
         {
-            return $"{Value} at ({Coordinate.CubeIndex}, {Coordinate.CellIndex})";
+            return $"{this.GetCellContent().Replace("\n", " ")} at ({Coordinate.CubeIndex}, {Coordinate.CellIndex})";
+        }
+        public override bool Equals(object obj)
+        {
+            Cell cell = obj as Cell;
+            if (cell == null) return false;
+            return cell.Coordinate == Coordinate
+                && cell.IsGenerated == IsGenerated
+                && cell._surmises == _surmises
+                && cell.Value == Value;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1953335316;
+            hashCode = hashCode * -1521134295 + _value.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<int>>.Default.GetHashCode(_surmises);
+            hashCode = hashCode * -1521134295 + _isGenerated.GetHashCode();
+            hashCode = hashCode * -1521134295 + Coordinate.GetHashCode();
+            return hashCode;
         }
     }
 }
