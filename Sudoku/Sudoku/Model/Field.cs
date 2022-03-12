@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Sudoku.Model
 {
@@ -12,7 +13,11 @@ namespace Sudoku.Model
     {
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
         private Random _random = new Random();
+        private readonly Brush _whiteBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        private readonly Brush _blackBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        private readonly Brush _printedBrush = new SolidColorBrush(Color.FromRgb(37, 84, 194));
         private delegate void ShuffleHandler();
+        private delegate IEnumerable<List<Cell>> GetAreaHandler(List<Cell> cells);
 
         public Field(List<Grid> grids)
         {
@@ -28,10 +33,68 @@ namespace Sudoku.Model
             }
             FillBase();
             Shuffle();
+            LeaveOnlyHints(Difficulty.Hard);
+        }
+        public void Solve()
+        {
+            ClearExtraHint(GetSquares);
+            ClearExtraHint(GetRows);
+            ClearExtraHint(GetColumns);
+            SetOnlyValues();
+        }
+        public void SetOnlyValues()
+        {
+            _cellToGrids.Keys.Where(c => c.Surmises?.Count == 1).ToList().ForEach(c => c.Value = c.Surmises[0]);
+        }
+        private void ClearExtraHint(GetAreaHandler getArea)
+        {
+            List<IEnumerable<Cell>> withHints = getArea(_cellToGrids.Keys.ToList())
+                                       .Select(area => area.Where(c => c.Value == 0))
+                                       .ToList();
+            List<IEnumerable<int>> constants = getArea(_cellToGrids.Keys.ToList())
+                                       .Select(area => area.Where(c => c.Value != 0)
+                                       .Select(c => c.Value))
+                                       .ToList();
+            int i = 0;
+            foreach (var square in withHints.Select(area => area.ToList()))
+            {
+                foreach (var cell in square)
+                {
+                    cell.RemoveSurmise(constants[i]);
+                }
+                i++;
+            }
+        }
+        #region Generating field
+        private void LeaveOnlyHints(Difficulty difficulty)
+        {
+            int countOfRemoves = 0;
+            switch (difficulty)
+            {
+                case Difficulty.Easy:
+                    countOfRemoves = 40;
+                    break;
+                case Difficulty.Hard:
+                    countOfRemoves = 50;
+                    break;
+            }
+            for (int i = 0; i < countOfRemoves; i++)
+            {
+                int cbIndex = _random.Next(9);
+                int innerIndex = _random.Next(9);
+                Cell toRemove = _cellToGrids.Keys.First(cell => cell.Coordinate == (cbIndex, innerIndex));
+                if (toRemove.Value == 0)
+                {
+                    i--;
+                    continue;
+                }
+                toRemove.UnlockValue();
+                toRemove.AddSurmise(Enumerable.Range(1, 9));
+            }
+            _cellToGrids.Keys.Where(cell => cell.Value != 0).ToList().ForEach(cell => cell.LockValue());
         }
 
-        #region Generating field
-        public void Shuffle()
+        private void Shuffle()
         {
             ShuffleColumns();
             ShuffleRows();
@@ -59,7 +122,7 @@ namespace Sudoku.Model
                 output.Add($"{item.Key} {item.Value}");
 
             }
-            File.WriteAllLines("data.txt", output.ToArray()); 
+            File.WriteAllLines("data.txt", output.ToArray());
             #endregion
         }
 
@@ -99,7 +162,7 @@ namespace Sudoku.Model
                 }
             }
         }
-        public void FillBase()
+        private void FillBase()
         {
             List<List<Cell>> rows = GetSquares(_cellToGrids.Keys.ToList()).ToList();
             for (int rowIndex = 0; rowIndex < 9; rowIndex++)
@@ -107,8 +170,7 @@ namespace Sudoku.Model
                 int i = rowIndex;
                 foreach (var item in rows[3 * rowIndex - 8 * (rowIndex / 3)])
                 {
-                    int v = i++ % 9 + 1;
-                    item.Value = v;
+                    item.Value = i++ % 9 + 1;
                 }
             }
         }
@@ -179,8 +241,14 @@ namespace Sudoku.Model
             Cell cell = (Cell)sender;
             TextBlock tb = _cellToGrids[cell].FindVisualChildren<TextBlock>().First();
             tb.Text = cell.GetCellContent();
-            tb.FontSize = cell.Value == 0 ? 15 : 24;
+            tb.FontSize = cell.Value == 0 ? 13 : 24;
             tb.Opacity = cell.Value == 0 ? 0.8 : 1;
+            tb.Foreground = cell.IsGenerated ? _blackBrush : _printedBrush;
         }
+    }
+    enum Difficulty
+    {
+        Easy,
+        Hard
     }
 }
