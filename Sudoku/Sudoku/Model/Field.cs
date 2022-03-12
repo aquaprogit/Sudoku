@@ -18,9 +18,15 @@ namespace Sudoku.Model
         private readonly Brush _printedBrush = new SolidColorBrush(Color.FromRgb(37, 84, 194));
         private delegate void ShuffleHandler();
         private delegate IEnumerable<List<Cell>> GetAreaHandler(List<Cell> cells);
-
+        private List<Grid> _grids;
         public Field(List<Grid> grids)
         {
+            _grids = grids;
+            GenerateNewField();
+        }
+        public void GenerateNewField()
+        {
+            _cellToGrids.Clear();
             int cubeIndex = -1;
             for (int iter = 0; iter < 81; iter++)
             {
@@ -29,12 +35,23 @@ namespace Sudoku.Model
                     cubeIndex++;
                 Cell cell = new Cell((cubeIndex, innerIndex), 0);
                 cell.PropertyChanged += Cell_PropertyChanged;
-                _cellToGrids.Add(cell, grids[iter]);
+                _cellToGrids.Add(cell, _grids[iter]);
             }
             FillBase();
             Shuffle();
             LeaveOnlyHints(Difficulty.Hard);
+            for (int i = 0; i < 10; i++)
+            {
+                Solve();
+                OnlyPossible();
+            }
+            if (_cellToGrids.Keys.Any(c => c.Value == 0))
+            {
+                GenerateNewField();
+            }
+            _cellToGrids.Keys.Where(c => c.IsGenerated == false).ToList().ForEach(c => c.Value = 0);
         }
+
         public void Solve()
         {
             ClearExtraHint(GetSquares);
@@ -46,6 +63,35 @@ namespace Sudoku.Model
         {
             _cellToGrids.Keys.Where(c => c.Surmises?.Count == 1).ToList().ForEach(c => c.Value = c.Surmises[0]);
         }
+        public void OnlyPossible()
+        {
+            foreach (var GetArea in new GetAreaHandler[] { GetSquares, GetRows, GetColumns })
+            {
+                ClearExtraHint(GetArea);
+                var areas = GetArea.Invoke(_cellToGrids.Keys.ToList());
+                foreach (var area in areas)
+                {
+                    List<int> counts = new List<int>(Enumerable.Repeat(0, 9));
+                    foreach (var surmises in area.Where(cell => cell.Value == 0).Select(cell => cell.Surmises))
+                    {
+                        foreach (var surmise in surmises)
+                        {
+                            counts[surmise - 1]++;
+                        }
+                    }
+                    if (counts.Count(i => i == 1) == 1)
+                    {
+                        int value = counts.IndexOf(1) + 1;
+                        Cell toSet = area.First(cell => cell.Surmises != null && cell.Surmises.Contains(value));
+                        toSet.Value = value;
+                        toSet.RemoveSurmise(toSet.Surmises);
+                        foreach (var ga in new GetAreaHandler[] { GetSquares, GetRows, GetColumns })
+                            ClearExtraHint(ga);
+                    }
+                }
+            }
+        }
+
         private void ClearExtraHint(GetAreaHandler getArea)
         {
             List<IEnumerable<Cell>> withHints = getArea(_cellToGrids.Keys.ToList())
@@ -64,6 +110,7 @@ namespace Sudoku.Model
                 }
                 i++;
             }
+
         }
         #region Generating field
         private void LeaveOnlyHints(Difficulty difficulty)
@@ -75,7 +122,7 @@ namespace Sudoku.Model
                     countOfRemoves = 40;
                     break;
                 case Difficulty.Hard:
-                    countOfRemoves = 50;
+                    countOfRemoves = 46;
                     break;
             }
             for (int i = 0; i < countOfRemoves; i++)
