@@ -142,9 +142,11 @@ namespace Sudoku.Model
 
         private void Shuffle()
         {
-            ShuffleColumns();
-            ShuffleRows();
-            ShuffleColumns();
+            GetAreaHandler[] handlers = { GetColumns, GetRows };
+            for (int i = 0; i < 20; i++)
+            {
+                ShuffleArea(handlers[_random.Next(handlers.Length)]);
+            }
             #region jff
             Dictionary<string, int> data = new Dictionary<string, int>();
             foreach (var line in File.ReadAllLines("data.txt"))
@@ -172,40 +174,21 @@ namespace Sudoku.Model
             File.WriteAllLines("data.txt", output.ToArray());
             #endregion
         }
-
-        private void ShuffleColumns()
+        private void ShuffleArea(GetAreaHandler handler)
         {
-            List<List<Cell>> columns = GetColumns(_cellToGrids.Keys.ToList()).ToList();
-            for (int area = 0; area < 3; area++)
+            if (handler == GetSquares)
+                return;
+            List<List<Cell>> areas = handler.Invoke(_cellToGrids.Keys.ToList()).ToList();
+            int sector = _random.Next(3);
+            int len = 3;
+            while (len > 1)
             {
-                int len = 3;
-                while (len > 1)
+                int t = _random.Next(len--);
+                for (int i = 0; i < 9; i++)
                 {
-                    int k = _random.Next(len--);
-                    for (int i = 0; i < 9; i++)
-                    {
-                        Cell c1 = columns[k + area * 3][i], c2 = columns[len + area * 3][i];
-                        (_cellToGrids.Keys.Last(c => c == c2).Value, _cellToGrids.Keys.Last(c => c == c1).Value) =
-                            (_cellToGrids.Keys.Last(c => c == c1).Value, _cellToGrids.Keys.Last(c => c == c2).Value);
-                    }
-                }
-            }
-        }
-        private void ShuffleRows()
-        {
-            List<List<Cell>> columns = GetRows(_cellToGrids.Keys.ToList()).ToList();
-            for (int area = 0; area < 3; area++)
-            {
-                int len = 3;
-                while (len > 1)
-                {
-                    int k = _random.Next(len--);
-                    for (int i = 0; i < 9; i++)
-                    {
-                        Cell c1 = columns[k + area * 3][i], c2 = columns[len + area * 3][i];
-                        (_cellToGrids.Keys.Last(c => c == c2).Value, _cellToGrids.Keys.Last(c => c == c1).Value) =
-                            (_cellToGrids.Keys.Last(c => c == c1).Value, _cellToGrids.Keys.Last(c => c == c2).Value);
-                    }
+                    Cell c1 = _cellToGrids.Keys.First(c => c == areas[t + sector * 3][i]);
+                    Cell c2 = _cellToGrids.Keys.First(c => c == areas[len + sector * 3][i]);
+                    (c1.Value, c2.Value) = (c2.Value, c1.Value);
                 }
             }
         }
