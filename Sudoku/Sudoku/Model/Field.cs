@@ -27,31 +27,30 @@ namespace Sudoku.Model
         public void GenerateNewField()
         {
             _cellToGrids.Clear();
-            int cubeIndex = -1;
-            for (int iter = 0; iter < 81; iter++)
+            int cubeIndex = 0;
+            for (int iteration = 0; iteration < 81; iteration++)
             {
-                int innerIndex = iter % 9;
-                if (innerIndex == 0)
+                int innerIndex = iteration % 9;
+                if (innerIndex == 0 && iteration != 0)
                     cubeIndex++;
                 Cell cell = new Cell((cubeIndex, innerIndex), 0);
                 cell.PropertyChanged += Cell_PropertyChanged;
-                _cellToGrids.Add(cell, _grids[iter]);
+                _cellToGrids.Add(cell, _grids[iteration]);
             }
             FillBase();
             Shuffle();
             LeaveOnlyHints(Difficulty.Hard);
-            for (int i = 0; i < 10; i++)
+            List<int> beforeSolving, afterSolving;
+            do
             {
+                beforeSolving = _cellToGrids.Keys.Select(cell => cell.Value).ToList();
                 Solve();
-                OnlyPossible();
-            }
-            if (_cellToGrids.Keys.Any(c => c.Value == 0))
-            {
+                afterSolving = _cellToGrids.Keys.Select(cell => cell.Value).ToList();
+            } while (!beforeSolving.SequenceEqual(afterSolving));
+            if (afterSolving.Contains(0))
                 GenerateNewField();
-            }
             _cellToGrids.Keys.Where(c => c.IsGenerated == false).ToList().ForEach(c => c.Value = 0);
         }
-
         public void Solve()
         {
             ClearExtraHint(GetSquares);
@@ -145,6 +144,7 @@ namespace Sudoku.Model
         {
             ShuffleColumns();
             ShuffleRows();
+            ShuffleColumns();
             #region jff
             Dictionary<string, int> data = new Dictionary<string, int>();
             foreach (var line in File.ReadAllLines("data.txt"))
