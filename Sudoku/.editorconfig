@@ -5,3 +5,12 @@ dotnet_diagnostic.IDE0044.severity = none
 
 # IDE0052: Remove unread private members
 dotnet_diagnostic.IDE0052.severity = none
+
+# IDE0007: Use implicit type
+csharp_style_var_when_type_is_apparent = false
+
+# IDE0007: Use implicit type
+dotnet_diagnostic.IDE0007.severity = silent
+
+# CS0659: Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+dotnet_diagnostic.CS0659.severity = none

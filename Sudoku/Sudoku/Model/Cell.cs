@@ -53,8 +53,7 @@ namespace Sudoku.Model
         {
             if (IsGenerated) return;
             if (value < 1 || value > 9) throw new ArgumentOutOfRangeException(nameof(value));
-            if (Surmises.Contains(value)) throw new Exception("Item already in collection");
-
+            if (_surmises.Contains(value)) throw new Exception("Item already in collection");
             _surmises.Add(value);
             OnPropertyChanged("Surmises");
         }
@@ -92,21 +91,11 @@ namespace Sudoku.Model
         public override bool Equals(object obj)
         {
             Cell cell = obj as Cell;
-            if (cell == null) return false;
-            return cell.Coordinate == Coordinate
+            return cell != null
+                && cell.Coordinate == Coordinate
                 && cell.IsGenerated == IsGenerated
                 && cell._surmises == _surmises
                 && cell.Value == Value;
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = -1953335316;
-            hashCode = hashCode * -1521134295 + _value.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<int>>.Default.GetHashCode(_surmises);
-            hashCode = hashCode * -1521134295 + _isGenerated.GetHashCode();
-            hashCode = hashCode * -1521134295 + Coordinate.GetHashCode();
-            return hashCode;
         }
     }
 }
