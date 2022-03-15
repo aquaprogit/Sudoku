@@ -72,6 +72,8 @@
     <Compile Include="Model\Cell.cs" />
     <Compile Include="Model\Extrentions.cs" />
     <Compile Include="Model\Field.cs" />
+    <Compile Include="Model\FieldPrinter.cs" />
+    <Compile Include="Model\FieldSelector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

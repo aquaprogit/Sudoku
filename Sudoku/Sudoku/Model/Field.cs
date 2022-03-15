@@ -13,9 +13,7 @@ namespace Sudoku.Model
     {
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
         private Random _random = new Random();
-        private readonly Brush _whiteBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
-        private readonly Brush _blackBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-        private readonly Brush _printedBrush = new SolidColorBrush(Color.FromRgb(37, 84, 194));
+
         private delegate void ShuffleHandler();
         private delegate IEnumerable<List<Cell>> GetAreaHandler();
         private List<Grid> _grids;
@@ -272,7 +270,7 @@ namespace Sudoku.Model
             tb.Text = cell.GetCellContent();
             tb.FontSize = cell.Value == 0 ? 13 : 24;
             tb.Opacity = cell.Value == 0 ? 0.8 : 1;
-            tb.Foreground = cell.IsGenerated ? _blackBrush : _printedBrush;
+            tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.PrintedBrush;
         }
     }
     enum Difficulty
