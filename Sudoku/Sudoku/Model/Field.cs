@@ -17,7 +17,7 @@ namespace Sudoku.Model
         private readonly Brush _blackBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
         private readonly Brush _printedBrush = new SolidColorBrush(Color.FromRgb(37, 84, 194));
         private delegate void ShuffleHandler();
-        private delegate IEnumerable<List<Cell>> GetAreaHandler(List<Cell> cells);
+        private delegate IEnumerable<List<Cell>> GetAreaHandler();
         private List<Grid> _grids;
         public Field(List<Grid> grids)
         {
@@ -53,9 +53,7 @@ namespace Sudoku.Model
         }
         public void Solve()
         {
-            ClearExtraHint(GetSquares);
-            ClearExtraHint(GetRows);
-            ClearExtraHint(GetColumns);
+            OnlyPossible();
             SetOnlyValues();
         }
         public void SetOnlyValues()
@@ -67,20 +65,17 @@ namespace Sudoku.Model
             foreach (var GetArea in new GetAreaHandler[] { GetSquares, GetRows, GetColumns })
             {
                 ClearExtraHint(GetArea);
-                var areas = GetArea.Invoke(_cellToGrids.Keys.ToList());
+                var areas = GetArea.Invoke();
                 foreach (var area in areas)
                 {
-                    List<int> counts = new List<int>(Enumerable.Repeat(0, 9));
-                    foreach (var surmises in area.Where(cell => cell.Value == 0).Select(cell => cell.Surmises))
+                    var groups = area.Where(cell => cell.Value == 0)
+                        .Select(cell => cell.Surmises)
+                        .SelectMany(list => list)
+                        .GroupBy(group => group)
+                        .Select(group => new { Value = group.Key, Count = group.Count() });
+                    if (groups.Count(group => group.Count == 1) == 1)
                     {
-                        foreach (var surmise in surmises)
-                        {
-                            counts[surmise - 1]++;
-                        }
-                    }
-                    if (counts.Count(i => i == 1) == 1)
-                    {
-                        int value = counts.IndexOf(1) + 1;
+                        int value = groups.First(group => group.Count == 1).Value;
                         Cell toSet = area.First(cell => cell.Surmises != null && cell.Surmises.Contains(value));
                         toSet.Value = value;
                         toSet.RemoveSurmise(toSet.Surmises);
@@ -93,10 +88,10 @@ namespace Sudoku.Model
 
         private void ClearExtraHint(GetAreaHandler getArea)
         {
-            List<IEnumerable<Cell>> withHints = getArea(_cellToGrids.Keys.ToList())
+            List<IEnumerable<Cell>> withHints = getArea()
                                        .Select(area => area.Where(c => c.Value == 0))
                                        .ToList();
-            List<IEnumerable<int>> constants = getArea(_cellToGrids.Keys.ToList())
+            List<IEnumerable<int>> constants = getArea()
                                        .Select(area => area.Where(c => c.Value != 0)
                                        .Select(c => c.Value))
                                        .ToList();
@@ -178,7 +173,7 @@ namespace Sudoku.Model
         {
             if (handler == GetSquares)
                 return;
-            List<List<Cell>> areas = handler.Invoke(_cellToGrids.Keys.ToList()).ToList();
+            List<List<Cell>> areas = handler.Invoke().ToList();
             int sector = _random.Next(3);
             int len = 3;
             while (len > 1)
@@ -194,7 +189,7 @@ namespace Sudoku.Model
         }
         private void FillBase()
         {
-            List<List<Cell>> rows = GetSquares(_cellToGrids.Keys.ToList()).ToList();
+            List<List<Cell>> rows = GetSquares().ToList();
             for (int rowIndex = 0; rowIndex < 9; rowIndex++)
             {
                 int i = rowIndex;
@@ -206,15 +201,17 @@ namespace Sudoku.Model
         }
         #endregion
         #region Orginize
-        public IEnumerable<List<Cell>> GetSquares(List<Cell> field)
+        public IEnumerable<List<Cell>> GetSquares()
         {
+            var field = _cellToGrids.Keys.ToList();
             foreach (var item in field.GroupBy(c => c.Coordinate.CubeIndex))
             {
                 yield return item.Select(c => c).ToList();
             }
         }
-        public IEnumerable<List<Cell>> GetRows(List<Cell> field)
+        public IEnumerable<List<Cell>> GetRows()
         {
+            var field = _cellToGrids.Keys.ToList();
             for (int i = 0; i < 3; i++)
             {
                 for (int j = 0; j < 3; j++)
@@ -223,8 +220,10 @@ namespace Sudoku.Model
                 }
             }
         }
-        public IEnumerable<List<Cell>> GetColumns(List<Cell> field)
+        public IEnumerable<List<Cell>> GetColumns()
         {
+            var field = _cellToGrids.Keys.ToList();
+
             int y = 0, x = 0;
             int iterator = 0;
             int xStart = 0, yStart = 0;
