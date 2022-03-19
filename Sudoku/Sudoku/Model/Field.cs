@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace Sudoku.Model
 {
@@ -13,6 +11,7 @@ namespace Sudoku.Model
     {
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
         private Random _random = new Random();
+        private FieldSelector _selector = new FieldSelector();
 
         private delegate void ShuffleHandler();
         private delegate IEnumerable<List<Cell>> GetAreaHandler();
@@ -60,10 +59,10 @@ namespace Sudoku.Model
         }
         public void OnlyPossible()
         {
-            foreach (var GetArea in new GetAreaHandler[] { GetSquares, GetRows, GetColumns })
+            foreach (var areaToSelect in new Area[] { Area.Row, Area.Column, Area.Square })
             {
-                ClearExtraHint(GetArea);
-                var areas = GetArea.Invoke();
+                ClearExtraHint(areaToSelect);
+                var areas = _selector.GetAreas(areaToSelect, _cellToGrids.Keys.ToList());
                 foreach (var area in areas)
                 {
                     var groups = area.Where(cell => cell.Value == 0)
@@ -77,24 +76,25 @@ namespace Sudoku.Model
                         Cell toSet = area.First(cell => cell.Surmises != null && cell.Surmises.Contains(value));
                         toSet.Value = value;
                         toSet.RemoveSurmise(toSet.Surmises);
-                        foreach (var ga in new GetAreaHandler[] { GetSquares, GetRows, GetColumns })
-                            ClearExtraHint(ga);
+                        foreach (var toSelect in new Area[] { Area.Row, Area.Column, Area.Square })
+                            ClearExtraHint(toSelect);
                     }
                 }
             }
         }
 
-        private void ClearExtraHint(GetAreaHandler getArea)
+        private void ClearExtraHint(Area area)
         {
-            List<IEnumerable<Cell>> withHints = getArea()
-                                       .Select(area => area.Where(c => c.Value == 0))
+            var areas = _selector.GetAreas(area, _cellToGrids.Keys.ToList());
+            List<IEnumerable<Cell>> withHints = areas
+                                       .Select(a => a.Where(c => c.Value == 0))
                                        .ToList();
-            List<IEnumerable<int>> constants = getArea()
-                                       .Select(area => area.Where(c => c.Value != 0)
+            List<IEnumerable<int>> constants = areas
+                                       .Select(a => a.Where(c => c.Value != 0)
                                        .Select(c => c.Value))
                                        .ToList();
             int i = 0;
-            foreach (var square in withHints.Select(area => area.ToList()))
+            foreach (var square in withHints.Select(a => a.ToList()))
             {
                 foreach (var cell in square)
                 {
@@ -135,10 +135,9 @@ namespace Sudoku.Model
 
         private void Shuffle()
         {
-            GetAreaHandler[] handlers = { GetColumns, GetRows };
             for (int i = 0; i < 20; i++)
             {
-                ShuffleArea(handlers[_random.Next(handlers.Length)]);
+                ShuffleArea((Area)_random.Next(0, 2));
             }
             #region jff
             Dictionary<string, int> data = new Dictionary<string, int>();
@@ -167,11 +166,11 @@ namespace Sudoku.Model
             File.WriteAllLines("data.txt", output.ToArray());
             #endregion
         }
-        private void ShuffleArea(GetAreaHandler handler)
+        private void ShuffleArea(Area area)
         {
-            if (handler == GetSquares)
-                return;
-            List<List<Cell>> areas = handler.Invoke().ToList();
+            if (area == Area.Square) return;
+
+            List<List<Cell>> areas = _selector.GetAreas(area, _cellToGrids.Keys.ToList());
             int sector = _random.Next(3);
             int len = 3;
             while (len > 1)
@@ -187,7 +186,7 @@ namespace Sudoku.Model
         }
         private void FillBase()
         {
-            List<List<Cell>> rows = GetSquares().ToList();
+            List<List<Cell>> rows = _selector.GetAreas(Area.Square, _cellToGrids.Keys.ToList());
             for (int rowIndex = 0; rowIndex < 9; rowIndex++)
             {
                 int i = rowIndex;
@@ -198,71 +197,6 @@ namespace Sudoku.Model
             }
         }
         #endregion
-        #region Orginize
-        public IEnumerable<List<Cell>> GetSquares()
-        {
-            var field = _cellToGrids.Keys.ToList();
-            foreach (var item in field.GroupBy(c => c.Coordinate.CubeIndex))
-            {
-                yield return item.Select(c => c).ToList();
-            }
-        }
-        public IEnumerable<List<Cell>> GetRows()
-        {
-            var field = _cellToGrids.Keys.ToList();
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    yield return field.Where(c => c.Coordinate.CellIndex / 3 == j && c.Coordinate.CubeIndex / 3 == i).ToList();
-                }
-            }
-        }
-        public IEnumerable<List<Cell>> GetColumns()
-        {
-            var field = _cellToGrids.Keys.ToList();
-
-            int y = 0, x = 0;
-            int iterator = 0;
-            int xStart = 0, yStart = 0;
-            List<Cell> cells = new List<Cell>();
-            do
-            {
-                cells.Add(field.First(c => c.Coordinate == (y, x)));
-                x += 3;
-                iterator++;
-                if (iterator % 27 != 0)
-                {
-                    if (iterator % 9 != 0)
-                    {
-                        if (iterator % 3 == 0 && iterator != 0)
-                        {
-                            y += 3;
-                            x = xStart;
-                        }
-                    }
-                    else
-                    {
-                        yield return cells.Select(c => c).ToList();
-                        cells.Clear();
-                        y = yStart;
-                        xStart++;
-                        x = xStart;
-                    }
-                }
-                else
-                {
-                    yield return cells.Select(c => c).ToList();
-                    cells.Clear();
-                    yStart++;
-                    xStart = 0;
-                    x = xStart;
-                    y = yStart;
-                }
-            } while (iterator != 81);
-        }
-        #endregion
-
         private void Cell_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             Cell cell = (Cell)sender;
