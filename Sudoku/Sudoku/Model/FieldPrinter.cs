@@ -14,16 +14,22 @@ namespace Sudoku.Model
         public static Brush SelectedCellBrush { get; private set; }
         public static Brush SameNumberBrush { get; private set; }
         public static Brush IncorrectNumberBrush { get; private set; }
+        public static Brush SolvedPartBrush { get; private set; }
         static FieldPrinter()
         {
             WhiteBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
             BlackBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-            NonGeneratedBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.NonGeneratedBrush);
-            PrintedBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.PrintedBrush);
-            SelectedCellBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.SelectedCellBrush);
-            SameNumberBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.SameNumberBrush);
-            IncorrectNumberBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.IncorrectNumberBrush);
+            NonGeneratedBrush = HexToBrush(Properties.Settings.Default.NonGeneratedBrush);
+            PrintedBrush = HexToBrush(Properties.Settings.Default.PrintedBrush);
+            SelectedCellBrush = HexToBrush(Properties.Settings.Default.SelectedCellBrush);
+            SameNumberBrush = HexToBrush(Properties.Settings.Default.SameNumberBrush);
+            IncorrectNumberBrush = HexToBrush(Properties.Settings.Default.IncorrectNumberBrush);
+            SolvedPartBrush = HexToBrush(Properties.Settings.Default.SolvedPartBrush);
         }
 
+        static Brush HexToBrush(string hex)
+        {
+            return (SolidColorBrush)new BrushConverter().ConvertFrom(hex);
+        }
     }
 }

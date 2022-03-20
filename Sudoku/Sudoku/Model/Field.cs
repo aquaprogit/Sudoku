@@ -83,11 +83,6 @@ namespace Sudoku.Model
                     selected.AddSurmise(value);
             }
             Cell_Focus(_cellToGrids[selected], null);
-
-            if (_solution != null
-                && selected.Value != _solution[Cells.IndexOf(selected)]
-                && selected.Value != 0)
-                _cellToGrids[selected].Background = FieldPrinter.IncorrectNumberBrush;
         }
 
         public void Solve()
@@ -245,7 +240,7 @@ namespace Sudoku.Model
             tb.Text = cell.GetCellContent();
             tb.FontSize = cell.Value == 0 ? 13 : 24;
             tb.Opacity = cell.Value == 0 ? 0.8 : 1;
-                tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
+            tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
         }
         private void Cell_Focus(object sender, MouseButtonEventArgs e)
         {
@@ -256,11 +251,28 @@ namespace Sudoku.Model
             {
                 _cellToGrids[cell].Background = FieldPrinter.PrintedBrush;
             }
+            _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
+            for (int i = 0; i < Cells.Count; i++)
+            {
+                if (Cells[i].Value != _solution[i] && Cells[i].Value != 0)
+                    _cellToGrids[Cells[i]].Background = FieldPrinter.IncorrectNumberBrush;
+            }
+            List<Cell> solved = new List<Cell>();
+            foreach (Area area in new Area[] { Area.Square, Area.Column, Area.Row })
+            {
+                solved.AddRange(_selector.GetAreas(area, Cells)
+                    .Where(list => list.All(cell => cell.Value != 0 
+                                     && Cells[Cells.IndexOf(cell)].Value == _solution[Cells.IndexOf(cell)]))
+                    .SelectMany(l => l));
+            }
+            foreach (var cell in solved)
+            {
+                _cellToGrids[cell].Background = FieldPrinter.SolvedPartBrush;
+            }
             foreach (Cell cell in _selector.GetSameValues(Cells))
             {
                 _cellToGrids[cell].Background = FieldPrinter.SameNumberBrush;
             }
-            _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
         }
     }
     enum Difficulty

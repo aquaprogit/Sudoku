@@ -23,7 +23,6 @@
             <Border>
                 <Grid x:Name="Playground"
                       Height="450"
-                      KeyboardNavigation.DirectionalNavigation="None"
                       Width="450"
                       Focusable="True"
                       PreviewKeyUp="Playground_KeyUp">
