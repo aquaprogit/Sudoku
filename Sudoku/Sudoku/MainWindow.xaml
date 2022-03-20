@@ -6,7 +6,8 @@
         mc:Ignorable="d"
         Title="Sudoku"
         Height="550"
-        Width="800">
+        Width="800"
+        PreviewKeyDown="Window_KeyUp">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Border">
@@ -22,7 +23,10 @@
             <Border>
                 <Grid x:Name="Playground"
                       Height="450"
-                      Width="450">
+                      KeyboardNavigation.DirectionalNavigation="None"
+                      Width="450"
+                      Focusable="True"
+                      PreviewKeyUp="Playground_KeyUp">
                     <Grid.Resources>
                         <Style TargetType="Grid"
                                x:Key="BigSquare">

@@ -58,6 +58,23 @@ namespace Sudoku.Model
             _selector.MoveSelection(dir, Cells);
             Cell_Focus(_cellToGrids[_selector.SelectedCell], null);
         }
+        public void TypeValue(int value, bool isSurmise = false)
+        {
+            if (value < 0 || value > 9) throw new ArgumentOutOfRangeException("value");
+            Cell selected = _selector.SelectedCell;
+            if (selected.IsGenerated) return;
+
+            if (!isSurmise)
+                selected.Value = value;
+            else
+            {
+                if (selected.Surmises.Contains(value))
+                    selected.RemoveSurmise(value);
+                else
+                    selected.AddSurmise(value);
+            }
+        }
+
         public void Solve()
         {
             OnlyPossible();
