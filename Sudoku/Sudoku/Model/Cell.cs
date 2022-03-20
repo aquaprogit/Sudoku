@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Sudoku.Model
 {
-    internal class Cell : INotifyPropertyChanged
+    internal delegate void CellContentChangedHandler(Cell obj);
+    internal class Cell
     {
         private int _value = 0;
         private readonly List<int> _surmises = new List<int>(9);
@@ -18,7 +16,7 @@ namespace Sudoku.Model
             IsGenerated = false;
             _value = value;
         }
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event CellContentChangedHandler ContentChanged;
         public (int CubeIndex, int CellIndex) Coordinate { get; private set; }
         public int Value {
             get => _value;
@@ -48,14 +46,19 @@ namespace Sudoku.Model
             IsGenerated = false;
             Value = 0;
         }
-
         public void AddSurmise(int value)
         {
             if (IsGenerated) return;
+            if (value == 0)
+            {
+                _surmises.Clear();
+                OnPropertyChanged();
+                return;
+            }
             if (value < 1 || value > 9) throw new ArgumentOutOfRangeException(nameof(value));
             if (_surmises.Contains(value)) throw new Exception("Item already in collection");
             _surmises.Add(value);
-            OnPropertyChanged("Surmises");
+            OnPropertyChanged();
         }
         public void RemoveSurmise(int value)
         {
@@ -67,21 +70,17 @@ namespace Sudoku.Model
         public void AddSurmise(IEnumerable<int> values)
         {
             foreach (int value in values)
-            {
                 AddSurmise(value);
-            }
         }
         public void RemoveSurmise(IEnumerable<int> values)
         {
-            foreach (var value in values)
-            {
+            foreach (int value in values)
                 RemoveSurmise(value);
-            }
         }
 
-        public void OnPropertyChanged([CallerMemberName] string name = "")
+        public void OnPropertyChanged()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            ContentChanged?.Invoke(this);
         }
 
         public override string ToString()
@@ -90,8 +89,7 @@ namespace Sudoku.Model
         }
         public override bool Equals(object obj)
         {
-            Cell cell = obj as Cell;
-            return cell != null
+            return obj is Cell cell
                 && cell.Coordinate == Coordinate
                 && cell.IsGenerated == IsGenerated
                 && cell._surmises == _surmises
