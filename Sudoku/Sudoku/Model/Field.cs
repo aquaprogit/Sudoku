@@ -53,6 +53,11 @@ namespace Sudoku.Model
             }
             _cellToGrids.Keys.Where(c => c.IsGenerated == false).ToList().ForEach(c => c.Value = 0);
         }
+        public void MoveSelection(Direction dir)
+        {
+            _selector.MoveSelection(dir, Cells);
+            Cell_Focus(_cellToGrids[_selector.SelectedCell], null);
+        }
         public void Solve()
         {
             OnlyPossible();

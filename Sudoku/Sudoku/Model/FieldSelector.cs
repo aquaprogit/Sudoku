@@ -13,6 +13,31 @@ namespace Sudoku.Model
 
         public Cell SelectedCell { get; set; }
 
+        public void MoveSelection(Direction dir, List<Cell> cells)
+        {
+            if (SelectedCell == null) return;
+            var column = GetAreas(Area.Column, cells).First(list => list.Contains(SelectedCell));
+            var row = GetAreas(Area.Row, cells).First(list => list.Contains(SelectedCell));
+            int index = -1;
+
+            if (dir == Direction.Up || dir == Direction.Down)
+            {
+                index = column.IndexOf(SelectedCell);
+                if (index > 0 && dir == Direction.Up)
+                    SelectedCell = column[index - 1];
+                else if (index < 8 && dir == Direction.Down)
+                    SelectedCell = column[index + 1];
+            }
+            else
+            {
+                index = row.IndexOf(SelectedCell);
+                if (index > 0 && dir == Direction.Left)
+                    SelectedCell = row[index - 1];
+                else if (index < 8 && dir == Direction.Right)
+                    SelectedCell = row[index + 1];
+            }
+        }
+
         public List<Cell> GetAllLinked(List<Cell> cells)
         {
             List<Cell> result = new List<Cell>();
@@ -114,6 +139,13 @@ namespace Sudoku.Model
 
             return _squares;
         }
+    }
+    enum Direction
+    {
+        Up,
+        Down,
+        Left,
+        Right
     }
     enum Area
     {
