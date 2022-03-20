@@ -15,12 +15,14 @@ namespace Sudoku.Model
         private Random _random = new Random();
         private FieldSelector _selector = new FieldSelector();
 
+        private List<int> _solution;
         private List<Grid> _grids;
         private List<Cell> Cells => _cellToGrids.Keys.ToList();
         public Field(List<Grid> grids)
         {
             _grids = grids;
             GenerateNewField();
+            SaveSolution();
         }
         public void GenerateNewField()
         {
@@ -51,8 +53,14 @@ namespace Sudoku.Model
             {
                 grid.MouseLeftButtonUp += Cell_Focus;
             }
+        }
+
+        private void SaveSolution()
+        {
+            _solution = Cells.Select(cell => cell.Value).ToList();
             _cellToGrids.Keys.Where(c => c.IsGenerated == false).ToList().ForEach(c => c.Value = 0);
         }
+
         public void MoveSelection(Direction dir)
         {
             _selector.MoveSelection(dir, Cells);
@@ -75,6 +83,11 @@ namespace Sudoku.Model
                     selected.AddSurmise(value);
             }
             Cell_Focus(_cellToGrids[selected], null);
+
+            if (_solution != null
+                && selected.Value != _solution[Cells.IndexOf(selected)]
+                && selected.Value != 0)
+                _cellToGrids[selected].Background = FieldPrinter.IncorrectNumberBrush;
         }
 
         public void Solve()
@@ -232,7 +245,7 @@ namespace Sudoku.Model
             tb.Text = cell.GetCellContent();
             tb.FontSize = cell.Value == 0 ? 13 : 24;
             tb.Opacity = cell.Value == 0 ? 0.8 : 1;
-            tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
+                tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
         }
         private void Cell_Focus(object sender, MouseButtonEventArgs e)
         {

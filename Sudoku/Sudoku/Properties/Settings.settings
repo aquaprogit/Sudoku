@@ -14,5 +14,8 @@
     <Setting Name="SameNumberBrush" Type="System.String" Scope="User">
       <Value Profile="(Default)">#efff73</Value>
     </Setting>
+    <Setting Name="IncorrectNumberBrush" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#ff7a69</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -70,5 +70,17 @@ namespace Sudoku.Properties {
                 this["SameNumberBrush"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#ff7a69")]
+        public string IncorrectNumberBrush {
+            get {
+                return ((string)(this["IncorrectNumberBrush"]));
+            }
+            set {
+                this["IncorrectNumberBrush"] = value;
+            }
+        }
     }
 }
