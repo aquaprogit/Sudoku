@@ -11,6 +11,17 @@ namespace Sudoku.Model
         private List<List<Cell>> _columns;
         private List<List<Cell>> _squares;
 
+        public Cell SelectedCell { get; set; }
+
+        public List<Cell> GetAllLinked(List<Cell> cells)
+        {
+            List<Cell> result = new List<Cell>();
+            result.AddRange(GetAreas(Area.Row, cells).First(list => list.Contains(SelectedCell)));
+            result.AddRange(GetAreas(Area.Column, cells).First(list => list.Contains(SelectedCell)));
+            result.AddRange(GetAreas(Area.Square, cells).First(list => list.Contains(SelectedCell)));
+            result.Remove(SelectedCell);
+            return result;
+        }
         public List<List<Cell>> GetAreas(Area area, List<Cell> cells)
         {
             if (cells == null)

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Sudoku.Model
 {
@@ -13,9 +15,8 @@ namespace Sudoku.Model
         private Random _random = new Random();
         private FieldSelector _selector = new FieldSelector();
 
-        private delegate void ShuffleHandler();
-        private delegate IEnumerable<List<Cell>> GetAreaHandler();
         private List<Grid> _grids;
+        private List<Cell> Cells => _cellToGrids.Keys.ToList();
         public Field(List<Grid> grids)
         {
             _grids = grids;
@@ -31,7 +32,7 @@ namespace Sudoku.Model
                 if (innerIndex == 0 && iteration != 0)
                     cubeIndex++;
                 Cell cell = new Cell((cubeIndex, innerIndex), 0);
-                cell.PropertyChanged += Cell_PropertyChanged;
+                cell.ContentChanged += Cell_PropertyChanged;
                 _cellToGrids.Add(cell, _grids[iteration]);
             }
             FillBase();
@@ -46,6 +47,10 @@ namespace Sudoku.Model
             } while (!beforeSolving.SequenceEqual(afterSolving));
             if (afterSolving.Contains(0))
                 GenerateNewField();
+            foreach (Grid grid in _cellToGrids.Values)
+            {
+                grid.MouseLeftButtonUp += Cell_Focus;
+            }
             _cellToGrids.Keys.Where(c => c.IsGenerated == false).ToList().ForEach(c => c.Value = 0);
         }
         public void Solve()
@@ -62,7 +67,7 @@ namespace Sudoku.Model
             foreach (var areaToSelect in new Area[] { Area.Row, Area.Column, Area.Square })
             {
                 ClearExtraHint(areaToSelect);
-                var areas = _selector.GetAreas(areaToSelect, _cellToGrids.Keys.ToList());
+                var areas = _selector.GetAreas(areaToSelect, Cells);
                 foreach (var area in areas)
                 {
                     var groups = area.Where(cell => cell.Value == 0)
@@ -82,10 +87,9 @@ namespace Sudoku.Model
                 }
             }
         }
-
         private void ClearExtraHint(Area area)
         {
-            var areas = _selector.GetAreas(area, _cellToGrids.Keys.ToList());
+            var areas = _selector.GetAreas(area, Cells);
             List<IEnumerable<Cell>> withHints = areas
                                        .Select(a => a.Where(c => c.Value == 0))
                                        .ToList();
@@ -170,7 +174,7 @@ namespace Sudoku.Model
         {
             if (area == Area.Square) return;
 
-            List<List<Cell>> areas = _selector.GetAreas(area, _cellToGrids.Keys.ToList());
+            List<List<Cell>> areas = _selector.GetAreas(area, Cells);
             int sector = _random.Next(3);
             int len = 3;
             while (len > 1)
@@ -186,7 +190,7 @@ namespace Sudoku.Model
         }
         private void FillBase()
         {
-            List<List<Cell>> rows = _selector.GetAreas(Area.Square, _cellToGrids.Keys.ToList());
+            List<List<Cell>> rows = _selector.GetAreas(Area.Square, Cells);
             for (int rowIndex = 0; rowIndex < 9; rowIndex++)
             {
                 int i = rowIndex;
@@ -197,14 +201,25 @@ namespace Sudoku.Model
             }
         }
         #endregion
-        private void Cell_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void Cell_PropertyChanged(Cell sender)
         {
-            Cell cell = (Cell)sender;
+            Cell cell = sender;
             TextBlock tb = _cellToGrids[cell].FindVisualChildren<TextBlock>().First();
             tb.Text = cell.GetCellContent();
             tb.FontSize = cell.Value == 0 ? 13 : 24;
             tb.Opacity = cell.Value == 0 ? 0.8 : 1;
-            tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.PrintedBrush;
+            tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
+        }
+        private void Cell_Focus(object sender, MouseButtonEventArgs e)
+        {
+            _grids.ForEach(g => g.Background = FieldPrinter.WhiteBrush);
+            Grid grid = (Grid)sender;
+            _selector.SelectedCell = _cellToGrids.First(pair => pair.Value == grid).Key;
+            foreach (Cell cell in _selector.GetAllLinked(Cells))
+            {
+                _cellToGrids[cell].Background = FieldPrinter.PrintedBrush;
+            }
+            _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
         }
     }
     enum Difficulty

@@ -65,7 +65,7 @@ namespace Sudoku.Model
             if (IsGenerated) return;
 
             _surmises.Remove(value);
-            OnPropertyChanged("Surmises");
+            OnPropertyChanged();
         }
         public void AddSurmise(IEnumerable<int> values)
         {
