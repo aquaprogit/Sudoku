@@ -58,5 +58,17 @@ namespace Sudoku.Properties {
                 this["NonGeneratedBrush"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#efff73")]
+        public string SameNumberBrush {
+            get {
+                return ((string)(this["SameNumberBrush"]));
+            }
+            set {
+                this["SameNumberBrush"] = value;
+            }
+        }
     }
 }

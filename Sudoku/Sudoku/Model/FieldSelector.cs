@@ -37,7 +37,12 @@ namespace Sudoku.Model
                     SelectedCell = row[index + 1];
             }
         }
-
+        public List<Cell> GetSameValues(List<Cell> cells)
+        {
+            return SelectedCell.Value == 0
+                ? new List<Cell>()
+                : cells.Where(cell => cell.Value == SelectedCell.Value && cell != SelectedCell).ToList();
+        }
         public List<Cell> GetAllLinked(List<Cell> cells)
         {
             List<Cell> result = new List<Cell>();

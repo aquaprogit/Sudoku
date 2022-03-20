@@ -12,6 +12,7 @@ namespace Sudoku.Model
         public static Brush NonGeneratedBrush { get; private set; }
         public static Brush PrintedBrush { get; private set; }
         public static Brush SelectedCellBrush { get; private set; }
+        public static Brush SameNumberBrush { get; private set; }
         static FieldPrinter()
         {
             WhiteBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
@@ -19,6 +20,7 @@ namespace Sudoku.Model
             NonGeneratedBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.NonGeneratedBrush);
             PrintedBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.PrintedBrush);
             SelectedCellBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.SelectedCellBrush);
+            SameNumberBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.SameNumberBrush);
         }
 
     }

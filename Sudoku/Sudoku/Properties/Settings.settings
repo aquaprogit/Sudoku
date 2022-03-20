@@ -11,5 +11,8 @@
     <Setting Name="NonGeneratedBrush" Type="System.String" Scope="User">
       <Value Profile="(Default)">#003ed4</Value>
     </Setting>
+    <Setting Name="SameNumberBrush" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#efff73</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

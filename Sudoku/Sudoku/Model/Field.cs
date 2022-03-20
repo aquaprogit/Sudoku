@@ -56,7 +56,8 @@ namespace Sudoku.Model
         public void MoveSelection(Direction dir)
         {
             _selector.MoveSelection(dir, Cells);
-            Cell_Focus(_cellToGrids[_selector.SelectedCell], null);
+            if (_selector.SelectedCell != null)
+                Cell_Focus(_cellToGrids[_selector.SelectedCell], null);
         }
         public void TypeValue(int value, bool isSurmise = false)
         {
@@ -73,6 +74,7 @@ namespace Sudoku.Model
                 else
                     selected.AddSurmise(value);
             }
+            Cell_Focus(_cellToGrids[selected], null);
         }
 
         public void Solve()
@@ -240,6 +242,10 @@ namespace Sudoku.Model
             foreach (Cell cell in _selector.GetAllLinked(Cells))
             {
                 _cellToGrids[cell].Background = FieldPrinter.PrintedBrush;
+            }
+            foreach (Cell cell in _selector.GetSameValues(Cells))
+            {
+                _cellToGrids[cell].Background = FieldPrinter.SameNumberBrush;
             }
             _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
         }
