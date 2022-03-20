@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Sudoku.Model
@@ -7,12 +9,17 @@ namespace Sudoku.Model
     {
         public static Brush WhiteBrush { get; private set; }
         public static Brush BlackBrush { get; private set; }
+        public static Brush NonGeneratedBrush { get; private set; }
         public static Brush PrintedBrush { get; private set; }
+        public static Brush SelectedCellBrush { get; private set; }
         static FieldPrinter()
         {
             WhiteBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
             BlackBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-            PrintedBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Sudoku.Properties.Settings.Default.PrintedBrush);
+            NonGeneratedBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.NonGeneratedBrush);
+            PrintedBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.PrintedBrush);
+            SelectedCellBrush = (SolidColorBrush)new BrushConverter().ConvertFrom(Properties.Settings.Default.SelectedCellBrush);
         }
+
     }
 }

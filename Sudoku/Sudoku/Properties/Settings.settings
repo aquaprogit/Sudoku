@@ -3,7 +3,13 @@
   <Profiles />
   <Settings>
     <Setting Name="PrintedBrush" Type="System.String" Scope="User">
-      <Value Profile="(Default)">#2554C2</Value>
+      <Value Profile="(Default)">#d4e3ff</Value>
+    </Setting>
+    <Setting Name="SelectedCellBrush" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#7195eb</Value>
+    </Setting>
+    <Setting Name="NonGeneratedBrush" Type="System.String" Scope="User">
+      <Value Profile="(Default)">#003ed4</Value>
     </Setting>
   </Settings>
 </SettingsFile>

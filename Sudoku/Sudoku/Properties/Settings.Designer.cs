@@ -25,13 +25,37 @@ namespace Sudoku.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#2554C2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#d4e3ff")]
         public string PrintedBrush {
             get {
                 return ((string)(this["PrintedBrush"]));
             }
             set {
                 this["PrintedBrush"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#7195eb")]
+        public string SelectedCellBrush {
+            get {
+                return ((string)(this["SelectedCellBrush"]));
+            }
+            set {
+                this["SelectedCellBrush"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("#003ed4")]
+        public string NonGeneratedBrush {
+            get {
+                return ((string)(this["NonGeneratedBrush"]));
+            }
+            set {
+                this["NonGeneratedBrush"] = value;
             }
         }
     }
