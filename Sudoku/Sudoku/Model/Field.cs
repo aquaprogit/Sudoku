@@ -177,6 +177,8 @@ namespace Sudoku.Model
             }
             #region jff
             Dictionary<string, int> data = new Dictionary<string, int>();
+            if (File.Exists("data.txt") == false)
+                File.Create("data.txt");
             foreach (var line in File.ReadAllLines("data.txt"))
             {
                 string k = line.Split(' ')[0];
