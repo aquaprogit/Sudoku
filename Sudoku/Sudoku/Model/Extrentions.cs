@@ -31,22 +31,15 @@ namespace Sudoku.Model
         public static string GetCellContent(this Cell cell)
         {
             if (cell == null) return null;
-            string result = "";
+            string result = "1 2 3\n4 5 6\n7 8 9";
 
             if (cell.Value == 0)
             {
-                for (int i = 1; i <= 9; i++)
+                foreach (int i in Enumerable.Range(1, 9).Except(cell.Surmises))
                 {
-                    if (i % 3 == 1)
-                        result += "\n";
-                    if (cell.Surmises.Contains(i) && i % 3 != 0)
-                        result += $"{i} ";
-                    else if (cell.Surmises.Contains(i) && i % 3 == 0)
-                        result += i.ToString();
-                    else
-                        result += "  ";
+                    result = result.Replace(i.ToString(), " ");
                 }
-                return result.Substring(1, result.Length - 1);
+                return result;
             }
             else
                 return cell.Value.ToString();
