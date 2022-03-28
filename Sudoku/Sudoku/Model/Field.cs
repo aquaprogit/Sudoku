@@ -46,7 +46,7 @@ namespace Sudoku.Model
                 beforeSolving = _cellToGrids.Keys.Select(cell => cell.Value).ToList();
                 Solve();
                 afterSolving = _cellToGrids.Keys.Select(cell => cell.Value).ToList();
-            } while (!beforeSolving.SequenceEqual(afterSolving));
+            } while (beforeSolving.SequenceEqual(afterSolving) == false);
             if (afterSolving.Contains(0))
                 GenerateNewField();
             foreach (Grid grid in _cellToGrids.Values)
@@ -73,7 +73,7 @@ namespace Sudoku.Model
             Cell selected = _selector.SelectedCell;
             if (selected.IsGenerated) return;
 
-            if (!isSurmise)
+            if (isSurmise == false)
                 selected.Value = value;
             else
             {
@@ -179,17 +179,16 @@ namespace Sudoku.Model
             Dictionary<string, int> data = new Dictionary<string, int>();
             if (File.Exists("data.txt") == false)
                 File.Create("data.txt");
-            foreach (var line in File.ReadAllLines("data.txt"))
+            foreach (string line in File.ReadAllLines("data.txt"))
             {
                 string k = line.Split(' ')[0];
-                string count = line.Split(' ')[1];
-                data.Add(k, Convert.ToInt32(count));
+                int count = Convert.ToInt32(line.Split(' ')[1]);
+                data.Add(k, count);
             }
-
             string key = "";
-            foreach (var item in _cellToGrids.Keys)
+            foreach (Cell cell in Cells)
             {
-                key += item.Value;
+                key += cell.Value;
             }
             if (data.ContainsKey(key))
                 data[key]++;
@@ -199,7 +198,6 @@ namespace Sudoku.Model
             foreach (var item in data)
             {
                 output.Add($"{item.Key} {item.Value}");
-
             }
             File.WriteAllLines("data.txt", output.ToArray());
             #endregion
