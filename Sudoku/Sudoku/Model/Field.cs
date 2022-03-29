@@ -12,8 +12,9 @@ namespace Sudoku.Model
     internal class Field
     {
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
-        private Random _random = new Random();
         private FieldSelector _selector = new FieldSelector();
+
+        private Random _random = new Random();
 
         private List<int> _solution;
         private List<Grid> _grids;
@@ -247,31 +248,26 @@ namespace Sudoku.Model
             _grids.ForEach(g => g.Background = FieldPrinter.WhiteBrush);
             Grid grid = (Grid)sender;
             _selector.SelectedCell = _cellToGrids.First(pair => pair.Value == grid).Key;
-            foreach (Cell cell in _selector.GetAllLinked(Cells))
-            {
-                _cellToGrids[cell].Background = FieldPrinter.PrintedBrush;
-            }
+            _selector.GetAllLinked(Cells)
+                            .Select(cell => _cellToGrids[cell])
+                            .ToList()
+                            .ForEach(g => g.Background = FieldPrinter.PrintedBrush);
             _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
+
+            _selector.GetCorrectAreas(Cells, _solution)
+                            .Select(cell => _cellToGrids[cell])
+                            .ToList()
+                            .ForEach(g => g.Background = FieldPrinter.SolvedPartBrush);
+
+            _selector.GetSameValues(Cells)
+                            .Select(cell => _cellToGrids[cell])
+                            .ToList()
+                            .ForEach(g => g.Background = FieldPrinter.SameNumberBrush);
+
             for (int i = 0; i < Cells.Count; i++)
             {
                 if (Cells[i].Value != _solution[i] && Cells[i].Value != 0)
                     _cellToGrids[Cells[i]].Background = FieldPrinter.IncorrectNumberBrush;
-            }
-            List<Cell> solved = new List<Cell>();
-            foreach (Area area in new Area[] { Area.Square, Area.Column, Area.Row })
-            {
-                solved.AddRange(_selector.GetAreas(area, Cells)
-                    .Where(list => list.All(cell => cell.Value != 0 
-                                     && Cells[Cells.IndexOf(cell)].Value == _solution[Cells.IndexOf(cell)]))
-                    .SelectMany(l => l));
-            }
-            foreach (var cell in solved)
-            {
-                _cellToGrids[cell].Background = FieldPrinter.SolvedPartBrush;
-            }
-            foreach (Cell cell in _selector.GetSameValues(Cells))
-            {
-                _cellToGrids[cell].Background = FieldPrinter.SameNumberBrush;
             }
         }
     }
