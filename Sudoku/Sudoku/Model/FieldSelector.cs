@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Controls.Primitives;
 
 namespace Sudoku.Model
 {
@@ -51,6 +52,18 @@ namespace Sudoku.Model
             result.AddRange(GetAreas(Area.Square, cells).First(list => list.Contains(SelectedCell)));
             result.Remove(SelectedCell);
             return result;
+        }
+        public List<Cell> GetCorrectAreas(List<Cell> cells, List<int> key)
+        {
+            List<Cell> solvedParts = new List<Cell>();
+            foreach (Area area in new Area[] { Area.Square, Area.Column, Area.Row })
+            {
+                solvedParts.AddRange(GetAreas(area, cells)
+                    .Where(list => list.All(cell => cell.Value != 0
+                                     && cells[cells.IndexOf(cell)].Value == key[cells.IndexOf(cell)]))
+                    .SelectMany(l => l));
+            }
+            return solvedParts;
         }
         public List<List<Cell>> GetAreas(Area area, List<Cell> cells)
         {
