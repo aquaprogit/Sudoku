@@ -245,25 +245,16 @@ namespace Sudoku.Model
         }
         private void Cell_Focus(object sender, MouseButtonEventArgs e)
         {
-            _grids.ForEach(g => g.Background = FieldPrinter.WhiteBrush);
+            FieldPrinter.PrintCells(_grids, FieldPrinter.WhiteBrush);
             Grid grid = (Grid)sender;
             _selector.SelectedCell = _cellToGrids.First(pair => pair.Value == grid).Key;
-            _selector.GetAllLinked(Cells)
-                            .Select(cell => _cellToGrids[cell])
-                            .ToList()
-                            .ForEach(g => g.Background = FieldPrinter.PrintedBrush);
+            var linked = _selector.GetAllLinked(Cells).Select(cell => _cellToGrids[cell]);
+            var correctParts = _selector.GetCorrectAreas(Cells, _solution).Select(cell => _cellToGrids[cell]);
+            var sameToSelected = _selector.GetSameValues(Cells).Select(cell => _cellToGrids[cell]);
+            FieldPrinter.PrintCells(linked, FieldPrinter.PrintedBrush);
+            FieldPrinter.PrintCells(correctParts, FieldPrinter.SolvedPartBrush);
+            FieldPrinter.PrintCells(sameToSelected, FieldPrinter.SameNumberBrush);
             _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
-
-            _selector.GetCorrectAreas(Cells, _solution)
-                            .Select(cell => _cellToGrids[cell])
-                            .ToList()
-                            .ForEach(g => g.Background = FieldPrinter.SolvedPartBrush);
-
-            _selector.GetSameValues(Cells)
-                            .Select(cell => _cellToGrids[cell])
-                            .ToList()
-                            .ForEach(g => g.Background = FieldPrinter.SameNumberBrush);
-
             for (int i = 0; i < Cells.Count; i++)
             {
                 if (Cells[i].Value != _solution[i] && Cells[i].Value != 0)

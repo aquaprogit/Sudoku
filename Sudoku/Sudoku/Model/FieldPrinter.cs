@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -30,6 +31,11 @@ namespace Sudoku.Model
         static Brush HexToBrush(string hex)
         {
             return (SolidColorBrush)new BrushConverter().ConvertFrom(hex);
+        }
+
+        public static void PrintCells(IEnumerable<Grid> grids, Brush brush)
+        {
+            grids.ToList().ForEach(grid => grid.Background = brush);
         }
     }
 }
