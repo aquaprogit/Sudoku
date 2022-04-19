@@ -103,49 +103,19 @@ namespace Sudoku.Model
                     _rows.Add(_cells.Where(c => c.Coordinate.CellIndex / 3 == j && c.Coordinate.CubeIndex / 3 == i).ToList());
             return _rows;
         }
-
         private List<List<Cell>> GetColumns(List<Cell> cells)
         {
             _columns = new List<List<Cell>>();
-            _cells = new List<Cell>(cells);
-            int y = 0, x = 0;
-            int iterator = 0;
-            int xStart = 0, yStart = 0;
-            List<Cell> column = new List<Cell>();
-            do
+            var rows = GetAreas(Area.Row, cells);
+            foreach (var row in rows)
             {
-                column.Add(_cells.First(c => c.Coordinate == (y, x)));
-                x += 3;
-                iterator++;
-                if (iterator % 27 != 0)
+                for (int i = 0; i < row.Count; i++)
                 {
-                    if (iterator % 9 != 0)
-                    {
-                        if (iterator % 3 == 0 && iterator != 0)
-                        {
-                            y += 3;
-                            x = xStart;
-                        }
-                    }
-                    else
-                    {
-                        _columns.Add(column.Select(c => c).ToList());
-                        column.Clear();
-                        y = yStart;
-                        xStart++;
-                        x = xStart;
-                    }
+                    if (_columns.Count == i)
+                        _columns.Add(new List<Cell>());
+                    _columns[i].Add(row[i]);
                 }
-                else
-                {
-                    _columns.Add(column.Select(c => c).ToList());
-                    column.Clear();
-                    yStart++;
-                    xStart = 0;
-                    x = xStart;
-                    y = yStart;
-                }
-            } while (iterator != 81);
+            }
             return _columns;
         }
         private List<List<Cell>> GetSquares(List<Cell> cells)
