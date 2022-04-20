@@ -37,6 +37,20 @@ namespace Sudoku.Model
         }
         public List<int> Surmises => IsGenerated ? null : new List<int>(_surmises);
 
+        public Cell Copy()
+        {
+            Cell copy = new Cell(Coordinate, Value);
+            copy._surmises.Clear();
+            copy._surmises.AddRange(Surmises);
+            return copy;
+        }
+        public void Set(Cell obj)
+        {
+            Value = obj.Value;
+            _surmises.Clear();
+            _surmises.AddRange(obj._surmises);
+            Coordinate = obj.Coordinate;
+        }
         public void LockValue()
         {
             IsGenerated = true;
