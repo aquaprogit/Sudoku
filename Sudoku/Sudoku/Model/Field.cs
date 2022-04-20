@@ -144,7 +144,7 @@ namespace Sudoku.Model
         #region Generating field
         private void LeaveOnlyHints(Difficulty difficulty)
         {
-            int countOfRemoves = 0;
+            int countOfRemoves = 1;
             switch (difficulty)
             {
                 case Difficulty.Easy:
@@ -169,12 +169,20 @@ namespace Sudoku.Model
             }
             _cellToGrids.Keys.Where(cell => cell.Value != 0).ToList().ForEach(cell => cell.LockValue());
         }
-
+        private void Transpose()
+        {
+            var tr = _selector.Transpose(Cells);
+            for (int i = 0; i < 81; i++)
+            {
+                Cells[i].Value = tr[i].Value;
+            }
+        }
         private void Shuffle()
         {
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 21; i++)
             {
                 ShuffleArea((Area)_random.Next(0, 2));
+                Transpose();
             }
             #region jff
             Dictionary<string, int> data = new Dictionary<string, int>();

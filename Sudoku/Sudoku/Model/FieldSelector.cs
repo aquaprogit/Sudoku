@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Windows.Controls.Primitives;
 
 namespace Sudoku.Model
 {
@@ -93,6 +93,25 @@ namespace Sudoku.Model
             }
 
             return result;
+        }
+        public List<Cell> Transpose(List<Cell> cells)
+        {
+            List<Cell> transposed = cells.Select(c => new Cell(c.Coordinate, c.Value)).ToList();
+            var rows = GetAreas(Area.Row, cells).Select(c => c).ToList();
+            var columns = GetAreas(Area.Column, cells).Select(c => c).ToList();
+            foreach (var col in columns)
+            {
+                foreach (Cell cell in col.Take(columns.IndexOf(col)))
+                {
+                    var inRow = rows.First(l => l.Contains(cell));
+                    var inCol = columns.First(l => l.Contains(cell));
+                    (int row, int col) coord = (rows.IndexOf(inRow), columns.IndexOf(inCol));
+                    Cell toSwapWith = rows[coord.col][coord.row];
+                    transposed[cells.IndexOf(cell)].Value = toSwapWith.Value;
+                    transposed[cells.IndexOf(toSwapWith)].Value = cell.Value;
+                }
+            }
+            return transposed;
         }
         private List<List<Cell>> GetRows(List<Cell> cells)
         {
