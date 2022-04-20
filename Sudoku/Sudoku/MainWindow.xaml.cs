@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +16,7 @@ namespace Sudoku
     {
         private Field _field;
         private bool _isSurmiseMode;
-        private Dictionary<Key, int> _keysValues = new Dictionary<Key, int>() {
+        private readonly Dictionary<Key, int> _keysValues = new Dictionary<Key, int>() {
             {Key.D0, 0},
             {Key.D1, 1},
             {Key.D2, 2},
@@ -27,7 +28,7 @@ namespace Sudoku
             {Key.D8, 8},
             {Key.D9, 9}
         };
-        private Dictionary<Key, Direction> _navigationKeys = new Dictionary<Key, Direction>() {
+        private readonly Dictionary<Key, Direction> _navigationKeys = new Dictionary<Key, Direction>() {
             { Key.Up,    Direction.Up    },
             { Key.Down,  Direction.Down  },
             { Key.Left,  Direction.Left  },
@@ -68,6 +69,18 @@ namespace Sudoku
         private void SurmiseModeButton_Click(object sender, RoutedEventArgs e)
         {
             IsSurmiseMode = !IsSurmiseMode;
+        }
+
+        private void Undo_Button_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _field.Undo();
+            }
+            catch (InvalidOperationException)
+            {
+
+            }
         }
     }
 }

@@ -715,7 +715,9 @@
                     <Button x:Name="SurmiseMode_Button"
                             Content="Surmise Mode | Off"
                             Click="SurmiseModeButton_Click" />
-                    <Button Content="Undo" />
+                    <Button x:Name="Undo_Button"
+                            Content="Undo"
+                            Click="Undo_Button_Click" />
                     <Button Content="Auto-check | Off" />
                 </StackPanel>
             </Grid>
