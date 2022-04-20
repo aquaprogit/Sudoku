@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Sudoku.Model
@@ -47,16 +46,17 @@ namespace Sudoku.Model
         public List<Cell> GetAllLinked(List<Cell> cells)
         {
             List<Cell> result = new List<Cell>();
-            result.AddRange(GetAreas(Area.Row, cells).First(list => list.Contains(SelectedCell)));
-            result.AddRange(GetAreas(Area.Column, cells).First(list => list.Contains(SelectedCell)));
-            result.AddRange(GetAreas(Area.Square, cells).First(list => list.Contains(SelectedCell)));
+            foreach (Area area in Enum.GetValues(typeof(Area)))
+            {
+                result.AddRange(GetAreas(area, cells).First(list => list.Contains(SelectedCell)));
+            }
             result.Remove(SelectedCell);
             return result;
         }
         public List<Cell> GetCorrectAreas(List<Cell> cells, List<int> key)
         {
             List<Cell> solvedParts = new List<Cell>();
-            foreach (Area area in new Area[] { Area.Square, Area.Column, Area.Row })
+            foreach (Area area in Enum.GetValues(typeof(Area)))
             {
                 solvedParts.AddRange(GetAreas(area, cells)
                     .Where(list => list.All(cell => cell.Value != 0

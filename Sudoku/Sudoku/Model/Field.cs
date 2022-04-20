@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
@@ -114,7 +112,7 @@ namespace Sudoku.Model
                         Cell toSet = area.First(cell => cell.Surmises != null && cell.Surmises.Contains(value));
                         toSet.Value = value;
                         toSet.RemoveSurmise(toSet.Surmises);
-                        foreach (var toSelect in new Area[] { Area.Row, Area.Column, Area.Square })
+                        foreach (Area toSelect in Enum.GetValues(typeof(Area)))
                             ClearExtraHint(toSelect);
                     }
                 }
