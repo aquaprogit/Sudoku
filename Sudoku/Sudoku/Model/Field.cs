@@ -11,6 +11,8 @@ namespace Sudoku.Model
     {
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
         private FieldSelector _selector = new FieldSelector();
+        private Stack<ICommand> _commandLog = new Stack<ICommand>();
+        private TypeValueCommand _command;
 
         private Random _random = new Random();
 
@@ -21,6 +23,7 @@ namespace Sudoku.Model
         {
             _grids = grids;
             GenerateNewField();
+            _command = new TypeValueCommand(_selector.SelectedCell);
             SaveSolution();
         }
         public void GenerateNewField()
@@ -50,40 +53,35 @@ namespace Sudoku.Model
                 GenerateNewField();
             foreach (Grid grid in _cellToGrids.Values)
             {
-                grid.MouseLeftButtonUp += Cell_Focus;
+                grid.MouseLeftButtonUp += GridCell_Focus;
             }
         }
-
         private void SaveSolution()
         {
             _solution = Cells.Select(cell => cell.Value).ToList();
             _cellToGrids.Keys.Where(c => c.IsGenerated == false).ToList().ForEach(c => c.Value = 0);
         }
 
+        public void TypeValue(int value, bool isSurmise)
+        {
+            _command = new TypeValueCommand(_selector.SelectedCell);
+            _command.Execute(value, isSurmise);
+            _commandLog.Push(_command);
+            GridCell_Focus(_cellToGrids[_selector.SelectedCell], null);
+        }
+        public void Undo()
+        {
+            if (_commandLog.Count == 0) throw new InvalidOperationException("Nothing to undo");
+            var command = _commandLog.Pop();
+            command.Undo();
+            GridCell_Focus(_cellToGrids[_selector.SelectedCell], null);
+        }
         public void MoveSelection(Direction dir)
         {
             _selector.MoveSelection(dir, Cells);
             if (_selector.SelectedCell != null)
-                Cell_Focus(_cellToGrids[_selector.SelectedCell], null);
+                GridCell_Focus(_cellToGrids[_selector.SelectedCell], null);
         }
-        public void TypeValue(int value, bool isSurmise = false)
-        {
-            if (value < 0 || value > 9) throw new ArgumentOutOfRangeException("value");
-            Cell selected = _selector.SelectedCell;
-            if (selected.IsGenerated) return;
-
-            if (isSurmise == false)
-                selected.Value = value;
-            else
-            {
-                if (selected.Surmises.Contains(value))
-                    selected.RemoveSurmise(value);
-                else
-                    selected.AddSurmise(value);
-            }
-            Cell_Focus(_cellToGrids[selected], null);
-        }
-
         public void Solve()
         {
             OnlyPossible();
@@ -250,7 +248,7 @@ namespace Sudoku.Model
             tb.Opacity = cell.Value == 0 ? 0.8 : 1;
             tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
         }
-        private void Cell_Focus(object sender, MouseButtonEventArgs e)
+        public void GridCell_Focus(object sender, MouseButtonEventArgs e)
         {
             FieldPrinter.PrintCells(_grids, FieldPrinter.WhiteBrush);
             Grid grid = (Grid)sender;
