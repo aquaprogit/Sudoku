@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +14,7 @@ namespace Sudoku
     public partial class MainWindow : Window
     {
         private Field _field;
+        private bool _isSurmiseMode;
         private Dictionary<Key, int> _keysValues = new Dictionary<Key, int>() {
             {Key.D0, 0},
             {Key.D1, 1},
@@ -37,7 +37,13 @@ namespace Sudoku
             { Key.A,     Direction.Left  },
             { Key.D,     Direction.Right }
         };
-        private bool _isSurmiseMode = false;
+        public bool IsSurmiseMode {
+            get => _isSurmiseMode;
+            set {
+                _isSurmiseMode = value;
+                SurmiseMode_Button.Content = "Surmise Mode | " + (IsSurmiseMode ? "On" : "Off");
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -45,22 +51,23 @@ namespace Sudoku
             List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
             _field = new Field(allGrid);
             Playground.Focus();
-
+            IsSurmiseMode = false;
         }
         private void Playground_KeyUp(object sender, KeyEventArgs e)
         {
             if (_keysValues.Keys.Contains(e.Key))
-            {
-                _field.TypeValue(_keysValues[e.Key], _isSurmiseMode);
-            }
+                _field.TypeValue(_keysValues[e.Key], IsSurmiseMode);
             else if (_navigationKeys.Keys.Contains(e.Key))
-            {
                 _field.MoveSelection(_navigationKeys[e.Key]);
-            }
         }
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
             Playground.Focus();
+        }
+
+        private void SurmiseModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            IsSurmiseMode = !IsSurmiseMode;
         }
     }
 }

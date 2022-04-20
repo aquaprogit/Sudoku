@@ -712,7 +712,9 @@
                                     Value="False" />
                         </Style>
                     </StackPanel.Resources>
-                    <Button Content="Surmise Mode | Off" />
+                    <Button x:Name="SurmiseMode_Button"
+                            Content="Surmise Mode | Off"
+                            Click="SurmiseModeButton_Click" />
                     <Button Content="Undo" />
                     <Button Content="Auto-check | Off" />
                 </StackPanel>

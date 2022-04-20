@@ -182,7 +182,8 @@ namespace Sudoku.Model
             for (int i = 0; i < 21; i++)
             {
                 ShuffleArea((Area)_random.Next(0, 2));
-                Transpose();
+                if (_random.Next(0, 3) == 0)
+                    Transpose();
             }
             #region jff
             Dictionary<string, int> data = new Dictionary<string, int>();
