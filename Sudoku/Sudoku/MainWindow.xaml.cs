@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 using Sudoku.Model;
 
@@ -53,6 +54,7 @@ namespace Sudoku
             _field = new Field(allGrid);
             Playground.Focus();
             IsSurmiseMode = false;
+
         }
         private void Playground_KeyUp(object sender, KeyEventArgs e)
         {

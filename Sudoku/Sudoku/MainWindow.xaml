@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Sudoku"
+        WindowStartupLocation="CenterScreen"
         Height="550"
         Width="800"
         PreviewKeyDown="Window_KeyUp">
