@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,6 +24,9 @@ namespace Sudoku.Model
             GenerateNewField();
             _command = new TypeValueCommand(_selector.SelectedCell);
         }
+
+        public bool AutoCheck { get; set; }
+
         public void GenerateNewField()
         {
             _cellToGrids.Clear();
@@ -88,10 +90,13 @@ namespace Sudoku.Model
             FieldPrinter.PrintCells(correctParts, FieldPrinter.SolvedPartBrush);
             FieldPrinter.PrintCells(sameToSelected, FieldPrinter.SameNumberBrush);
             _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
-            for (int i = 0; i < Cells.Count; i++)
+            if (AutoCheck)
             {
-                if (Cells[i].Value != _solution[i] && Cells[i].Value != 0)
-                    _cellToGrids[Cells[i]].Background = FieldPrinter.IncorrectNumberBrush;
+                for (int i = 0; i < Cells.Count; i++)
+                {
+                    if (Cells[i].Value != _solution[i] && Cells[i].Value != 0)
+                        _cellToGrids[Cells[i]].Background = FieldPrinter.IncorrectNumberBrush;
+                }
             }
         }
     }

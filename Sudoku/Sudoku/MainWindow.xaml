@@ -719,7 +719,9 @@
                     <Button x:Name="Undo_Button"
                             Content="Undo"
                             Click="Undo_Button_Click" />
-                    <Button Content="Auto-check | Off" />
+                    <Button x:Name="AutoMode_Button"
+                        Content="Auto-check | Off"
+                            Click="Button_Click" />
                 </StackPanel>
             </Grid>
         </Grid>

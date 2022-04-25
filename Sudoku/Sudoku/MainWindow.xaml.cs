@@ -46,6 +46,13 @@ namespace Sudoku
                 SurmiseMode_Button.Content = "Surmise Mode | " + (IsSurmiseMode ? "On" : "Off");
             }
         }
+        public bool AutoCheck {
+            get => _field.AutoCheck;
+            set {
+                _field.AutoCheck = value;
+                AutoMode_Button.Content = "Auto-check | " + (_field.AutoCheck ? "On" : "Off");
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -83,6 +90,11 @@ namespace Sudoku
             {
 
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            AutoCheck = !AutoCheck;
         }
     }
 }

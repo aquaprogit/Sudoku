@@ -30,7 +30,12 @@ namespace Sudoku.Model
             UnlockCells();
             SetSurmises();
             MakeSolvable();
+            ClearSurmises();
             _cells = null;
+        }
+        private static void ClearSurmises()
+        {
+            _cells.Where(c => c.IsGenerated == false).ToList().ForEach(c => c.Value = 0);
         }
         private static void MakeSolvable()
         {
