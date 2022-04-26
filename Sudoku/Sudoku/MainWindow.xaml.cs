@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 
 using Sudoku.Model;
 
@@ -88,7 +87,7 @@ namespace Sudoku
             }
             catch (InvalidOperationException)
             {
-
+                MessageBox.Show("Nothing to undo.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

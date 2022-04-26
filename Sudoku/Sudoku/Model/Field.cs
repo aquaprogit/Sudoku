@@ -16,13 +16,21 @@ namespace Sudoku.Model
 
         private List<int> _solution;
         private List<Grid> _grids;
+        private bool _autoCheck;
+
         private List<Cell> Cells => _cellToGrids.Keys.ToList();
         public Field(List<Grid> grids)
         {
             _grids = grids;
             GenerateNewField();
         }
-        public bool AutoCheck { get; set; }
+        public bool AutoCheck {
+            get => _autoCheck;
+            set {
+                _autoCheck = value;
+                FocusGridCell(_cellToGrids[_selector.SelectedCell]);
+            }
+        }
 
         public void GenerateNewField()
         {
@@ -41,7 +49,7 @@ namespace Sudoku.Model
             FieldGenerator.MakePlayable(Cells);
             foreach (Grid grid in _cellToGrids.Values)
             {
-                grid.MouseLeftButtonUp += GridCell_Focus;
+                grid.MouseLeftButtonUp += Grid_MouseButtonUp;
             }
         }
         public void TypeValue(int value, bool isSurmise)
@@ -49,23 +57,23 @@ namespace Sudoku.Model
             TypeValueCommand _command = new TypeValueCommand(_selector.SelectedCell);
             _command.Execute(value, isSurmise);
             _commandLog.Push(_command);
-            GridCell_Focus(_cellToGrids[_selector.SelectedCell], null);
+            FocusGridCell(_cellToGrids[_selector.SelectedCell]);
         }
         public void Undo()
         {
             if (_commandLog.Count == 0)
                 throw new InvalidOperationException("Nothing to undo");
             ICommand command = _commandLog.Pop();
-            var res = command.Undo();
-            GridCell_Focus(_cellToGrids[Cells.First(c => c.Coordinate == res.Coordinate)], null);
-            _selector.SelectedCell.Set(res); 
-            GridCell_Focus(_cellToGrids[_selector.SelectedCell], null);
+            var previousValue = command.Undo();
+            FocusGridCell(_cellToGrids[Cells.First(c => c.Coordinate == previousValue.Coordinate)]);
+            _selector.SelectedCell.Set(previousValue);
+            FocusGridCell(_cellToGrids[_selector.SelectedCell]);
         }
         public void MoveSelection(Direction dir)
         {
             _selector.MoveSelection(dir, Cells);
             if (_selector.SelectedCell != null)
-                GridCell_Focus(_cellToGrids[_selector.SelectedCell], null);
+                FocusGridCell(_cellToGrids[_selector.SelectedCell]);
         }
 
         private void Cell_PropertyChanged(Cell sender)
@@ -77,25 +85,36 @@ namespace Sudoku.Model
             tb.Opacity = cell.Value == 0 ? 0.8 : 1;
             tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
         }
-        public void GridCell_Focus(object sender, MouseButtonEventArgs e)
+        private void Grid_MouseButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            FocusGridCell((Grid)sender);
+        }
+
+        private void FocusGridCell(Grid grid)
         {
             FieldPrinter.PrintCells(_grids, FieldPrinter.WhiteBrush);
-            Grid grid = (Grid)sender;
             _selector.SelectedCell = _cellToGrids.First(pair => pair.Value == grid).Key;
+            BrushLinked();
+            _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
+            if (AutoCheck)
+                BrushIncorrect();
+        }
+
+        private void BrushLinked()
+        {
             var linked = _selector.GetAllLinked(Cells).Select(cell => _cellToGrids[cell]);
             var correctParts = _selector.GetCorrectAreas(Cells, _solution).Select(cell => _cellToGrids[cell]);
             var sameToSelected = _selector.GetSameValues(Cells).Select(cell => _cellToGrids[cell]);
             FieldPrinter.PrintCells(linked, FieldPrinter.PrintedBrush);
             FieldPrinter.PrintCells(correctParts, FieldPrinter.SolvedPartBrush);
             FieldPrinter.PrintCells(sameToSelected, FieldPrinter.SameNumberBrush);
-            _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
-            if (AutoCheck)
+        }
+        private void BrushIncorrect()
+        {
+            for (int i = 0; i < Cells.Count; i++)
             {
-                for (int i = 0; i < Cells.Count; i++)
-                {
-                    if (Cells[i].Value != _solution[i] && Cells[i].Value != 0)
-                        _cellToGrids[Cells[i]].Background = FieldPrinter.IncorrectNumberBrush;
-                }
+                if (Cells[i].Value != _solution[i] && Cells[i].Value != 0)
+                    _cellToGrids[Cells[i]].Background = FieldPrinter.IncorrectNumberBrush;
             }
         }
     }
