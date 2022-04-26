@@ -11,7 +11,6 @@ namespace Sudoku.Model
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
         private FieldSelector _selector = new FieldSelector();
         private Stack<ICommand> _commandLog = new Stack<ICommand>();
-        private TypeValueCommand _command;
 
         private Random _random = new Random();
 
@@ -22,7 +21,6 @@ namespace Sudoku.Model
         {
             _grids = grids;
             GenerateNewField();
-            _command = new TypeValueCommand(_selector.SelectedCell);
         }
         public bool AutoCheck { get; set; }
 
@@ -48,7 +46,7 @@ namespace Sudoku.Model
         }
         public void TypeValue(int value, bool isSurmise)
         {
-            _command = new TypeValueCommand(_selector.SelectedCell);
+            TypeValueCommand _command = new TypeValueCommand(_selector.SelectedCell);
             _command.Execute(value, isSurmise);
             _commandLog.Push(_command);
             GridCell_Focus(_cellToGrids[_selector.SelectedCell], null);
@@ -58,7 +56,9 @@ namespace Sudoku.Model
             if (_commandLog.Count == 0)
                 throw new InvalidOperationException("Nothing to undo");
             ICommand command = _commandLog.Pop();
-            command.Undo();
+            var res = command.Undo();
+            GridCell_Focus(_cellToGrids[Cells.First(c => c.Coordinate == res.Coordinate)], null);
+            _selector.SelectedCell.Set(res); 
             GridCell_Focus(_cellToGrids[_selector.SelectedCell], null);
         }
         public void MoveSelection(Direction dir)

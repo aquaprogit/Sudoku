@@ -12,7 +12,7 @@ namespace Sudoku.Model
         }
         public void Execute(int value, bool isSurmise)
         {
-            _previousCell = _cell.Copy();
+            _previousCell = _cell.Clone();
             if (value < 0 || value > 9) throw new ArgumentOutOfRangeException("value");
             if (_cell.IsGenerated) return;
 
@@ -27,9 +27,9 @@ namespace Sudoku.Model
             }
         }
 
-        public void Undo()
+        public Cell Undo()
         {
-            _cell.Set(_previousCell);
+            return _previousCell;
         }
     }
 }

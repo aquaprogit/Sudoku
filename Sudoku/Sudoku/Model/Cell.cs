@@ -37,7 +37,7 @@ namespace Sudoku.Model
         }
         public List<int> Surmises => IsGenerated ? null : new List<int>(_surmises);
 
-        public Cell Copy()
+        public Cell Clone()
         {
             Cell copy = new Cell(Coordinate, Value);
             copy._surmises.Clear();
@@ -48,7 +48,7 @@ namespace Sudoku.Model
         {
             Value = obj.Value;
             _surmises.Clear();
-            _surmises.AddRange(obj._surmises);
+            AddSurmise(obj._surmises);
             Coordinate = obj.Coordinate;
         }
         public void LockValue()
