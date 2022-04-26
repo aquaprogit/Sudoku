@@ -24,7 +24,6 @@ namespace Sudoku.Model
             GenerateNewField();
             _command = new TypeValueCommand(_selector.SelectedCell);
         }
-
         public bool AutoCheck { get; set; }
 
         public void GenerateNewField()
@@ -47,7 +46,6 @@ namespace Sudoku.Model
                 grid.MouseLeftButtonUp += GridCell_Focus;
             }
         }
-
         public void TypeValue(int value, bool isSurmise)
         {
             _command = new TypeValueCommand(_selector.SelectedCell);
@@ -57,8 +55,9 @@ namespace Sudoku.Model
         }
         public void Undo()
         {
-            if (_commandLog.Count == 0) throw new InvalidOperationException("Nothing to undo");
-            var command = _commandLog.Pop();
+            if (_commandLog.Count == 0)
+                throw new InvalidOperationException("Nothing to undo");
+            ICommand command = _commandLog.Pop();
             command.Undo();
             GridCell_Focus(_cellToGrids[_selector.SelectedCell], null);
         }
@@ -99,10 +98,5 @@ namespace Sudoku.Model
                 }
             }
         }
-    }
-    enum Difficulty
-    {
-        Easy,
-        Hard
     }
 }
