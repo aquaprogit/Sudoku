@@ -41,7 +41,8 @@ namespace Sudoku.Model
         {
             if (TrySolve() == false)
             {
-                int index = _cells.IndexOf(_cells.Find(c => c.Value == 0));
+                List<Cell> withoutValue = _cells.Where(c => c.Value == 0).ToList();
+                int index = _cells.IndexOf(withoutValue[_random.Next(withoutValue.Count)]);
                 _cells[index].Value = _solution[index];
                 _cells[index].LockValue();
                 if (TrySolve() == false)
@@ -55,6 +56,7 @@ namespace Sudoku.Model
                     beforeSolving = _cells.Select(cell => cell.Value).ToList();
                     RemoveOddSurmises();
                     SetOnlySurmise();
+                    SetSingleInArea();
                     afterSolving = _cells.Select(cell => cell.Value).ToList();
                 } while (!beforeSolving.SequenceEqual(afterSolving));
                 return afterSolving.Count(c => c == 0) == 0;
@@ -78,27 +80,27 @@ namespace Sudoku.Model
                 }
             }
         }
-        public static void SetOnlySurmise()
+        private static void SetOnlySurmise()
         {
             _cells.Where(c => c.IsGenerated == false && c.Surmises.Count == 1)
                   .ToList()
                   .ForEach(c => c.Value = c.Surmises[0]);
             RemoveOddSurmises();
         }
-        public static void SetSingleInArea()
+        private static void SetSingleInArea()
         {
             foreach (Area area in Enum.GetValues(typeof(Area)))
             {
-                foreach (var region in _selector.GetAreas(area, _cells))
+                foreach (List<Cell> region in _selector.GetAreas(area, _cells))
                 {
-                    var surmisesInArea = _cells.Where(c => c.IsGenerated == false)
+                    var surmisesInArea = region.Where(c => c.IsGenerated == false)
                         .Select(c => c.Surmises)
                         .SelectMany(l => l)
                         .GroupBy(i => i)
                         .Select(group => new { Surmise = group.Key, Count = group.Count() });
                     if (surmisesInArea.Count(a => a.Count == 1) == 1)
                     {
-                        Cell cell = region.First(c => c.Surmises.Contains(surmisesInArea.First(a => a.Count == 1).Surmise));
+                        Cell cell = region.Where(c => c.Value == 0).First(c => c.Surmises.Contains(surmisesInArea.First(a => a.Count == 1).Surmise));
                         cell.Value = cell.Surmises[0];
                     }
                 }
@@ -107,7 +109,7 @@ namespace Sudoku.Model
         }
         private static void UnlockCells()
         {
-            int countOfRemoves = 81 - 35;
+            int countOfRemoves = 81-20;
             for (int i = 0; i < countOfRemoves; i++)
             {
                 List<Cell> withValue = _cells.Where(c => c.Value != 0).ToList();
