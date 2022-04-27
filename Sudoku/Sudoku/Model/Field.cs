@@ -95,6 +95,8 @@ namespace Sudoku.Model
             FieldPrinter.PrintCells(_grids, FieldPrinter.WhiteBrush);
             _selector.SelectedCell = _cellToGrids.First(pair => pair.Value == grid).Key;
             BrushLinked();
+            if (AutoCheck)
+                BrushSolved();
             _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
             if (AutoCheck)
                 BrushIncorrect();
@@ -103,12 +105,17 @@ namespace Sudoku.Model
         private void BrushLinked()
         {
             var linked = _selector.GetAllLinked(Cells).Select(cell => _cellToGrids[cell]);
-            var correctParts = _selector.GetCorrectAreas(Cells, _solution).Select(cell => _cellToGrids[cell]);
             var sameToSelected = _selector.GetSameValues(Cells).Select(cell => _cellToGrids[cell]);
             FieldPrinter.PrintCells(linked, FieldPrinter.PrintedBrush);
-            FieldPrinter.PrintCells(correctParts, FieldPrinter.SolvedPartBrush);
             FieldPrinter.PrintCells(sameToSelected, FieldPrinter.SameNumberBrush);
         }
+
+        private void BrushSolved()
+        {
+            var correctParts = _selector.GetCorrectAreas(Cells, _solution).Select(cell => _cellToGrids[cell]);
+            FieldPrinter.PrintCells(correctParts, FieldPrinter.SolvedPartBrush);
+        }
+
         private void BrushIncorrect()
         {
             for (int i = 0; i < Cells.Count; i++)
