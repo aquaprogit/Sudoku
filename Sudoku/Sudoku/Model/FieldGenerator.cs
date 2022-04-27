@@ -101,7 +101,7 @@ namespace Sudoku.Model
                     if (surmisesInArea.Count(a => a.Count == 1) == 1)
                     {
                         Cell cell = region.Where(c => c.Value == 0).First(c => c.Surmises.Contains(surmisesInArea.First(a => a.Count == 1).Surmise));
-                        cell.Value = cell.Surmises[0];
+                        cell.Value = surmisesInArea.First(a => a.Count == 1).Surmise;
                     }
                 }
                 RemoveOddSurmises();
