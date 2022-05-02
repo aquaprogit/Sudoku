@@ -33,12 +33,6 @@ namespace Sudoku.Model
             ClearSurmises();
             _cells = null;
         }
-        public static void GiveHint(List<Cell> cells)
-        {
-            List<Cell> withNoValue = cells.Where(c => c.Value == 0).ToList();
-            Cell toShow = withNoValue[_random.Next(withNoValue.Count)];
-            toShow.Value = _solution[cells.IndexOf(toShow)];
-        }
         private static void ClearSurmises()
         {
             _cells.Where(c => c.IsGenerated == false).ToList().ForEach(c => c.Value = 0);

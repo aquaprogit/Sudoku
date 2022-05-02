@@ -57,9 +57,15 @@ namespace Sudoku.Model
         public void GiveHint()
         {
             if (Cells.Count(c => c.Value == 0) != 0 && _hintsLeft-- > 0)
-                FieldGenerator.GiveHint(Cells);
+            {
+                var withoutValue = Cells.Where(c => c.Value == 0 || c.Value != _solution[Cells.IndexOf(c)]).ToList());
+                Cell toShow = withoutValue[_random.Next(withoutValue.Count)];
+                toShow.Value = _solution[Cells.IndexOf(toShow)]];
+            }
             else
+            {
                 throw new InvalidOperationException("No hints left");
+            }
         }
         public void TypeValue(int value, bool isSurmise)
         {
