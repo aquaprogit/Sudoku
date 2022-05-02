@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Sudoku.Model
@@ -109,7 +110,7 @@ namespace Sudoku.Model
         }
         private static void UnlockCells()
         {
-            int countOfRemoves = 81-20;
+            int countOfRemoves = 81 - 30;
             for (int i = 0; i < countOfRemoves; i++)
             {
                 List<Cell> withValue = _cells.Where(c => c.Value != 0).ToList();

@@ -53,6 +53,9 @@ namespace Sudoku.Model
             {
                 grid.MouseLeftButtonUp += Grid_MouseButtonUp;
             }
+            _selector.SelectedCell = Cells.Find(c => c.Coordinate == (4, 4));
+            FocusGridCell(_cellToGrids[_selector.SelectedCell]);
+
         }
         public void FinishSolving()
         {
