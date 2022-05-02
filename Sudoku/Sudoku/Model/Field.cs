@@ -54,13 +54,21 @@ namespace Sudoku.Model
                 grid.MouseLeftButtonUp += Grid_MouseButtonUp;
             }
         }
+        public void FinishSolving()
+        {
+            for (int i = 0; i < Cells.Count; i++)
+            {
+                if (Cells[i].IsGenerated == false)
+                    Cells[i].Value = _solution[i];
+            }
+        }
         public void GiveHint()
         {
             if (Cells.Count(c => c.Value == 0) != 0 && _hintsLeft-- > 0)
             {
-                var withoutValue = Cells.Where(c => c.Value == 0 || c.Value != _solution[Cells.IndexOf(c)]).ToList());
+                var withoutValue = Cells.Where(c => c.Value == 0 || c.Value != _solution[Cells.IndexOf(c)]).ToList();
                 Cell toShow = withoutValue[_random.Next(withoutValue.Count)];
-                toShow.Value = _solution[Cells.IndexOf(toShow)]];
+                toShow.Value = _solution[Cells.IndexOf(toShow)];
             }
             else
             {

@@ -726,6 +726,9 @@
                     <Button x:Name="Hint_Button"
                             Content="Hint" 
                             Click="Hint_Button_Click"/>
+                    <Button x:Name="Solve_Button"
+                            Content="Solve"
+                            Click="Solve_Button_Click" />
                 </StackPanel>
             </Grid>
         </Grid>

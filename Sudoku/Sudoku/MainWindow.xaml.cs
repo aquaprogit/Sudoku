@@ -106,5 +106,10 @@ namespace Sudoku
                 MessageBox.Show("No hints left.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private void Solve_Button_Click(object sender, RoutedEventArgs e)
+        {
+            _field.FinishSolving();
+        }
     }
 }
