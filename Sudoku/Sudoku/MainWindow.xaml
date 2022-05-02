@@ -86,6 +86,7 @@
                                   Grid.Row="0"
                                   Style="{StaticResource SmallSquare}">
                                 <TextBlock Text="1"
+                                           TextAlignment="Center"
                                            FontSize="24" />
                             </Grid>
                             <Grid Grid.Column="1"
@@ -720,8 +721,11 @@
                             Content="Undo"
                             Click="Undo_Button_Click" />
                     <Button x:Name="AutoMode_Button"
-                        Content="Auto-check | Off"
+                            Content="Auto-check | Off"
                             Click="Button_Click" />
+                    <Button x:Name="Hint_Button"
+                            Content="Hint" 
+                            Click="Hint_Button_Click"/>
                 </StackPanel>
             </Grid>
         </Grid>

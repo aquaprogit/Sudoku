@@ -58,7 +58,6 @@ namespace Sudoku
 
             List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
             _field = new Field(allGrid);
-            Playground.Focus();
             IsSurmiseMode = false;
 
         }
@@ -86,7 +85,7 @@ namespace Sudoku
                 _field.Undo();
             }
             catch (InvalidOperationException)
-            {
+            { 
                 MessageBox.Show("Nothing to undo.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -94,6 +93,18 @@ namespace Sudoku
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             AutoCheck = !AutoCheck;
+        }
+
+        private void Hint_Button_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _field.GiveHint();
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("No hints left.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

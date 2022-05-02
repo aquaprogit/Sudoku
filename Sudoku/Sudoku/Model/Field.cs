@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,6 +12,7 @@ namespace Sudoku.Model
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
         private FieldSelector _selector = new FieldSelector();
         private Stack<ICommand> _commandLog = new Stack<ICommand>();
+        private int _hintsLeft = 3;
 
         private Random _random = new Random();
 
@@ -51,6 +53,13 @@ namespace Sudoku.Model
             {
                 grid.MouseLeftButtonUp += Grid_MouseButtonUp;
             }
+        }
+        public void GiveHint()
+        {
+            if (Cells.Count(c => c.Value == 0) != 0 && _hintsLeft-- > 0)
+                FieldGenerator.GiveHint(Cells);
+            else
+                throw new InvalidOperationException("No hints left");
         }
         public void TypeValue(int value, bool isSurmise)
         {

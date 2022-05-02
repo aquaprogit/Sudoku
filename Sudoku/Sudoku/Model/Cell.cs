@@ -41,7 +41,7 @@ namespace Sudoku.Model
         {
             Cell copy = new Cell(Coordinate, Value);
             copy._surmises.Clear();
-            copy._surmises.AddRange(Surmises);
+            copy._surmises.AddRange(_surmises);
             return copy;
         }
         public void Set(Cell obj)
