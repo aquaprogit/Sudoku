@@ -7,8 +7,10 @@ using System.Windows.Input;
 
 namespace Sudoku.Model
 {
+    public delegate void SolvingFinishedHandler();
     internal class Field
     {
+
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
         private FieldSelector _selector = new FieldSelector();
         private Stack<ICommand> _commandLog = new Stack<ICommand>();
@@ -26,6 +28,7 @@ namespace Sudoku.Model
             _grids = grids;
             GenerateNewField();
         }
+        public event SolvingFinishedHandler OnSolvingFinished;
         public bool AutoCheck {
             get => _autoCheck;
             set {
@@ -55,6 +58,7 @@ namespace Sudoku.Model
             }
             _selector.SelectedCell = Cells.Find(c => c.Coordinate == (4, 4));
             FocusGridCell(_cellToGrids[_selector.SelectedCell]);
+            _hintsLeft = 3;
 
         }
         public void FinishSolving()
@@ -64,6 +68,7 @@ namespace Sudoku.Model
                 if (Cells[i].IsGenerated == false)
                     Cells[i].Value = _solution[i];
             }
+            OnSolvingFinished?.Invoke();
         }
         public void GiveHint()
         {
@@ -84,6 +89,9 @@ namespace Sudoku.Model
             _command.Execute(value, isSurmise);
             _commandLog.Push(_command);
             FocusGridCell(_cellToGrids[_selector.SelectedCell]);
+            if (IsSolved())
+                OnSolvingFinished?.Invoke();
+
         }
         public void Undo()
         {
@@ -101,7 +109,10 @@ namespace Sudoku.Model
             if (_selector.SelectedCell != null)
                 FocusGridCell(_cellToGrids[_selector.SelectedCell]);
         }
-
+        private bool IsSolved()
+        {
+            return Cells.All(c => c.Value != 0 && c.Value == _solution[Cells.IndexOf(c)]);
+        }
         private void Cell_PropertyChanged(Cell sender)
         {
             Cell cell = sender;

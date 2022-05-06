@@ -58,9 +58,17 @@ namespace Sudoku
 
             List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
             _field = new Field(allGrid);
+            _field.OnSolvingFinished += OnSolvingFinished;
             IsSurmiseMode = false;
 
         }
+
+        private void OnSolvingFinished()
+        {
+            if (MessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                _field.GenerateNewField();
+        }
+
         private void Playground_KeyUp(object sender, KeyEventArgs e)
         {
             if (_keysValues.Keys.Contains(e.Key))
@@ -85,7 +93,7 @@ namespace Sudoku
                 _field.Undo();
             }
             catch (InvalidOperationException)
-            { 
+            {
                 MessageBox.Show("Nothing to undo.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
