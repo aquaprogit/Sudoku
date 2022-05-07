@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 using Sudoku.Model;
 
@@ -42,14 +44,22 @@ namespace Sudoku
             get => _isSurmiseMode;
             set {
                 _isSurmiseMode = value;
-                SurmiseMode_Button.Content = "Surmise Mode | " + (IsSurmiseMode ? "On" : "Off");
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.UriSource = new Uri("/Assets/edit_" + (_isSurmiseMode ? "f" : "u") + ".png", UriKind.Relative);
+                bitmapImage.EndInit();
+                (SurmiseMode_Button.Content as Image).Source = bitmapImage;
             }
         }
         public bool AutoCheck {
             get => _field.AutoCheck;
             set {
                 _field.AutoCheck = value;
-                AutoMode_Button.Content = "Auto-check | " + (_field.AutoCheck ? "On" : "Off");
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.UriSource = new Uri("/Assets/search_" + (AutoCheck ? "f" : "u") + ".png", UriKind.Relative);
+                bitmapImage.EndInit();
+                (AutoMode_Button.Content as Image).Source = bitmapImage;
             }
         }
         public MainWindow()

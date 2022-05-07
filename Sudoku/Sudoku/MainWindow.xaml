@@ -699,36 +699,46 @@
             <Grid Margin="5,10">
                 <StackPanel Orientation="Vertical">
                     <StackPanel.Resources>
-                        <Style TargetType="Button">
-                            <Setter Property="Margin"
-                                    Value="5,30, 0,0" />
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                            <Setter Property="BorderThickness"
+                                    Value="0" />
                             <Setter Property="HorizontalAlignment"
                                     Value="Left" />
-                            <Setter Property="Padding"
-                                    Value="20,10" />
-                            <Setter Property="FontSize"
-                                    Value="15" />
-                            <Setter Property="Width"
-                                    Value="175" />
+                            <Setter Property="Margin"
+                                    Value="10, 30, 0,15" />
                             <Setter Property="Focusable"
                                     Value="False" />
                         </Style>
+                        <Style TargetType="Image">
+                            <Setter Property="RenderOptions.BitmapScalingMode"
+                                    Value="HighQuality" />
+                            <Setter Property="Height"
+                                    Value="50" />
+                            <Setter Property="Width"
+                                    Value="50" />
+                        </Style>
                     </StackPanel.Resources>
                     <Button x:Name="SurmiseMode_Button"
-                            Content="Surmise Mode | Off"
-                            Click="SurmiseModeButton_Click" />
-                    <Button x:Name="Undo_Button"
-                            Content="Undo"
-                            Click="Undo_Button_Click" />
+                            Click="SurmiseModeButton_Click">
+                        <Image Source="/Assets/edit_u.png" />
+                    </Button>
                     <Button x:Name="AutoMode_Button"
-                            Content="Auto-check | Off"
-                            Click="Button_Click" />
+                            Click="Button_Click">
+                        <Image Source="/Assets/search_u.png" />
+                    </Button>
+                    <Button x:Name="Undo_Button"
+                            Click="Undo_Button_Click">
+                        <Image Source="/Assets/undo.png" />
+                    </Button>
                     <Button x:Name="Hint_Button"
-                            Content="Hint" 
-                            Click="Hint_Button_Click"/>
+                            Click="Hint_Button_Click">
+                        <Image Source="/Assets/bulb_b.png" />
+                    </Button>
                     <Button x:Name="Solve_Button"
-                            Content="Solve"
-                            Click="Solve_Button_Click" />
+                            Click="Solve_Button_Click">
+                        <Image Source="/Assets/solve.png" />
+                    </Button>
                 </StackPanel>
             </Grid>
         </Grid>

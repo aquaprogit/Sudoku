@@ -105,5 +105,25 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\undo.png" />
+    <Resource Include="Assets\regen.png" />
+    <Resource Include="Assets\solve.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\bulb_b.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\edit_f.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\edit_u.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\search_f.png" />
+    <Resource Include="Assets\search_u.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
