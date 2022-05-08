@@ -4,7 +4,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using Sudoku.Model;
@@ -18,6 +17,10 @@ namespace Sudoku
     {
         private Field _field;
         private bool _isSurmiseMode;
+        private BitmapImage _surmiseImageEnable;
+        private BitmapImage _surmiseImageDisable;
+        private BitmapImage _automodeImageEnable;
+        private BitmapImage _automodeImageDisable;
         private readonly Dictionary<Key, int> _keysValues = new Dictionary<Key, int>() {
             {Key.D0, 0},
             {Key.D1, 1},
@@ -44,35 +47,37 @@ namespace Sudoku
             get => _isSurmiseMode;
             set {
                 _isSurmiseMode = value;
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.UriSource = new Uri("/Assets/edit_" + (_isSurmiseMode ? "f" : "u") + ".png", UriKind.Relative);
-                bitmapImage.EndInit();
-                (SurmiseMode_Button.Content as Image).Source = bitmapImage;
+                (SurmiseMode_Button.Content as Image).Source = _isSurmiseMode ? _surmiseImageEnable : _surmiseImageDisable;
             }
         }
         public bool AutoCheck {
             get => _field.AutoCheck;
             set {
                 _field.AutoCheck = value;
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.UriSource = new Uri("/Assets/search_" + (AutoCheck ? "f" : "u") + ".png", UriKind.Relative);
-                bitmapImage.EndInit();
-                (AutoMode_Button.Content as Image).Source = bitmapImage;
+                (AutoMode_Button.Content as Image).Source = AutoCheck ? _automodeImageEnable : _automodeImageDisable;
             }
         }
         public MainWindow()
         {
-            InitializeComponent();
+            InitBitmapImage(ref _automodeImageDisable, "/Assets/search_u.png");
+            InitBitmapImage(ref _automodeImageEnable, "/Assets/search_f.png");
+            InitBitmapImage(ref _surmiseImageEnable, "/Assets/edit_f.png");
+            InitBitmapImage(ref _surmiseImageDisable, "/Assets/edit_u.png");
 
+            InitializeComponent();
             List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
             _field = new Field(allGrid);
             _field.OnSolvingFinished += OnSolvingFinished;
             IsSurmiseMode = false;
-
         }
-
+        private void InitBitmapImage(ref BitmapImage image, string source)
+        {
+            if (image == null)
+                image = new BitmapImage();
+            image.BeginInit();
+            image.UriSource = new Uri(source, UriKind.Relative);
+            image.EndInit();
+        }
         private void OnSolvingFinished()
         {
             if (MessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
@@ -128,6 +133,11 @@ namespace Sudoku
         private void Solve_Button_Click(object sender, RoutedEventArgs e)
         {
             _field.FinishSolving();
+        }
+
+        private void Regen_Button_Click(object sender, RoutedEventArgs e)
+        {
+            _field.GenerateNewField();
         }
     }
 }
