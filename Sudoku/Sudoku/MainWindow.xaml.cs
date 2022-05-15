@@ -80,7 +80,7 @@ namespace Sudoku
         }
         private void OnSolvingFinished()
         {
-            if (MessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            if (MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
                 _field.GenerateNewField();
         }
 
@@ -109,7 +109,7 @@ namespace Sudoku
             }
             catch (InvalidOperationException)
             {
-                MessageBox.Show("Nothing to undo.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MyMessageBox.Show("Nothing to undo.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -126,7 +126,7 @@ namespace Sudoku
             }
             catch (InvalidOperationException)
             {
-                MessageBox.Show("No hints left.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
+                MyMessageBox.Show("No hints left.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
