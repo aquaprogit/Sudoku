@@ -1,15 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Sudoku.Model
 {
+    delegate void ActHandler();
     internal static class Extrentions
     {
+        public static void Time(ActHandler handler)
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            handler.Invoke();
+            sw.Stop();
+            Debug.WriteLine(handler.Method.Name + " time is: " + sw.ElapsedMilliseconds);
+        }
         public static IEnumerable<T> FindVisualChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)

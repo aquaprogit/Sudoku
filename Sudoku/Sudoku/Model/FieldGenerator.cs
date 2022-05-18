@@ -66,7 +66,7 @@ namespace Sudoku.Model
         {
             foreach (Cell cell in _cells.Where(c => c.Value == 0))
             {
-                cell.AddSurmise(Enumerable.Range(1, 9));
+                cell.Surmises.Add(Enumerable.Range(1, 9));
             }
         }
         private static void RemoveOddSurmises()
@@ -76,7 +76,7 @@ namespace Sudoku.Model
                 foreach (Area area in Enum.GetValues(typeof(Area)))
                 {
                     var areaWithCell = _selector.GetAreas(area, _cells).First(l => l.Contains(cell));
-                    cell.RemoveSurmise(areaWithCell.Where(c => c.Value != 0).Select(c => c.Value));
+                    cell.Surmises.Remove(areaWithCell.Where(c => c.Value != 0).Select(c => c.Value));
                 }
             }
         }

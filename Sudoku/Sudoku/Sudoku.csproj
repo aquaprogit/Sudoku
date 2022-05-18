@@ -81,6 +81,7 @@
     <Compile Include="Model\Field.cs" />
     <Compile Include="Model\FieldPrinter.cs" />
     <Compile Include="Model\FieldSelector.cs" />
+    <Compile Include="Model\SurmiseList.cs" />
     <Compile Include="Model\TypeValueCommand.cs" />
     <Compile Include="MyMessageBox.xaml.cs">
       <DependentUpon>MyMessageBox.xaml</DependentUpon>
@@ -105,6 +106,7 @@
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
