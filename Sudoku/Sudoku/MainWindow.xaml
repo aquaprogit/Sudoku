@@ -6,8 +6,8 @@
         mc:Ignorable="d"
         Title="Sudoku"
         WindowStartupLocation="CenterScreen"
-        Height="550"
-        Width="800"
+        Height="650"
+        Width="550"
         PreviewKeyDown="Window_KeyUp">
     <Grid>
         <Grid.Resources>
@@ -20,13 +20,13 @@
             <Style TargetType="ToolTip"
                    x:Key="ToolTipStyle">
                 <Setter Property="Placement"
-                        Value="Right" />
+                        Value="Bottom" />
                 <Setter Property="Height"
                         Value="40" />
                 <Setter Property="Width"
                         Value="150" />
                 <Setter Property="Margin"
-                        Value="20,0,0,0" />
+                        Value="0" />
                 <Setter Property="Background"
                         Value="#FFFFBB00" />
                 <Setter Property="BorderBrush"
@@ -38,74 +38,86 @@
                 <Setter Property="FontSize"
                         Value="16" />
                 <Setter Property="PlacementRectangle"
-                        Value="60,0,0,0" />
+                        Value="0,0,0,0" />
                 <Setter Property="HorizontalOffset"
-                        Value="15" />
+                        Value="0" />
                 <Setter Property="VerticalOffset"
-                        Value="6" />
+                        Value="50" />
                 <Setter Property="HasDropShadow"
                         Value="True" />
                 <Setter Property="HorizontalContentAlignment"
                         Value="Center" />
             </Style>
         </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Grid HorizontalAlignment="Left"
-              VerticalAlignment="Center"
-              Margin="30,0,10,0">
-            <Border>
-                <Grid x:Name="Playground"
-                      Height="450"
-                      Width="450"
-                      Focusable="True"
-                      PreviewKeyUp="Playground_KeyUp">
-                    <Grid.Resources>
-                        <Style TargetType="Grid"
-                               x:Key="BigSquare">
-                            <Setter Property="Height"
-                                    Value="150" />
-                            <Setter Property="Width"
-                                    Value="150" />
-                            <Setter Property="ShowGridLines"
-                                    Value="True" />
-                        </Style>
-                        <Style TargetType="Grid">
-                            <Setter Property="Height"
-                                    Value="50" />
-                            <Setter Property="Width"
-                                    Value="50" />
-                        </Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="FontFamily"
-                                    Value="Consolas" />
-                            <Setter Property="HorizontalAlignment"
-                                    Value="Center" />
-                            <Setter Property="VerticalAlignment"
-                                    Value="Center" />
-                            <Setter Property="TextWrapping"
-                                    Value="Wrap" />
-                            <Setter Property="Text"
-                                    Value="1" />
-                            <Setter Property="FontSize"
-                                    Value="24" />
-                        </Style>
-                    </Grid.Resources>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Border Grid.Column="0"
-                            Grid.Row="0">
-                        <Grid Style="{StaticResource BigSquare}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Menu VerticalAlignment="Top"
+              FontSize="18"
+              FontFamily="Cascadia Mono">
+            <Menu.Resources>
+                <Style TargetType="MenuItem">
+                    <Setter Property="Background"
+                            Value="#FFD7D7D7" />
+                    <Setter Property="Focusable"
+                            Value="False" />
+                    <EventSetter Event="Click"
+                                 Handler="MenuItem_Click" />
+                </Style>
+            </Menu.Resources>
+            <MenuItem Header="_Game mode" />
+            <MenuItem Header="_Solve mode" />
+        </Menu>
+        <Grid Grid.Row="1">
+            <Grid x:Name="GameMode_Grid"
+                  VerticalAlignment="Stretch"
+                  Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="500"/>
+                    <RowDefinition Height="65"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Top"
+                      Margin="0,20">
+                    <Border>
+                        <Grid x:Name="Playground"
+                              Height="450"
+                              Width="450"
+                              Focusable="True"
+                              PreviewKeyUp="Playground_KeyUp">
+                            <Grid.Resources>
+                                <Style TargetType="Grid"
+                                       x:Key="BigSquare">
+                                    <Setter Property="Height"
+                                            Value="150" />
+                                    <Setter Property="Width"
+                                            Value="150" />
+                                    <Setter Property="ShowGridLines"
+                                            Value="True" />
+                                </Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Height"
+                                            Value="50" />
+                                    <Setter Property="Width"
+                                            Value="50" />
+                                </Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily"
+                                            Value="Consolas" />
+                                    <Setter Property="HorizontalAlignment"
+                                            Value="Center" />
+                                    <Setter Property="VerticalAlignment"
+                                            Value="Center" />
+                                    <Setter Property="TextWrapping"
+                                            Value="Wrap" />
+                                    <Setter Property="Text"
+                                            Value="1" />
+                                    <Setter Property="FontSize"
+                                            Value="24" />
+                                </Style>
+                            </Grid.Resources>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition />
@@ -116,541 +128,552 @@
                                 <RowDefinition />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                        </Grid>
-                    </Border>
-                    <Border Grid.Column="1"
-                            Grid.Row="0">
-                        <Grid Style="{StaticResource BigSquare}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="0"
-                                  x:Name="f">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                        </Grid>
-                    </Border>
-                    <Border Grid.Column="2"
-                            Grid.Row="0">
-                        <Grid Style="{StaticResource BigSquare}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                        </Grid>
-                    </Border>
-                    <Border Grid.Column="0"
-                            Grid.Row="1">
-                        <Grid Style="{StaticResource BigSquare}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                        </Grid>
-                    </Border>
-                    <Border Grid.Column="1"
-                            Grid.Row="1">
-                        <Grid Style="{StaticResource BigSquare}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                        </Grid>
-                    </Border>
-                    <Border Grid.Column="2"
-                            Grid.Row="1">
-                        <Grid Style="{StaticResource BigSquare}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                        </Grid>
-                    </Border>
-                    <Border Grid.Column="0"
-                            Grid.Row="2">
-                        <Grid Style="{StaticResource BigSquare}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                        </Grid>
-                    </Border>
-                    <Border Grid.Column="1"
-                            Grid.Row="2">
-                        <Grid Style="{StaticResource BigSquare}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                        </Grid>
-                    </Border>
-                    <Border Grid.Column="2"
-                            Grid.Row="2">
-                        <Grid Style="{StaticResource BigSquare}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="0">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="1">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="0"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="1"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
-                            <Grid Grid.Column="2"
-                                  Grid.Row="2">
-                                <TextBlock />
-                            </Grid>
+                            <Border Grid.Column="0"
+                                    Grid.Row="0">
+                                <Grid Style="{StaticResource BigSquare}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    Grid.Row="0">
+                                <Grid Style="{StaticResource BigSquare}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="0"
+                                          x:Name="f">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="2"
+                                    Grid.Row="0">
+                                <Grid Style="{StaticResource BigSquare}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="0"
+                                    Grid.Row="1">
+                                <Grid Style="{StaticResource BigSquare}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    Grid.Row="1">
+                                <Grid Style="{StaticResource BigSquare}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="2"
+                                    Grid.Row="1">
+                                <Grid Style="{StaticResource BigSquare}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="0"
+                                    Grid.Row="2">
+                                <Grid Style="{StaticResource BigSquare}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    Grid.Row="2">
+                                <Grid Style="{StaticResource BigSquare}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="2"
+                                    Grid.Row="2">
+                                <Grid Style="{StaticResource BigSquare}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="0">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="1">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="0"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="1"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                    <Grid Grid.Column="2"
+                                          Grid.Row="2">
+                                        <TextBlock />
+                                    </Grid>
+                                </Grid>
+                            </Border>
                         </Grid>
                     </Border>
                 </Grid>
-            </Border>
-        </Grid>
-        <Grid Grid.Column="1">
-            <Grid Margin="5,10">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel.Resources>
-                        <Style TargetType="Button"
-                               BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                            <Setter Property="BorderThickness"
-                                    Value="0" />
-                            <Setter Property="HorizontalAlignment"
-                                    Value="Left" />
-                            <Setter Property="Margin"
-                                    Value="10, 25, 0, 0" />
-                            <Setter Property="Focusable"
-                                    Value="False" />
-                        </Style>
-                        <Style TargetType="Image">
-                            <Setter Property="RenderOptions.BitmapScalingMode"
-                                    Value="HighQuality" />
-                            <Setter Property="Height"
-                                    Value="50" />
-                            <Setter Property="Width"
-                                    Value="50" />
-                        </Style>
-                    </StackPanel.Resources>
-                    <Button x:Name="SurmiseMode_Button"
-                            Click="SurmiseModeButton_Click">
-                        <Button.ToolTip>
-                            <ToolTip Style="{StaticResource ToolTipStyle}"
-                                     Content="Edit mode"
-                                     Placement="Right"
-                                     HorizontalOffset="0" />
-                        </Button.ToolTip>
-                        <Image Source="/Assets/edit_u.png" />
-                    </Button>
-                    <Button x:Name="AutoMode_Button"
-                            Click="Button_Click">
-                        <Button.ToolTip>
-                            <ToolTip Style="{StaticResource ToolTipStyle}"
-                                     Content="Auto-check mode"
-                                     Placement="Right"
-                                     HorizontalOffset="0" />
-                        </Button.ToolTip>
-                        <Image Source="/Assets/search_u.png" />
-                    </Button>
-                    <Button x:Name="Undo_Button"
-                            Click="Undo_Button_Click">
-                        <Button.ToolTip>
-                            <ToolTip Style="{StaticResource ToolTipStyle}"
-                                     Content="Undo"
-                                     Placement="Right"
-                                     HorizontalOffset="0" />
-                        </Button.ToolTip>
-                        <Image Source="/Assets/undo.png" />
-                    </Button>
-                    <Button x:Name="Hint_Button"
-                            Click="Hint_Button_Click">
-                        <Button.ToolTip>
-                            <ToolTip Style="{StaticResource ToolTipStyle}"
-                                     Content="Give hint"
-                                     Placement="Right"
-                                     HorizontalOffset="0" />
-                        </Button.ToolTip>
-                        <Image Source="/Assets/bulb_b.png" />
-                    </Button>
-                    <Button x:Name="Solve_Button"
-                            Click="Solve_Button_Click">
-                        <Button.ToolTip>
-                            <ToolTip Style="{StaticResource ToolTipStyle}"
-                                     Content="Finish solving"
-                                     Placement="Right"
-                                     HorizontalOffset="0" />
-                        </Button.ToolTip>
-                        <Image Source="/Assets/solve.png" />
-                    </Button>
-                    <Button x:Name="Regen_Button"
-                            Click="Regen_Button_Click">
-                        <Button.ToolTip>
-                            <ToolTip Style="{StaticResource ToolTipStyle}"
-                                     Content="Generate new field"
-                                     Placement="Right"
-                                     HorizontalOffset="0" />
-                        </Button.ToolTip>
-                        <Image Source="/Assets/regen.png" />
-                    </Button>
-                </StackPanel>
+                <Grid Grid.Row="1"
+                      Height="65">
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Top"
+                                Width="Auto"
+                                HorizontalAlignment="Center">
+                        <StackPanel.Resources>
+                            <Style TargetType="Button"
+                                   BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                                <Setter Property="BorderThickness"
+                                        Value="0" />
+                                <Setter Property="HorizontalAlignment"
+                                        Value="Left" />
+                                <Setter Property="Margin"
+                                        Value="25, 0, 0, 0" />
+                                <Setter Property="Focusable"
+                                        Value="False" />
+                            </Style>
+                            <Style TargetType="Image">
+                                <Setter Property="RenderOptions.BitmapScalingMode"
+                                        Value="HighQuality" />
+                                <Setter Property="Height"
+                                        Value="50" />
+                                <Setter Property="Width"
+                                        Value="50" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button x:Name="SurmiseMode_Button"
+                                Click="SurmiseModeButton_Click">
+                            <Button.ToolTip>
+                                <ToolTip Style="{StaticResource ToolTipStyle}"
+                                         Content="Edit mode"
+                                         Placement="Right"
+                                         HorizontalOffset="0" />
+                            </Button.ToolTip>
+                            <Image Source="/Assets/edit_u.png" />
+                        </Button>
+                        <Button x:Name="AutoMode_Button"
+                                Click="Button_Click">
+                            <Button.ToolTip>
+                                <ToolTip Style="{StaticResource ToolTipStyle}"
+                                         Content="Auto-check mode" />
+                            </Button.ToolTip>
+                            <Image Source="/Assets/search_u.png" />
+                        </Button>
+                        <Button x:Name="Undo_Button"
+                                Click="Undo_Button_Click">
+                            <Button.ToolTip>
+                                <ToolTip Style="{StaticResource ToolTipStyle}"
+                                         Content="Undo" />
+                            </Button.ToolTip>
+                            <Image Source="/Assets/undo.png" />
+                        </Button>
+                        <Button x:Name="Hint_Button"
+                                Click="Hint_Button_Click">
+                            <Button.ToolTip>
+                                <ToolTip Style="{StaticResource ToolTipStyle}"
+                                         Content="Give hint"/>
+                            </Button.ToolTip>
+                            <Image Source="/Assets/bulb_b.png" />
+                        </Button>
+                        <Button x:Name="Solve_Button"
+                                Click="Solve_Button_Click">
+                            <Button.ToolTip>
+                                <ToolTip Style="{StaticResource ToolTipStyle}"
+                                         Content="Finish solving"/>
+                            </Button.ToolTip>
+                            <Image Source="/Assets/solve.png" />
+                        </Button>
+                        <Button x:Name="Regen_Button"
+                                Click="Regen_Button_Click">
+                            <Button.ToolTip>
+                                <ToolTip Style="{StaticResource ToolTipStyle}"
+                                         Content="Generate new field" />
+                            </Button.ToolTip>
+                            <Image Source="/Assets/refresh.png" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <Grid x:Name="SolveMode_Grid"
+                  Visibility="Visible">
+                
             </Grid>
         </Grid>
     </Grid>

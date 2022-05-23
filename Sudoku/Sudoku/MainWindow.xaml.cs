@@ -94,6 +94,10 @@ namespace Sudoku
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
             Playground.Focus();
+            if (e.Key == Key.Tab)
+            {
+                SwitchTabs();
+            }
         }
 
         private void SurmiseModeButton_Click(object sender, RoutedEventArgs e)
@@ -134,10 +138,29 @@ namespace Sudoku
         {
             _field.FinishSolving();
         }
-
         private void Regen_Button_Click(object sender, RoutedEventArgs e)
         {
             _field.GenerateNewField();
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SwitchTabs();
+        }
+
+        private void SwitchTabs()
+        {
+            if (GameMode_Grid.Visibility == Visibility.Visible)
+            {
+                GameMode_Grid.Visibility = Visibility.Hidden;
+                SolveMode_Grid.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                GameMode_Grid.Visibility = Visibility.Visible;
+                SolveMode_Grid.Visibility = Visibility.Hidden;
+                Playground.Focus();
+            }
         }
     }
 }

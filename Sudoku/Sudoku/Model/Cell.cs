@@ -18,7 +18,9 @@ namespace Sudoku.Model
             IsGenerated = false;
             _value = value;
             _surmises = new SurmiseList();
-            _surmises.OnCollectionChanged += Surmises_OnCollectionChanged;
+            _surmises.OnCollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => {
+                OnPropertyChanged();
+            };
         }
 
         public event CellContentChangedHandler ContentChanged;
@@ -71,10 +73,6 @@ namespace Sudoku.Model
         private void OnPropertyChanged()
         {
             ContentChanged?.Invoke(this);
-        }
-        private void Surmises_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            OnPropertyChanged();
         }
         public override string ToString()
         {

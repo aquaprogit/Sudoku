@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,7 +9,6 @@ namespace Sudoku.Model
     public delegate void SolvingFinishedHandler();
     internal class Field
     {
-
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
         private FieldSelector _selector = new FieldSelector();
         private Stack<ICommand> _commandLog = new Stack<ICommand>();
@@ -59,7 +57,6 @@ namespace Sudoku.Model
             _selector.SelectedCell = Cells.Find(c => c.Coordinate == (4, 4));
             FocusGridCell(_cellToGrids[_selector.SelectedCell]);
             _hintsLeft = 3;
-
         }
         public void FinishSolving()
         {

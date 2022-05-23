@@ -159,7 +159,12 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\error.png" />
+    <Resource Include="Assets\error.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
