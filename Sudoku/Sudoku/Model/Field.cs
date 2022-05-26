@@ -11,6 +11,7 @@ namespace Sudoku.Model
     {
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
         private FieldSelector _selector = new FieldSelector();
+        private FieldGenerator _generator;
         private Stack<ICommand> _commandLog = new Stack<ICommand>();
         private int _hintsLeft = 3;
 
@@ -37,8 +38,9 @@ namespace Sudoku.Model
         public void GenerateNewField()
         {
             BaseCells();
-            _solution = FieldGenerator.GenerateMap(Cells);
-            FieldGenerator.MakePlayable(Cells);
+            _generator = new BaseFieldGenerator(Cells);
+            _solution = _generator.GenerateMap();
+            _generator.MakePlayable();
             foreach (Grid grid in _cellToGrids.Values)
             {
                 grid.MouseLeftButtonUp += Grid_MouseButtonUp;
