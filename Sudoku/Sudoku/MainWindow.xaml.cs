@@ -75,7 +75,6 @@ namespace Sudoku
             List<Grid> toSolveGrids = SolveField.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
             _toSolveField = new Field(toSolveGrids);
             _toSolveField.BaseCells();
-            SolveField.Focus();
         }
 
 
@@ -107,7 +106,12 @@ namespace Sudoku
                 SwitchTabs();
             }
             else
-                SolveField.Focus();
+            {
+                if (GameMode_Grid.Visibility == Visibility.Visible)
+                    SolveField.Focus();
+                else
+                    Playground.Focus();
+            }
         }
 
         private void SurmiseModeButton_Click(object sender, RoutedEventArgs e)
@@ -170,7 +174,7 @@ namespace Sudoku
             {
                 GameMode_Grid.Visibility = Visibility.Visible;
                 SolveMode_Grid.Visibility = Visibility.Hidden;
-                SolveField.Focus();
+                Playground.Focus();
             }
         }
 

@@ -73,8 +73,8 @@
                   VerticalAlignment="Stretch"
                   Visibility="Hidden">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="500"/>
-                    <RowDefinition Height="65"/>
+                    <RowDefinition Height="500" />
+                    <RowDefinition Height="65" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0"
                       HorizontalAlignment="Center"
@@ -647,7 +647,7 @@
                                 Click="Hint_Button_Click">
                             <Button.ToolTip>
                                 <ToolTip Style="{StaticResource ToolTipStyle}"
-                                         Content="Give hint"/>
+                                         Content="Give hint" />
                             </Button.ToolTip>
                             <Image Source="/Assets/bulb_b.png" />
                         </Button>
@@ -655,7 +655,7 @@
                                 Click="Solve_Button_Click">
                             <Button.ToolTip>
                                 <ToolTip Style="{StaticResource ToolTipStyle}"
-                                         Content="Finish solving"/>
+                                         Content="Finish solving" />
                             </Button.ToolTip>
                             <Image Source="/Assets/solve.png" />
                         </Button>
@@ -672,6 +672,31 @@
             </Grid>
             <Grid x:Name="SolveMode_Grid"
                   Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="500" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="1"
+                      HorizontalAlignment="Center">
+                    <Grid.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Width"
+                                    Value="150" />
+                            <Setter Property="FontSize"
+                                    Value="24" />
+                            <Setter Property="Height"
+                                    Value="65" />
+                            <Setter Property="Margin"
+                                    Value="25,10" />
+                            <Setter Property="Padding"
+                                    Value="25,5" />
+                        </Style>
+                    </Grid.Resources>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Solve" />
+                        <Button Content="Clear" />
+                    </StackPanel>
+                </Grid>
                 <Border>
                     <Grid x:Name="SolveField"
                           Height="450"

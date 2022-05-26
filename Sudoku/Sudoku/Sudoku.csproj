@@ -64,7 +64,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Model\BaseFieldGenerator.cs" />
     <Compile Include="Model\FieldGenerator.cs" />
+    <Compile Include="Model\FieldSolver.cs" />
     <Compile Include="Model\ICommand.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -111,7 +113,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Sudoku.cd" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
