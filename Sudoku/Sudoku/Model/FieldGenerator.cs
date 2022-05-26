@@ -48,19 +48,20 @@ namespace Sudoku.Model
                 if (TrySolve() == false)
                     MakeSolvable();
             }
-            bool TrySolve()
+        }
+
+        public static bool TrySolve()
+        {
+            List<int> beforeSolving, afterSolving;
+            do
             {
-                List<int> beforeSolving, afterSolving;
-                do
-                {
-                    beforeSolving = _cells.Select(cell => cell.Value).ToList();
-                    RemoveOddSurmises();
-                    SetOnlySurmise();
-                    SetSingleInArea();
-                    afterSolving = _cells.Select(cell => cell.Value).ToList();
-                } while (!beforeSolving.SequenceEqual(afterSolving));
-                return afterSolving.Count(c => c == 0) == 0;
-            }
+                beforeSolving = _cells.Select(cell => cell.Value).ToList();
+                RemoveOddSurmises();
+                SetOnlySurmise();
+                SetSingleInArea();
+                afterSolving = _cells.Select(cell => cell.Value).ToList();
+            } while (!beforeSolving.SequenceEqual(afterSolving));
+            return afterSolving.Count(c => c == 0) == 0;
         }
         private static void SetSurmises()
         {

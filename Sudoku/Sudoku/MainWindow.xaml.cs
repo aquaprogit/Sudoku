@@ -16,6 +16,7 @@ namespace Sudoku
     public partial class MainWindow : Window
     {
         private Field _field;
+        private Field _toSolveField;
         private bool _isSurmiseMode;
         private BitmapImage _surmiseImageEnable;
         private BitmapImage _surmiseImageDisable;
@@ -67,9 +68,17 @@ namespace Sudoku
             InitializeComponent();
             List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
             _field = new Field(allGrid);
+            _field.GenerateNewField();
             _field.OnSolvingFinished += OnSolvingFinished;
             IsSurmiseMode = false;
+
+            List<Grid> toSolveGrids = SolveField.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
+            _toSolveField = new Field(toSolveGrids);
+            _toSolveField.BaseCells();
+            SolveField.Focus();
         }
+
+
         private void InitBitmapImage(ref BitmapImage image, string source)
         {
             if (image == null)
@@ -93,11 +102,12 @@ namespace Sudoku
         }
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
-            Playground.Focus();
             if (e.Key == Key.Tab)
             {
                 SwitchTabs();
             }
+            else
+                SolveField.Focus();
         }
 
         private void SurmiseModeButton_Click(object sender, RoutedEventArgs e)
@@ -154,13 +164,22 @@ namespace Sudoku
             {
                 GameMode_Grid.Visibility = Visibility.Hidden;
                 SolveMode_Grid.Visibility = Visibility.Visible;
+                SolveField.Focus();
             }
             else
             {
                 GameMode_Grid.Visibility = Visibility.Visible;
                 SolveMode_Grid.Visibility = Visibility.Hidden;
-                Playground.Focus();
+                SolveField.Focus();
             }
+        }
+
+        private void SolveField_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if (_keysValues.Keys.Contains(e.Key))
+                _toSolveField.TypeValue(_keysValues[e.Key], IsSurmiseMode);
+            else if (_navigationKeys.Keys.Contains(e.Key))
+                _toSolveField.MoveSelection(_navigationKeys[e.Key]);
         }
     }
 }

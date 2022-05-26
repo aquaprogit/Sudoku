@@ -24,7 +24,6 @@ namespace Sudoku.Model
         public Field(List<Grid> grids)
         {
             _grids = grids;
-            GenerateNewField();
         }
         public event SolvingFinishedHandler OnSolvingFinished;
         public bool AutoCheck {
@@ -37,6 +36,20 @@ namespace Sudoku.Model
 
         public void GenerateNewField()
         {
+            BaseCells();
+            _solution = FieldGenerator.GenerateMap(Cells);
+            FieldGenerator.MakePlayable(Cells);
+            foreach (Grid grid in _cellToGrids.Values)
+            {
+                grid.MouseLeftButtonUp += Grid_MouseButtonUp;
+            }
+            _selector.SelectedCell = Cells.Find(c => c.Coordinate == (4, 4));
+            FocusGridCell(_cellToGrids[_selector.SelectedCell]);
+            _hintsLeft = 3;
+        }
+
+        public void BaseCells()
+        {
             _cellToGrids.Clear();
             int cubeIndex = 0;
             for (int iteration = 0; iteration < 81; iteration++)
@@ -48,16 +61,14 @@ namespace Sudoku.Model
                 cell.ContentChanged += Cell_PropertyChanged;
                 _cellToGrids.Add(cell, _grids[iteration]);
             }
-            _solution = FieldGenerator.GenerateMap(Cells);
-            FieldGenerator.MakePlayable(Cells);
             foreach (Grid grid in _cellToGrids.Values)
             {
                 grid.MouseLeftButtonUp += Grid_MouseButtonUp;
             }
             _selector.SelectedCell = Cells.Find(c => c.Coordinate == (4, 4));
             FocusGridCell(_cellToGrids[_selector.SelectedCell]);
-            _hintsLeft = 3;
         }
+
         public void FinishSolving()
         {
             for (int i = 0; i < Cells.Count; i++)
