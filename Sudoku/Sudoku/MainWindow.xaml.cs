@@ -66,16 +66,23 @@ namespace Sudoku
             InitBitmapImage(ref _surmiseImageDisable, "/Assets/edit_u.png");
 
             InitializeComponent();
-            List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
-            _field = new Field(allGrid);
-            _field.GenerateNewField();
-            _field.OnSolvingFinished += OnSolvingFinished;
-            IsSurmiseMode = false;
+            //List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
+            //_field = new Field(allGrid);
+            //_field.GenerateNewField();
+            //_field.OnSolvingFinished += OnSolvingFinished;
+            //IsSurmiseMode = false;
 
             List<Grid> toSolveGrids = SolveField.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
             _toSolveField = new Field(toSolveGrids);
             _toSolveField.BaseCells();
+            Test();
         }
+
+        private void Test()
+        {
+
+        }
+
 
 
         private void InitBitmapImage(ref BitmapImage image, string source)
@@ -184,6 +191,18 @@ namespace Sudoku
                 _toSolveField.TypeValue(_keysValues[e.Key], IsSurmiseMode);
             else if (_navigationKeys.Keys.Contains(e.Key))
                 _toSolveField.MoveSelection(_navigationKeys[e.Key]);
+        }
+
+        private void CustomSolve_Button_Click(object sender, RoutedEventArgs e)
+        {
+            _toSolveField.LockEntered();
+            _toSolveField.SolveEntered();
+        }
+
+        private void CustomClear_Button_Click(object sender, RoutedEventArgs e)
+        {
+            _toSolveField.UnlockEntered();
+            _toSolveField.ClearField();
         }
     }
 }

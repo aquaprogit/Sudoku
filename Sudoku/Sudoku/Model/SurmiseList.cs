@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 
 namespace Sudoku.Model
 {
@@ -81,7 +82,17 @@ namespace Sudoku.Model
 
         public bool Equals(SurmiseList other)
         {
-            return other._surmises.Equals(_surmises);
+            return other._surmises.SequenceEqual(_surmises);
+        }
+
+        public override int GetHashCode()
+        {
+            int source = 0;
+            foreach (int i in _surmises)
+            {
+                source ^= (int)Math.Pow(2, i - 1);
+            }
+            return source;
         }
     }
 }

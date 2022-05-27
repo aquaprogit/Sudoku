@@ -690,11 +690,17 @@
                                     Value="25,10" />
                             <Setter Property="Padding"
                                     Value="25,5" />
+                            <Setter Property="Focusable"
+                                    Value="False" />
                         </Style>
                     </Grid.Resources>
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="Solve" />
-                        <Button Content="Clear" />
+                        <Button x:Name="CustomSolve_Button"
+                                Content="Solve"
+                                Click="CustomSolve_Button_Click" />
+                        <Button x:Name="CustomClear_Button"
+                                Content="Clear"
+                                Click="CustomClear_Button_Click" />
                     </StackPanel>
                 </Grid>
                 <Border>

@@ -12,6 +12,7 @@ namespace Sudoku.Model
         private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
         private FieldSelector _selector = new FieldSelector();
         private FieldGenerator _generator;
+        private FieldSolver _solver;
         private Stack<ICommand> _commandLog = new Stack<ICommand>();
         private int _hintsLeft = 3;
 
@@ -70,7 +71,23 @@ namespace Sudoku.Model
             _selector.SelectedCell = Cells.Find(c => c.Coordinate == (4, 4));
             FocusGridCell(_cellToGrids[_selector.SelectedCell]);
         }
-
+        public void LockEntered()
+        {
+            Cells.Where(cell => cell.Value != 0).ToList().ForEach(cell => cell.LockValue());
+        }
+        public void UnlockEntered()
+        {
+            Cells.ForEach(cell => cell.UnlockValue());
+        }
+        public void SolveEntered()
+        {
+            _solver = new FieldSolver(Cells);
+            _solver.Solve();
+        }
+        public void ClearField()
+        {
+            Cells.ForEach(cell => cell.Value = 0);
+        }
         public void FinishSolving()
         {
             for (int i = 0; i < Cells.Count; i++)
@@ -102,6 +119,15 @@ namespace Sudoku.Model
             if (IsSolved())
                 OnSolvingFinished?.Invoke();
 
+        }
+        public void TypeValue(int value, (int,int) coord)
+        {
+            TypeValueCommand _command = new TypeValueCommand(Cells.First(c => c.Coordinate == coord));
+            _command.Execute(value, false);
+            _commandLog.Push(_command);
+            FocusGridCell(_cellToGrids[Cells.First(c => c.Coordinate == coord)]);
+            if (IsSolved())
+                OnSolvingFinished?.Invoke();
         }
         public void Undo()
         {
