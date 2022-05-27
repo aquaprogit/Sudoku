@@ -18,20 +18,6 @@ namespace Sudoku.Model
         public override void MakePlayable()
         {
             UnlockCells();
-            _solver = new FieldSolver(_cells);
-            MakeSolvable();
-        }
-        private void MakeSolvable()
-        {
-            if (_solver.Solve(true) == false)
-            {
-                List<Cell> withoutValue = _cells.Where(c => c.Value == 0).ToList();
-                int index = _cells.IndexOf(withoutValue[_random.Next(withoutValue.Count)]);
-                _cells[index].Value = _solution[index];
-                _cells[index].LockValue();
-                if (_solver.Solve(true) == false)
-                    MakeSolvable();
-            }
         }
         private void UnlockCells()
         {
