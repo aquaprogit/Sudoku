@@ -66,11 +66,11 @@ namespace Sudoku
             InitBitmapImage(ref _surmiseImageDisable, "/Assets/edit_u.png");
 
             InitializeComponent();
-            //List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
-            //_field = new Field(allGrid);
-            //_field.GenerateNewField();
-            //_field.OnSolvingFinished += OnSolvingFinished;
-            //IsSurmiseMode = false;
+            List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
+            _field = new Field(allGrid);
+            _field.GenerateNewField();
+            _field.OnSolvingFinished += OnSolvingFinished;
+            IsSurmiseMode = false;
 
             List<Grid> toSolveGrids = SolveField.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
             _toSolveField = new Field(toSolveGrids);
@@ -196,7 +196,16 @@ namespace Sudoku
         private void CustomSolve_Button_Click(object sender, RoutedEventArgs e)
         {
             _toSolveField.LockEntered();
-            _toSolveField.SolveEntered();
+
+            try
+            {
+                _toSolveField.SolveEntered();
+
+            }
+            catch (Exception)
+            {
+                MyMessageBox.Show("2 or more solutions for this field");
+            }
         }
 
         private void CustomClear_Button_Click(object sender, RoutedEventArgs e)

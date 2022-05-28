@@ -82,7 +82,7 @@ namespace Sudoku.Model
         public void SolveEntered()
         {
             _solver = new FieldSolver();
-            _solver.Solve(Cells.To2DArray());
+            _solver.Solve(Cells);
         }
         public void ClearField()
         {

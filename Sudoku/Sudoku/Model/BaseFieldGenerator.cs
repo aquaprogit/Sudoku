@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Sudoku.Model
@@ -18,10 +20,33 @@ namespace Sudoku.Model
         public override void MakePlayable()
         {
             UnlockCells();
+            MakeSolvable();
+            _cells.Where(c => c.Value == 0).ToList().ForEach(c => c.Surmises.Add(Enumerable.Range(1, 9).Except(c.Surmises)));
+            foreach (Cell cell in _cells.Where(c => c.IsGenerated == false))
+            {
+                foreach (Area area in Enum.GetValues(typeof(Area)))
+                {
+                    List<Cell> areaWithCell = _selector.GetAreas(area, _cells).First(l => l.Contains(cell));
+                    cell.Surmises.Remove(areaWithCell.Where(c => c.Value != 0).Select(c => c.Value));
+                }
+            }
+        }
+        private void MakeSolvable()
+        {
+            FieldSolver solver = new FieldSolver();
+            if (solver.Solve(_cells) == false)
+            {
+                List<Cell> withoutValue = _cells.Where(c => c.IsGenerated == false).ToList();
+                int index = _cells.IndexOf(withoutValue[_random.Next(withoutValue.Count)]);
+                _cells[index].Value = _solution[index];
+                _cells[index].LockValue();
+                if (solver.Solve(_cells) == false)
+                    MakeSolvable();
+            }
         }
         private void UnlockCells()
         {
-            int countOfRemoves = 81-27;
+            int countOfRemoves = 81 - 1;
             for (int i = 0; i < countOfRemoves; i++)
             {
                 List<Cell> withValue = _cells.Where(c => c.Value != 0).ToList();

@@ -65,6 +65,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Model\BaseFieldGenerator.cs" />
+    <Compile Include="Model\DancingLinksX\DLX.cs" />
+    <Compile Include="Model\DancingLinksX\ExactCover.cs" />
+    <Compile Include="Model\DancingLinksX\ICSPSolver.cs" />
+    <Compile Include="Model\DancingLinksX\Node.cs" />
+    <Compile Include="Model\DancingLinksX\SolverOptions.cs" />
+    <Compile Include="Model\DancingLinksX\Sudoku.cs" />
     <Compile Include="Model\FieldGenerator.cs" />
     <Compile Include="Model\FieldSolver.cs" />
     <Compile Include="Model\ICommand.cs" />
