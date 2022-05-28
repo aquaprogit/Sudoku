@@ -7,15 +7,11 @@ namespace Sudoku.Model.Generator
     {
         public EasyFieldGenerator(List<Cell> cells, int cluesCount) : base(cells, cluesCount) { }
 
-        public override List<int> GenerateMap()
+        protected override void CreatePattern()
         {
             FillBase();
             Shuffle();
-            _solution = _cells.Select(c => c.Value).ToList();
-            LeaveCluesOnly();
-            return _solution;
         }
-
         private void Shuffle()
         {
             for (int i = 0; i < 10; i++)

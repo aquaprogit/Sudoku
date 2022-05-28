@@ -21,8 +21,14 @@ namespace Sudoku.Model.Generator
             _solver = new FieldSolver();
             _random = new Random();
         }
-        public abstract List<int> GenerateMap();
-
+        public List<int> GenerateMap()
+        {
+            CreatePattern();
+            _solution = _cells.Select(c => c.Value).ToList();
+            LeaveCluesOnly();
+            return _solution;
+        }
+        protected abstract void CreatePattern();
         protected void LeaveCluesOnly()
         {
             int countOfRemoves = 81 - _cluesCount % 81;
