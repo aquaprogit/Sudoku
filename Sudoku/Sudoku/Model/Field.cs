@@ -79,14 +79,10 @@ namespace Sudoku.Model
         {
             Cells.ForEach(cell => cell.UnlockValue());
         }
-        public void SolveEntered()
+        public bool SolveEntered()
         {
             _solver = new FieldSolver();
-            _solver.Solve(Cells);
-        }
-        public void ClearField()
-        {
-            Cells.ForEach(cell => cell.Value = 0);
+            return _solver.Solve(Cells, false);
         }
         public void FinishSolving()
         {
@@ -110,13 +106,13 @@ namespace Sudoku.Model
                 throw new InvalidOperationException("No hints left");
             }
         }
-        public void TypeValue(int value, bool isSurmise)
+        public void TypeValue(int value, bool isSurmise, bool isCustomEnter = false)
         {
             TypeValueCommand _command = new TypeValueCommand(_selector.SelectedCell);
             _command.Execute(value, isSurmise);
             _commandLog.Push(_command);
             FocusGridCell(_cellToGrids[_selector.SelectedCell]);
-            if (IsSolved())
+            if (isCustomEnter == false && IsSolved())
                 OnSolvingFinished?.Invoke();
 
         }

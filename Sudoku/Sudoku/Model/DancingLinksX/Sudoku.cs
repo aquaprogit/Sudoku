@@ -16,7 +16,7 @@ namespace Sudoku.Model.DancingLinksX
             var problem = Reduce(Board);
             IReadOnlyCollection<ISet<int>> readOnlyCollection = problem.Solve(
                                 new DLX(), new SolverOptions { MaxSolutions = 2 });
-            if (readOnlyCollection.Count > 1)
+            if (readOnlyCollection.Count != 1)
                 return false;
             ISet<int> solution = readOnlyCollection.Single();
             Augment(Board, solution);

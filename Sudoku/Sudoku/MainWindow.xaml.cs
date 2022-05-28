@@ -75,16 +75,7 @@ namespace Sudoku
             List<Grid> toSolveGrids = SolveField.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
             _toSolveField = new Field(toSolveGrids);
             _toSolveField.BaseCells();
-            Test();
         }
-
-        private void Test()
-        {
-
-        }
-
-
-
         private void InitBitmapImage(ref BitmapImage image, string source)
         {
             if (image == null)
@@ -188,7 +179,7 @@ namespace Sudoku
         private void SolveField_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             if (_keysValues.Keys.Contains(e.Key))
-                _toSolveField.TypeValue(_keysValues[e.Key], IsSurmiseMode);
+                _toSolveField.TypeValue(_keysValues[e.Key], IsSurmiseMode, true);
             else if (_navigationKeys.Keys.Contains(e.Key))
                 _toSolveField.MoveSelection(_navigationKeys[e.Key]);
         }
@@ -196,22 +187,13 @@ namespace Sudoku
         private void CustomSolve_Button_Click(object sender, RoutedEventArgs e)
         {
             _toSolveField.LockEntered();
-
-            try
-            {
-                _toSolveField.SolveEntered();
-
-            }
-            catch (Exception)
-            {
+            if (_toSolveField.SolveEntered() == false)
                 MyMessageBox.Show("2 or more solutions for this field");
-            }
         }
 
         private void CustomClear_Button_Click(object sender, RoutedEventArgs e)
         {
             _toSolveField.UnlockEntered();
-            _toSolveField.ClearField();
         }
     }
 }
