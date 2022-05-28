@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 
 namespace Sudoku.Model
 {
@@ -7,7 +9,7 @@ namespace Sudoku.Model
     internal class Cell
     {
         private int _value = 0;
-        private readonly List<int> _surmises = new List<int>(9);
+        private SurmiseList _surmises;
         private bool _isGenerated = false;
 
         public Cell((int y, int x) coord, int value)
@@ -15,7 +17,12 @@ namespace Sudoku.Model
             Coordinate = coord;
             IsGenerated = false;
             _value = value;
+            _surmises = new SurmiseList();
+            _surmises.OnCollectionChanged += (object sender, NotifyCollectionChangedEventArgs e) => {
+                OnPropertyChanged();
+            };
         }
+
         public event CellContentChangedHandler ContentChanged;
         public (int CubeIndex, int CellIndex) Coordinate { get; private set; }
         public int Value {
@@ -35,20 +42,22 @@ namespace Sudoku.Model
                 OnPropertyChanged();
             }
         }
-        public List<int> Surmises => IsGenerated ? null : new List<int>(_surmises);
+        public SurmiseList Surmises {
+            get => IsGenerated ? null : _surmises;
+        }
 
         public Cell Clone()
         {
             Cell copy = new Cell(Coordinate, Value);
             copy._surmises.Clear();
-            copy._surmises.AddRange(_surmises);
+            copy._surmises.Add(_surmises);
             return copy;
         }
         public void Set(Cell obj)
         {
             Value = obj.Value;
             _surmises.Clear();
-            AddSurmise(obj._surmises);
+            _surmises.Add(obj._surmises);
             Coordinate = obj.Coordinate;
         }
         public void LockValue()
@@ -60,43 +69,11 @@ namespace Sudoku.Model
             IsGenerated = false;
             Value = 0;
         }
-        public void AddSurmise(int value)
-        {
-            if (IsGenerated) return;
-            if (value == 0)
-            {
-                _surmises.Clear();
-                OnPropertyChanged();
-                return;
-            }
-            if (value < 1 || value > 9) throw new ArgumentOutOfRangeException(nameof(value));
-            if (_surmises.Contains(value)) throw new Exception("Item already in collection");
-            _surmises.Add(value);
-            OnPropertyChanged();
-        }
-        public void RemoveSurmise(int value)
-        {
-            if (IsGenerated) return;
 
-            _surmises.Remove(value);
-            OnPropertyChanged();
-        }
-        public void AddSurmise(IEnumerable<int> values)
-        {
-            foreach (int value in values)
-                AddSurmise(value);
-        }
-        public void RemoveSurmise(IEnumerable<int> values)
-        {
-            foreach (int value in values)
-                RemoveSurmise(value);
-        }
-
-        public void OnPropertyChanged()
+        private void OnPropertyChanged()
         {
             ContentChanged?.Invoke(this);
         }
-
         public override string ToString()
         {
             return $"{this.GetCellContent().Replace("\n", " ")} at ({Coordinate.CubeIndex}, {Coordinate.CellIndex})";
@@ -106,7 +83,7 @@ namespace Sudoku.Model
             return obj is Cell cell
                 && cell.Coordinate == Coordinate
                 && cell.IsGenerated == IsGenerated
-                && cell._surmises == _surmises
+                && cell._surmises.Equals(_surmises)
                 && cell.Value == Value;
         }
     }

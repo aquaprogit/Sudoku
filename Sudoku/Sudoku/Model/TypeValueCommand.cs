@@ -21,9 +21,9 @@ namespace Sudoku.Model
             else
             {
                 if (_cell.Surmises.Contains(value))
-                    _cell.RemoveSurmise(value);
+                    _cell.Surmises.Remove(value);
                 else
-                    _cell.AddSurmise(value);
+                    _cell.Surmises.Add(value);
             }
         }
 

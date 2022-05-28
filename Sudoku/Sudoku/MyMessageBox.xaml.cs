@@ -458,9 +458,9 @@ namespace Sudoku
         internal static string TryAddKeyboardAccellerator(this string input)
         {
             // This is the default WPF accellerator symbol - used to be & in WinForms
-            const string accellerator = "_";
+            const string ACCELLERATOR = "_";
             // If it already contains an accellerator, do nothing
-            return input.Contains(accellerator) ? input : accellerator + input;
+            return input.Contains(ACCELLERATOR) ? input : ACCELLERATOR + input;
         }
     }
 }

@@ -64,7 +64,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Model\BaseFieldGenerator.cs" />
+    <Compile Include="Model\DancingLinksX\DLX.cs" />
+    <Compile Include="Model\DancingLinksX\ExactCover.cs" />
+    <Compile Include="Model\DancingLinksX\ICSPSolver.cs" />
+    <Compile Include="Model\DancingLinksX\Node.cs" />
+    <Compile Include="Model\DancingLinksX\SolverOptions.cs" />
+    <Compile Include="Model\DancingLinksX\Sudoku.cs" />
     <Compile Include="Model\FieldGenerator.cs" />
+    <Compile Include="Model\FieldSolver.cs" />
     <Compile Include="Model\ICommand.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -81,6 +89,7 @@
     <Compile Include="Model\Field.cs" />
     <Compile Include="Model\FieldPrinter.cs" />
     <Compile Include="Model\FieldSelector.cs" />
+    <Compile Include="Model\SurmiseList.cs" />
     <Compile Include="Model\TypeValueCommand.cs" />
     <Compile Include="MyMessageBox.xaml.cs">
       <DependentUpon>MyMessageBox.xaml</DependentUpon>
@@ -105,11 +114,11 @@
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Sudoku.cd" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -157,7 +166,12 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\error.png" />
+    <Resource Include="Assets\error.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

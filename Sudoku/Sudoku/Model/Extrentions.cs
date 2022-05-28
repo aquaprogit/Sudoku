@@ -1,15 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Sudoku.Model
 {
+    delegate void ActHandler();
     internal static class Extrentions
     {
+        public static void Time(ActHandler handler)
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            handler.Invoke();
+            sw.Stop();
+            Debug.WriteLine(handler.Method.Name + " time is: " + sw.ElapsedMilliseconds);
+        }
+        public static Cell[,] To2DArray(this List<Cell> self)
+        {
+            Cell[,] cells = new Cell[9, 9];
+            FieldSelector selector = new FieldSelector();
+            var columns = selector.GetAreas(Area.Column, self);
+            for (int columnIndex = 0; columnIndex < 9; columnIndex++)
+            {
+                for (int rowIndex = 0; rowIndex < 9; rowIndex++)
+                {
+                    cells[columnIndex, rowIndex] = columns[columnIndex][rowIndex];
+                }
+            }
+            return cells;
+            
+        }
         public static IEnumerable<T> FindVisualChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)

@@ -16,6 +16,7 @@ namespace Sudoku
     public partial class MainWindow : Window
     {
         private Field _field;
+        private Field _toSolveField;
         private bool _isSurmiseMode;
         private BitmapImage _surmiseImageEnable;
         private BitmapImage _surmiseImageDisable;
@@ -67,9 +68,23 @@ namespace Sudoku
             InitializeComponent();
             List<Grid> allGrid = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
             _field = new Field(allGrid);
+            _field.GenerateNewField();
             _field.OnSolvingFinished += OnSolvingFinished;
             IsSurmiseMode = false;
+
+            List<Grid> toSolveGrids = SolveField.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
+            _toSolveField = new Field(toSolveGrids);
+            _toSolveField.BaseCells();
+            Test();
         }
+
+        private void Test()
+        {
+
+        }
+
+
+
         private void InitBitmapImage(ref BitmapImage image, string source)
         {
             if (image == null)
@@ -93,7 +108,17 @@ namespace Sudoku
         }
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
-            Playground.Focus();
+            if (e.Key == Key.Tab)
+            {
+                SwitchTabs();
+            }
+            else
+            {
+                if (GameMode_Grid.Visibility == Visibility.Visible)
+                    SolveField.Focus();
+                else
+                    Playground.Focus();
+            }
         }
 
         private void SurmiseModeButton_Click(object sender, RoutedEventArgs e)
@@ -134,10 +159,59 @@ namespace Sudoku
         {
             _field.FinishSolving();
         }
-
         private void Regen_Button_Click(object sender, RoutedEventArgs e)
         {
             _field.GenerateNewField();
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            SwitchTabs();
+        }
+
+        private void SwitchTabs()
+        {
+            if (GameMode_Grid.Visibility == Visibility.Visible)
+            {
+                GameMode_Grid.Visibility = Visibility.Hidden;
+                SolveMode_Grid.Visibility = Visibility.Visible;
+                SolveField.Focus();
+            }
+            else
+            {
+                GameMode_Grid.Visibility = Visibility.Visible;
+                SolveMode_Grid.Visibility = Visibility.Hidden;
+                Playground.Focus();
+            }
+        }
+
+        private void SolveField_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if (_keysValues.Keys.Contains(e.Key))
+                _toSolveField.TypeValue(_keysValues[e.Key], IsSurmiseMode);
+            else if (_navigationKeys.Keys.Contains(e.Key))
+                _toSolveField.MoveSelection(_navigationKeys[e.Key]);
+        }
+
+        private void CustomSolve_Button_Click(object sender, RoutedEventArgs e)
+        {
+            _toSolveField.LockEntered();
+
+            try
+            {
+                _toSolveField.SolveEntered();
+
+            }
+            catch (Exception)
+            {
+                MyMessageBox.Show("2 or more solutions for this field");
+            }
+        }
+
+        private void CustomClear_Button_Click(object sender, RoutedEventArgs e)
+        {
+            _toSolveField.UnlockEntered();
+            _toSolveField.ClearField();
         }
     }
 }
