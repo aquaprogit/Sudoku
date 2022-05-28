@@ -6,7 +6,7 @@ namespace Sudoku.Model
     internal class FieldSolver
     {
         private Random _random;
-        public bool Solve(List<Cell> _cells, bool clearField = true)
+        public bool Solve(List<Cell> _cells, bool clearField = true, bool isSinglePossible = true)
         {
             _random = new Random();
             int[,] values = new int[9, 9];
@@ -18,7 +18,7 @@ namespace Sudoku.Model
                     values[rowIndex, columnIndex] = columns[rowIndex][columnIndex].Value;
 
             DancingLinksX.Sudoku sudoku = new DancingLinksX.Sudoku(values);
-            bool result = sudoku.Solve();
+            bool result = sudoku.Solve(isSinglePossible);
             if (clearField == false)
             {
                 for (int columnIndex = 0; columnIndex < columns.Count; columnIndex++)

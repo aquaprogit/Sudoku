@@ -20,11 +20,9 @@ namespace Sudoku.Model.Generator
             }
                 if (_random.Next(0, 4) == 0)
                     Transpose();
-            _cells.ForEach(c => c.LockValue());
         }
         private void FillBase()
         {
-            _cells.ForEach(c => c.UnlockValue());
             var rows = _selector.GetAreas(Area.Square, _cells);
             for (int rowIndex = 0; rowIndex < 9; rowIndex++)
             {

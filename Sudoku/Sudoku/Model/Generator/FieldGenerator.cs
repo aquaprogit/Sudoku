@@ -6,9 +6,9 @@ namespace Sudoku.Model.Generator
 {
     internal abstract class FieldGenerator
     {
-        private FieldSolver _solver;
         private int _cluesCount;
 
+        protected FieldSolver _solver;
         protected FieldSelector _selector;
         protected Random _random;
         protected List<Cell> _cells;
@@ -23,7 +23,9 @@ namespace Sudoku.Model.Generator
         }
         public List<int> GenerateMap()
         {
+            _cells.ForEach(c => c.UnlockValue());
             CreatePattern();
+            _cells.ForEach(c => c.LockValue());
             _solution = _cells.Select(c => c.Value).ToList();
             LeaveCluesOnly();
             return _solution;

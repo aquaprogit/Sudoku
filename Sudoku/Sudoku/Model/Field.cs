@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 
+using Sudoku.Model.Generator;
+
 namespace Sudoku.Model
 {
     public delegate void SolvingFinishedHandler();
@@ -39,9 +41,8 @@ namespace Sudoku.Model
         public void GenerateNewField()
         {
             BaseCells();
-            _generator = new BaseFieldGenerator(Cells);
+            _generator = new HardFieldGenerator(Cells, 30);
             _solution = _generator.GenerateMap();
-            _generator.MakePlayable();
             foreach (var grid in _cellToGrids.Values)
             {
                 grid.MouseLeftButtonUp += Grid_MouseButtonUp;
