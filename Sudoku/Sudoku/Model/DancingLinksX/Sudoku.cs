@@ -11,11 +11,11 @@ namespace Sudoku.Model.DancingLinksX
         {
             Board = board;
         }
-        public bool Solve()
+        public bool Solve(bool isSinglePossible = true)
         {
             var problem = Reduce(Board);
             var readOnlyCollection = problem.Solve(
-                                new DLX(), new SolverOptions { MaxSolutions = 2 });
+                                new DLX(), new SolverOptions { MaxSolutions = isSinglePossible ? 2 : 1 });
             if (readOnlyCollection.Count != 1)
                 return false;
             var solution = readOnlyCollection.Single();

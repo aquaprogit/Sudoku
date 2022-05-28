@@ -1,69 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Sudoku.Model
+namespace Sudoku.Model.Generator
 {
-    internal class BaseFieldGenerator : FieldGenerator
+    internal class EasyFieldGenerator : FieldGenerator
     {
-        public BaseFieldGenerator(List<Cell> cells) : base(cells) { }
+        public EasyFieldGenerator(List<Cell> cells, int cluesCount) : base(cells, cluesCount) { }
 
         public override List<int> GenerateMap()
         {
             FillBase();
             Shuffle();
             _solution = _cells.Select(c => c.Value).ToList();
+            LeaveCluesOnly();
             return _solution;
         }
 
-        public override void MakePlayable()
-        {
-            UnlockCells();
-            MakeSolvable();
-            _cells.Where(c => c.Value == 0).ToList().ForEach(c => c.Surmises.Add(Enumerable.Range(1, 9).Except(c.Surmises)));
-            foreach (var cell in _cells.Where(c => c.IsGenerated == false))
-            {
-                foreach (Area area in Enum.GetValues(typeof(Area)))
-                {
-                    var areaWithCell = _selector.GetAreas(area, _cells).First(l => l.Contains(cell));
-                    cell.Surmises.Remove(areaWithCell.Where(c => c.Value != 0).Select(c => c.Value));
-                }
-            }
-        }
-        private void MakeSolvable()
-        {
-            FieldSolver solver = new FieldSolver();
-            if (solver.Solve(_cells) == false)
-            {
-                List<Cell> withoutValue = _cells.Where(c => c.IsGenerated == false).ToList();
-                int index = _cells.IndexOf(withoutValue[_random.Next(withoutValue.Count)]);
-                _cells[index].Value = _solution[index];
-                _cells[index].LockValue();
-                if (solver.Solve(_cells) == false)
-                    MakeSolvable();
-            }
-        }
-        private void UnlockCells()
-        {
-            int countOfRemoves = 81 - 1;
-            for (int i = 0; i < countOfRemoves; i++)
-            {
-                List<Cell> withValue = _cells.Where(c => c.Value != 0).ToList();
-                var toRemove = withValue[_random.Next(withValue.Count)];
-                toRemove.UnlockValue();
-            }
-        }
         private void Shuffle()
         {
-            for (int i = 0; i < 55; i++)
+            for (int i = 0; i < 10; i++)
             {
                 ShuffleSmallArea((Area)_random.Next(0, 2));
+            }
                 if (_random.Next(0, 4) == 0)
                     Transpose();
-            }
             _cells.ForEach(c => c.LockValue());
         }
-
         private void FillBase()
         {
             _cells.ForEach(c => c.UnlockValue());
@@ -104,6 +66,5 @@ namespace Sudoku.Model
                 _cells[i].Value = transposed.First(cell => cell.Coordinate == curr.Coordinate).Value;
             }
         }
-
     }
 }
