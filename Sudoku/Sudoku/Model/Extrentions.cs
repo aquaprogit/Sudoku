@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace Sudoku.Model
 {
-    delegate void ActHandler();
+    internal delegate void ActHandler();
     internal static class Extrentions
     {
         public static void Time(ActHandler handler)
@@ -30,7 +30,7 @@ namespace Sudoku.Model
                 }
             }
             return cells;
-            
+
         }
         public static IEnumerable<T> FindVisualChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
@@ -64,7 +64,9 @@ namespace Sudoku.Model
                 return result;
             }
             else
+            {
                 return cell.Value.ToString();
+            }
         }
     }
 }

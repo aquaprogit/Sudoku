@@ -17,7 +17,9 @@ namespace Sudoku.Model
             if (_cell.IsGenerated) return;
 
             if (isSurmise == false)
+            {
                 _cell.Value = value;
+            }
             else
             {
                 if (_cell.Surmises.Contains(value))

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -28,7 +27,7 @@ namespace Sudoku.Model
             SolvedPartBrush = HexToBrush(Properties.Settings.Default.SolvedPartBrush);
         }
 
-        static Brush HexToBrush(string hex)
+        private static Brush HexToBrush(string hex)
         {
             return (SolidColorBrush)new BrushConverter().ConvertFrom(hex);
         }

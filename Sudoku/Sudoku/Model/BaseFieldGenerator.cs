@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Sudoku.Model
@@ -22,11 +21,11 @@ namespace Sudoku.Model
             UnlockCells();
             MakeSolvable();
             _cells.Where(c => c.Value == 0).ToList().ForEach(c => c.Surmises.Add(Enumerable.Range(1, 9).Except(c.Surmises)));
-            foreach (Cell cell in _cells.Where(c => c.IsGenerated == false))
+            foreach (var cell in _cells.Where(c => c.IsGenerated == false))
             {
                 foreach (Area area in Enum.GetValues(typeof(Area)))
                 {
-                    List<Cell> areaWithCell = _selector.GetAreas(area, _cells).First(l => l.Contains(cell));
+                    var areaWithCell = _selector.GetAreas(area, _cells).First(l => l.Contains(cell));
                     cell.Surmises.Remove(areaWithCell.Where(c => c.Value != 0).Select(c => c.Value));
                 }
             }
@@ -50,7 +49,7 @@ namespace Sudoku.Model
             for (int i = 0; i < countOfRemoves; i++)
             {
                 List<Cell> withValue = _cells.Where(c => c.Value != 0).ToList();
-                Cell toRemove = withValue[_random.Next(withValue.Count)];
+                var toRemove = withValue[_random.Next(withValue.Count)];
                 toRemove.UnlockValue();
             }
         }
@@ -68,7 +67,7 @@ namespace Sudoku.Model
         private void FillBase()
         {
             _cells.ForEach(c => c.UnlockValue());
-            List<List<Cell>> rows = _selector.GetAreas(Area.Square, _cells);
+            var rows = _selector.GetAreas(Area.Square, _cells);
             for (int rowIndex = 0; rowIndex < 9; rowIndex++)
             {
                 int i = rowIndex;
@@ -82,7 +81,7 @@ namespace Sudoku.Model
         {
             if (area == Area.Square) return;
 
-            List<List<Cell>> areas = _selector.GetAreas(area, _cells);
+            var areas = _selector.GetAreas(area, _cells);
             int sector = _random.Next(3);
             int len = 3;
             while (len > 1)
@@ -90,8 +89,8 @@ namespace Sudoku.Model
                 int t = _random.Next(len--);
                 for (int i = 0; i < 9; i++)
                 {
-                    Cell c1 = _cells.First(c => c == areas[t + sector * 3][i]);
-                    Cell c2 = _cells.First(c => c == areas[len + sector * 3][i]);
+                    var c1 = _cells.First(c => c == areas[t + sector * 3][i]);
+                    var c2 = _cells.First(c => c == areas[len + sector * 3][i]);
                     (c1.Value, c2.Value) = (c2.Value, c1.Value);
                 }
             }

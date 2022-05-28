@@ -42,7 +42,7 @@ namespace Sudoku.Model
             _generator = new BaseFieldGenerator(Cells);
             _solution = _generator.GenerateMap();
             _generator.MakePlayable();
-            foreach (Grid grid in _cellToGrids.Values)
+            foreach (var grid in _cellToGrids.Values)
             {
                 grid.MouseLeftButtonUp += Grid_MouseButtonUp;
             }
@@ -64,7 +64,7 @@ namespace Sudoku.Model
                 cell.ContentChanged += Cell_PropertyChanged;
                 _cellToGrids.Add(cell, _grids[iteration]);
             }
-            foreach (Grid grid in _cellToGrids.Values)
+            foreach (var grid in _cellToGrids.Values)
             {
                 grid.MouseLeftButtonUp += Grid_MouseButtonUp;
             }
@@ -97,8 +97,8 @@ namespace Sudoku.Model
         {
             if (Cells.Count(c => c.Value == 0) != 0 && _hintsLeft-- > 0)
             {
-                var withoutValue = Cells.Where(c => c.Value == 0 || c.Value != _solution[Cells.IndexOf(c)]).ToList();
-                Cell toShow = withoutValue[_random.Next(withoutValue.Count)];
+                List<Cell> withoutValue = Cells.Where(c => c.Value == 0 || c.Value != _solution[Cells.IndexOf(c)]).ToList();
+                var toShow = withoutValue[_random.Next(withoutValue.Count)];
                 toShow.Value = _solution[Cells.IndexOf(toShow)];
             }
             else
@@ -116,7 +116,7 @@ namespace Sudoku.Model
                 OnSolvingFinished?.Invoke();
 
         }
-        public void TypeValue(int value, (int,int) coord)
+        public void TypeValue(int value, (int, int) coord)
         {
             TypeValueCommand _command = new TypeValueCommand(Cells.First(c => c.Coordinate == coord));
             _command.Execute(value, false);
@@ -129,7 +129,7 @@ namespace Sudoku.Model
         {
             if (_commandLog.Count == 0)
                 throw new InvalidOperationException("Nothing to undo");
-            ICommand command = _commandLog.Pop();
+            var command = _commandLog.Pop();
             var previousValue = command.Undo();
             FocusGridCell(_cellToGrids[Cells.First(c => c.Coordinate == previousValue.Coordinate)]);
             _selector.SelectedCell.Set(previousValue);
@@ -147,8 +147,8 @@ namespace Sudoku.Model
         }
         private void Cell_PropertyChanged(Cell sender)
         {
-            Cell cell = sender;
-            TextBlock tb = _cellToGrids[cell].FindVisualChildren<TextBlock>().First();
+            var cell = sender;
+            var tb = _cellToGrids[cell].FindVisualChildren<TextBlock>().First();
             tb.Text = cell.GetCellContent();
             tb.FontSize = cell.Value == 0 ? 13 : 24;
             tb.Opacity = cell.Value == 0 ? 0.8 : 1;

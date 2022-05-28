@@ -14,11 +14,11 @@ namespace Sudoku.Model.DancingLinksX
         public bool Solve()
         {
             var problem = Reduce(Board);
-            IReadOnlyCollection<ISet<int>> readOnlyCollection = problem.Solve(
+            var readOnlyCollection = problem.Solve(
                                 new DLX(), new SolverOptions { MaxSolutions = 2 });
             if (readOnlyCollection.Count != 1)
                 return false;
-            ISet<int> solution = readOnlyCollection.Single();
+            var solution = readOnlyCollection.Single();
             Augment(Board, solution);
             return true;
 

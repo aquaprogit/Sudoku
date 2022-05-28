@@ -97,16 +97,16 @@ namespace Sudoku.Model
         public List<Cell> Transpose(List<Cell> cells)
         {
             List<Cell> transposed = cells.Select(c => new Cell(c.Coordinate, c.Value)).ToList();
-            var rows = GetAreas(Area.Row, cells).Select(c => c).ToList();
-            var columns = GetAreas(Area.Column, cells).Select(c => c).ToList();
+            List<List<Cell>> rows = GetAreas(Area.Row, cells).Select(c => c).ToList();
+            List<List<Cell>> columns = GetAreas(Area.Column, cells).Select(c => c).ToList();
             foreach (var col in columns)
             {
-                foreach (Cell cell in col.Take(columns.IndexOf(col)))
+                foreach (var cell in col.Take(columns.IndexOf(col)))
                 {
                     var inRow = rows.First(l => l.Contains(cell));
                     var inCol = columns.First(l => l.Contains(cell));
                     (int row, int col) coord = (rows.IndexOf(inRow), columns.IndexOf(inCol));
-                    Cell toSwapWith = rows[coord.col][coord.row];
+                    var toSwapWith = rows[coord.col][coord.row];
                     transposed[cells.IndexOf(cell)].Value = toSwapWith.Value;
                     transposed[cells.IndexOf(toSwapWith)].Value = cell.Value;
                 }
@@ -118,8 +118,11 @@ namespace Sudoku.Model
             _rows = new List<List<Cell>>();
             _cells = new List<Cell>(cells);
             for (int i = 0; i < 3; i++)
+            {
                 for (int j = 0; j < 3; j++)
                     _rows.Add(_cells.Where(c => c.Coordinate.CellIndex / 3 == j && c.Coordinate.CubeIndex / 3 == i).ToList());
+            }
+
             return _rows;
         }
         private List<List<Cell>> GetColumns(List<Cell> cells)
@@ -147,14 +150,16 @@ namespace Sudoku.Model
             return _squares;
         }
     }
-    enum Direction
+
+    internal enum Direction
     {
         Up,
         Down,
         Left,
         Right
     }
-    enum Area
+
+    internal enum Area
     {
         Row,
         Column,

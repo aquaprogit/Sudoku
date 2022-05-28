@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 
 namespace Sudoku.Model
 {
@@ -42,9 +40,7 @@ namespace Sudoku.Model
                 OnPropertyChanged();
             }
         }
-        public SurmiseList Surmises {
-            get => IsGenerated ? null : _surmises;
-        }
+        public SurmiseList Surmises => IsGenerated ? null : _surmises;
 
         public Cell Clone()
         {

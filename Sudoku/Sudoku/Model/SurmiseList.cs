@@ -11,9 +11,7 @@ namespace Sudoku.Model
     {
         private List<int> _surmises;
 
-        public int this[int index] {
-            get => _surmises[index];
-        }
+        public int this[int index] => _surmises[index];
         public SurmiseList()
         {
             _surmises = new List<int>();
@@ -25,7 +23,7 @@ namespace Sudoku.Model
         }
 
         public event NotifyCollectionChangedEventHandler OnCollectionChanged;
-        public int Count { get => _surmises.Count; }
+        public int Count => _surmises.Count;
 
         public void Add(int surmise)
         {
