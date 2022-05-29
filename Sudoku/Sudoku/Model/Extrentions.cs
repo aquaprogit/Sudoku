@@ -57,7 +57,7 @@ namespace Sudoku.Model
 
             if (cell.Value == 0)
             {
-                foreach (int i in Enumerable.Range(1, 9).Except(cell.Surmises))
+                foreach (int i in Enumerable.Range(1, 9).Except(cell.Surmises ?? new SurmiseList()))
                 {
                     result = result.Replace(i.ToString(), " ");
                 }

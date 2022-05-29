@@ -40,6 +40,7 @@ namespace Sudoku.Model
             HintsLeft = hintsCount;
             Selector = new FieldSelector();
             BaseCellInit();
+            Selector.SelectedCell = _cells.Find(c => c.Coordinate == (4, 4));
         }
 
         public void GenerateNewField(Difficulty difficulty)
@@ -57,7 +58,6 @@ namespace Sudoku.Model
                     break;
             }
             _solution = _generator.GenerateMap();
-            Selector.SelectedCell = _cells.Find(c => c.Coordinate == (4, 4));
             HintsLeft = _hintsMaxCount;
             OnFieldContentChanged?.Invoke();
         }
@@ -78,18 +78,19 @@ namespace Sudoku.Model
             command.Execute(value, isSurmise);
             _commandLog.Push(command);
             Cell_ContentChanged(Selector.SelectedCell);
-            if (IsSolved)
+            if (_solution.Count != 0 && IsSolved)
                 OnSolvingFinished?.Invoke();
         }
-        public void Undo()
+        public bool Undo()
         {
             if (_commandLog.Count == 0)
-                throw new InvalidOperationException("Nothing to undo. Log is empty");
+                return false;
             ICommand command = _commandLog.Pop();
             Cell previousCell = command.Undo();
             Cell_ContentChanged(previousCell);
             Selector.SelectedCell.Set(previousCell);
             Cell_ContentChanged(Selector.SelectedCell);
+            return true;
         }
         public void GiveHint()
         {
@@ -108,11 +109,10 @@ namespace Sudoku.Model
                     _cells[index].Value = _solution[index];
             }
         }
-        void IBaseField.Solve()
+        bool IBaseField.Solve()
         {
-            _cells.ForEach(cell => cell.LockValue());
-            if (_solver.Solve(_cells, false, false) == false)
-                throw new ArgumentException("The field has more than one solution");
+            _cells.Where(c => c.Value != 0).ToList().ForEach(cell => cell.LockValue());
+            return _solver.Solve(_cells, false, false) != false;
         }
         void IBaseField.Clear()
         {

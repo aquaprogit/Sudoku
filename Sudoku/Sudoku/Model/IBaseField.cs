@@ -11,7 +11,9 @@ namespace Sudoku.Model
         void MoveSelection(Direction dir);
         void MoveSelection((int, int) coordinate);
         void TypeValue(int value, bool isSurmise);
-        void Solve();
+        bool Solve();
         void Clear();
+        event FieldContentChangedHandler OnFieldContentChanged;
+        event CellContentChangedHandler CellContentChanged;
     }
 }
