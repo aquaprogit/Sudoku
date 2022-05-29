@@ -14,3 +14,6 @@ dotnet_diagnostic.IDE0007.severity = silent
 
 # CS0659: Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 dotnet_diagnostic.CS0659.severity = none
+
+# IDE0051: Remove unused private members
+dotnet_diagnostic.IDE0051.severity = silent

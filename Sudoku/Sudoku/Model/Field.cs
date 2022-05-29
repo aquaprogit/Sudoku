@@ -1,60 +1,118 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 using Sudoku.Model.Generator;
 
 namespace Sudoku.Model
 {
     public delegate void SolvingFinishedHandler();
-    internal class Field
+    public delegate void FieldContentChangedHandler();
+
+    internal class Field : IBaseField
     {
-        private Dictionary<Cell, Grid> _cellToGrids = new Dictionary<Cell, Grid>(81);
-        private FieldSelector _selector = new FieldSelector();
+        private List<Cell> _cells;
+        private List<int> _solution;
+        private Stack<ICommand> _commandLog;
         private FieldGenerator _generator;
         private FieldSolver _solver;
-        private Stack<ICommand> _commandLog = new Stack<ICommand>();
-        private int _hintsLeft = 3;
+        private int _hintsMaxCount;
 
-        private Random _random = new Random();
+        private bool IsSolved => _cells.All(cell => {
+            int index = _cells.IndexOf(cell);
+            return cell.Value == _solution[index];
+        });
 
-        private List<int> _solution;
-        private List<Grid> _grids;
-        private bool _autoCheck;
-
-        private List<Cell> Cells => _cellToGrids.Keys.ToList();
-        public Field(List<Grid> grids)
-        {
-            _grids = grids;
-        }
+        public int HintsLeft { get; private set; }
+        public FieldSelector Selector { get; private set; }
         public event SolvingFinishedHandler OnSolvingFinished;
-        public bool AutoCheck {
-            get => _autoCheck;
-            set {
-                _autoCheck = value;
-                FocusGridCell(_cellToGrids[_selector.SelectedCell]);
-            }
+        public event FieldContentChangedHandler OnFieldContentChanged;
+
+        public Field(int hintsCount)
+        {
+            _cells = new List<Cell>(81);
+            _solution = new List<int>();
+            _solver = new FieldSolver();
+            _commandLog = new Stack<ICommand>();
+            _hintsMaxCount = hintsCount;
+            HintsLeft = hintsCount;
+            Selector = new FieldSelector();
+            BaseCellInit();
         }
 
-        public void GenerateNewField()
+        public void GenerateNewField(Difficulty difficulty)
         {
-            BaseCells();
-            _generator = new HardFieldGenerator(Cells, 30);
-            _solution = _generator.GenerateMap();
-            foreach (var grid in _cellToGrids.Values)
+            switch (difficulty)
             {
-                grid.MouseLeftButtonUp += Grid_MouseButtonUp;
+                case Difficulty.Easy:
+                    _generator = new EasyFieldGenerator(_cells);
+                    break;
+                case Difficulty.Normal:
+                    _generator = new HardFieldGenerator(_cells, 30);
+                    break;
+                case Difficulty.Hard:
+                    _generator = new HardFieldGenerator(_cells, 25);
+                    break;
             }
-            _selector.SelectedCell = Cells.Find(c => c.Coordinate == (4, 4));
-            FocusGridCell(_cellToGrids[_selector.SelectedCell]);
-            _hintsLeft = 3;
+            _solution = _generator.GenerateMap();
+            Selector.SelectedCell = _cells.Find(c => c.Coordinate == (4, 4));
+            HintsLeft = _hintsMaxCount;
         }
 
-        public void BaseCells()
+        public void MoveSelection(Direction dir)
         {
-            _cellToGrids.Clear();
+            Selector.MoveSelection(dir, _cells);
+            OnFieldContentChanged?.Invoke();
+        }
+
+        public void TypeValue(int value, bool isSurmise = false)
+        {
+            TypeValueCommand command = new TypeValueCommand(Selector.SelectedCell);
+            command.Execute(value, isSurmise);
+            _commandLog.Push(command);
+            OnFieldContentChanged?.Invoke();
+            if (IsSolved)
+                OnSolvingFinished?.Invoke();
+        }
+        public void Undo()
+        {
+            if (_commandLog.Count == 0)
+                throw new InvalidOperationException("Nothing to undo. Log is empty");
+            ICommand command = _commandLog.Pop();
+            Cell previousCell = command.Undo();
+            Cell_ContentChanged(previousCell);
+            Selector.SelectedCell.Set(previousCell);
+            Cell_ContentChanged(Selector.SelectedCell);
+        }
+        public void GiveHint()
+        {
+            if (IsSolved == false && HintsLeft > 0)
+            {
+                Cell toShow = Selector.CellForHint(_cells);
+                int index = _cells.IndexOf(toShow);
+                toShow.Value = _solution[index];
+            }
+        }
+        public void FinishSolving()
+        {
+            for (int index = 0; index < _cells.Count; index++)
+            {
+                if (_cells[index].IsGenerated == false)
+                    _cells[index].Value = _solution[index];
+            }
+        }
+        public void Solve()
+        {
+            _cells.ForEach(cell => cell.LockValue());
+            if (_solver.Solve(_cells, false, false) == false)
+                throw new ArgumentException("The field has more than one solution");
+        }
+        public void Clear()
+        {
+            _cells.ForEach(cell => cell.UnlockValue());
+        }
+        private void BaseCellInit()
+        {
             int cubeIndex = 0;
             for (int iteration = 0; iteration < 81; iteration++)
             {
@@ -62,137 +120,20 @@ namespace Sudoku.Model
                 if (innerIndex == 0 && iteration != 0)
                     cubeIndex++;
                 Cell cell = new Cell((cubeIndex, innerIndex), 0);
-                cell.ContentChanged += Cell_PropertyChanged;
-                _cellToGrids.Add(cell, _grids[iteration]);
+                cell.ContentChanged += Cell_ContentChanged;
+                _cells.Add(cell);
             }
-            foreach (var grid in _cellToGrids.Values)
-            {
-                grid.MouseLeftButtonUp += Grid_MouseButtonUp;
-            }
-            _selector.SelectedCell = Cells.Find(c => c.Coordinate == (4, 4));
-            FocusGridCell(_cellToGrids[_selector.SelectedCell]);
-        }
-        public void LockEntered()
-        {
-            Cells.Where(cell => cell.Value != 0).ToList().ForEach(cell => cell.LockValue());
-        }
-        public void UnlockEntered()
-        {
-            Cells.ForEach(cell => cell.UnlockValue());
-        }
-        public bool SolveEntered()
-        {
-            _solver = new FieldSolver();
-            return _solver.Solve(Cells, false);
-        }
-        public void FinishSolving()
-        {
-            for (int i = 0; i < Cells.Count; i++)
-            {
-                if (Cells[i].IsGenerated == false)
-                    Cells[i].Value = _solution[i];
-            }
-            OnSolvingFinished?.Invoke();
-        }
-        public void GiveHint()
-        {
-            if (Cells.Count(c => c.Value == 0) != 0 && _hintsLeft-- > 0)
-            {
-                List<Cell> withoutValue = Cells.Where(c => c.Value == 0 || c.Value != _solution[Cells.IndexOf(c)]).ToList();
-                var toShow = withoutValue[_random.Next(withoutValue.Count)];
-                toShow.Value = _solution[Cells.IndexOf(toShow)];
-            }
-            else
-            {
-                throw new InvalidOperationException("No hints left");
-            }
-        }
-        public void TypeValue(int value, bool isSurmise, bool isCustomEnter = false)
-        {
-            TypeValueCommand _command = new TypeValueCommand(_selector.SelectedCell);
-            _command.Execute(value, isSurmise);
-            _commandLog.Push(_command);
-            FocusGridCell(_cellToGrids[_selector.SelectedCell]);
-            if (isCustomEnter == false && IsSolved())
-                OnSolvingFinished?.Invoke();
-
-        }
-        public void TypeValue(int value, (int, int) coord)
-        {
-            TypeValueCommand _command = new TypeValueCommand(Cells.First(c => c.Coordinate == coord));
-            _command.Execute(value, false);
-            _commandLog.Push(_command);
-            FocusGridCell(_cellToGrids[Cells.First(c => c.Coordinate == coord)]);
-            if (IsSolved())
-                OnSolvingFinished?.Invoke();
-        }
-        public void Undo()
-        {
-            if (_commandLog.Count == 0)
-                throw new InvalidOperationException("Nothing to undo");
-            var command = _commandLog.Pop();
-            var previousValue = command.Undo();
-            FocusGridCell(_cellToGrids[Cells.First(c => c.Coordinate == previousValue.Coordinate)]);
-            _selector.SelectedCell.Set(previousValue);
-            FocusGridCell(_cellToGrids[_selector.SelectedCell]);
-        }
-        public void MoveSelection(Direction dir)
-        {
-            _selector.MoveSelection(dir, Cells);
-            if (_selector.SelectedCell != null)
-                FocusGridCell(_cellToGrids[_selector.SelectedCell]);
-        }
-        private bool IsSolved()
-        {
-            return Cells.All(c => c.Value != 0 && c.Value == _solution[Cells.IndexOf(c)]);
-        }
-        private void Cell_PropertyChanged(Cell sender)
-        {
-            var cell = sender;
-            var tb = _cellToGrids[cell].FindVisualChildren<TextBlock>().First();
-            tb.Text = cell.GetCellContent();
-            tb.FontSize = cell.Value == 0 ? 13 : 24;
-            tb.Opacity = cell.Value == 0 ? 0.8 : 1;
-            tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
-        }
-        private void Grid_MouseButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            FocusGridCell((Grid)sender);
         }
 
-        private void FocusGridCell(Grid grid)
+        private void Cell_ContentChanged(Cell obj)
         {
-            FieldPrinter.PrintCells(_grids, FieldPrinter.WhiteBrush);
-            _selector.SelectedCell = _cellToGrids.First(pair => pair.Value == grid).Key;
-            BrushLinked();
-            if (AutoCheck)
-                BrushSolved();
-            _cellToGrids[_selector.SelectedCell].Background = FieldPrinter.SelectedCellBrush;
-            if (AutoCheck)
-                BrushIncorrect();
+            OnFieldContentChanged?.Invoke();
         }
-
-        private void BrushLinked()
-        {
-            var linked = _selector.GetAllLinked(Cells).Select(cell => _cellToGrids[cell]);
-            var sameToSelected = _selector.GetSameValues(Cells).Select(cell => _cellToGrids[cell]);
-            FieldPrinter.PrintCells(linked, FieldPrinter.PrintedBrush);
-            FieldPrinter.PrintCells(sameToSelected, FieldPrinter.SameNumberBrush);
-        }
-
-        private void BrushSolved()
-        {
-            var correctParts = _selector.GetCorrectAreas(Cells, _solution).Select(cell => _cellToGrids[cell]);
-            FieldPrinter.PrintCells(correctParts, FieldPrinter.SolvedPartBrush);
-        }
-
-        private void BrushIncorrect()
-        {
-            for (int i = 0; i < Cells.Count; i++)
-            {
-                if (Cells[i].Value != _solution[i] && Cells[i].Value != 0)
-                    _cellToGrids[Cells[i]].Background = FieldPrinter.IncorrectNumberBrush;
-            }
-        }
+    }
+    enum Difficulty
+    {
+        Easy,
+        Normal,
+        Hard
     }
 }

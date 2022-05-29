@@ -74,6 +74,7 @@
     <Compile Include="Model\Generator\FieldGenerator.cs" />
     <Compile Include="Model\FieldSolver.cs" />
     <Compile Include="Model\Generator\HardFieldGenerator.cs" />
+    <Compile Include="Model\IBaseField.cs" />
     <Compile Include="Model\ICommand.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

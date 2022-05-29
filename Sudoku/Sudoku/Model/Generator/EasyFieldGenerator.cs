@@ -5,7 +5,7 @@ namespace Sudoku.Model.Generator
 {
     internal class EasyFieldGenerator : FieldGenerator
     {
-        public EasyFieldGenerator(List<Cell> cells, int cluesCount) : base(cells, cluesCount) { }
+        public EasyFieldGenerator(List<Cell> cells, int cluesCount = 30) : base(cells, cluesCount) { }
 
         protected override void CreatePattern()
         {
