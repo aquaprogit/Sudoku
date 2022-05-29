@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
@@ -103,7 +102,7 @@ namespace Sudoku
                     solve[listIndex].MouseLeftButtonUp += SolveGrid_MouseLeftButtonUp;
                 }
             }
-            _currentDifficulty = Difficulty.Hard;
+            _currentDifficulty = Difficulty.Easy;
             _field = new Field(3);
             _field.OnSolvingFinished += OnSolvingFinished;
             _field.OnFieldContentChanged += OnFieldContentChanged;
@@ -111,7 +110,11 @@ namespace Sudoku
             _toSolveField = new Field(0);
             _toSolveField.OnFieldContentChanged += OnSolveFieldContentChanged;
             _toSolveField.CellContentChanged += OnSolveCellContentChanged;
-            _field.GenerateNewField(_currentDifficulty);
+
+            for (int i = 0; i < 100; i++)
+            {
+                _field.GenerateNewField(_currentDifficulty);
+            }
 
             GameMode_Grid.Visibility = Visibility.Visible;
             SolveMode_Grid.Visibility = Visibility.Hidden;
@@ -240,6 +243,12 @@ namespace Sudoku
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             SwitchTabs();
+        }
+        private void DifficultyMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+            _currentDifficulty = (Difficulty)int.Parse(item.Tag.ToString());
+
         }
         #endregion
 

@@ -72,7 +72,7 @@
         <Grid Grid.Row="1">
             <Grid x:Name="GameMode_Grid"
                   VerticalAlignment="Stretch"
-                  Visibility="Hidden">
+                  Visibility="Visible">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="500" />
                     <RowDefinition Height="65" />
@@ -666,13 +666,29 @@
                                 <ToolTip Style="{StaticResource ToolTipStyle}"
                                          Content="Generate new field" />
                             </Button.ToolTip>
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <ContextMenu.Resources>
+                                        <Style TargetType="MenuItem">
+                                            <EventSetter Event="Click"
+                                                         Handler="DifficultyMenuItem_Click" />
+                                        </Style>
+                                    </ContextMenu.Resources>
+                                    <MenuItem Tag="0"
+                                              Header="Easy" />
+                                    <MenuItem Tag="1"
+                                              Header="Normal" />
+                                    <MenuItem Tag="2"
+                                              Header="Hard" />
+                                </ContextMenu>
+                            </Button.ContextMenu>
                             <Image Source="/Assets/refresh.png" />
                         </Button>
                     </StackPanel>
                 </Grid>
             </Grid>
             <Grid x:Name="SolveMode_Grid"
-                  Visibility="Visible">
+                  Visibility="Hidden">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="500" />
                     <RowDefinition />

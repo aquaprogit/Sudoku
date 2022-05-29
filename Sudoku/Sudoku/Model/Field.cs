@@ -48,13 +48,13 @@ namespace Sudoku.Model
             switch (difficulty)
             {
                 case Difficulty.Easy:
-                    _generator = new EasyFieldGenerator(_cells);
+                    _generator = new EasyFieldGenerator(_cells, 35);
                     break;
                 case Difficulty.Normal:
-                    _generator = new HardFieldGenerator(_cells, 25);
+                    _generator = new HardFieldGenerator(_cells, 20);
                     break;
                 case Difficulty.Hard:
-                    _generator = new HardFieldGenerator(_cells, 20);
+                    _generator = new HardFieldGenerator(_cells, 15);
                     break;
             }
             _solution = _generator.GenerateMap();
