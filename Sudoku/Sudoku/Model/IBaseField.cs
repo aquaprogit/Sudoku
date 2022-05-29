@@ -9,6 +9,7 @@ namespace Sudoku.Model
     internal interface IBaseField
     {
         void MoveSelection(Direction dir);
+        void MoveSelection((int, int) coordinate);
         void TypeValue(int value, bool isSurmise);
         void Solve();
         void Clear();

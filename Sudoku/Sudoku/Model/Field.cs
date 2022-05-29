@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 using Sudoku.Model.Generator;
 
@@ -27,7 +29,7 @@ namespace Sudoku.Model
         public FieldSelector Selector { get; private set; }
         public event SolvingFinishedHandler OnSolvingFinished;
         public event FieldContentChangedHandler OnFieldContentChanged;
-
+        public event CellContentChangedHandler CellContentChanged;
         public Field(int hintsCount)
         {
             _cells = new List<Cell>(81);
@@ -48,15 +50,16 @@ namespace Sudoku.Model
                     _generator = new EasyFieldGenerator(_cells);
                     break;
                 case Difficulty.Normal:
-                    _generator = new HardFieldGenerator(_cells, 30);
+                    _generator = new HardFieldGenerator(_cells, 25);
                     break;
                 case Difficulty.Hard:
-                    _generator = new HardFieldGenerator(_cells, 25);
+                    _generator = new HardFieldGenerator(_cells, 20);
                     break;
             }
             _solution = _generator.GenerateMap();
             Selector.SelectedCell = _cells.Find(c => c.Coordinate == (4, 4));
             HintsLeft = _hintsMaxCount;
+            OnFieldContentChanged?.Invoke();
         }
 
         public void MoveSelection(Direction dir)
@@ -64,13 +67,17 @@ namespace Sudoku.Model
             Selector.MoveSelection(dir, _cells);
             OnFieldContentChanged?.Invoke();
         }
-
+        public void MoveSelection((int, int) coordinate)
+        {
+            Selector.SelectedCell = _cells.First(cell => cell.Coordinate == coordinate);
+            OnFieldContentChanged?.Invoke();
+        }
         public void TypeValue(int value, bool isSurmise = false)
         {
             TypeValueCommand command = new TypeValueCommand(Selector.SelectedCell);
             command.Execute(value, isSurmise);
             _commandLog.Push(command);
-            OnFieldContentChanged?.Invoke();
+            Cell_ContentChanged(Selector.SelectedCell);
             if (IsSolved)
                 OnSolvingFinished?.Invoke();
         }
@@ -101,16 +108,40 @@ namespace Sudoku.Model
                     _cells[index].Value = _solution[index];
             }
         }
-        public void Solve()
+        void IBaseField.Solve()
         {
             _cells.ForEach(cell => cell.LockValue());
             if (_solver.Solve(_cells, false, false) == false)
                 throw new ArgumentException("The field has more than one solution");
         }
-        public void Clear()
+        void IBaseField.Clear()
         {
             _cells.ForEach(cell => cell.UnlockValue());
         }
+
+        public List<Cell> GetSameValues()
+        {
+            return Selector.GetSameValues(_cells);
+        }
+        public List<Cell> GetAllLinked()
+        {
+            return Selector.GetAllLinked(_cells);
+        }
+        public List<Cell> GetCorrectAreas()
+        {
+            return Selector.GetCorrectAreas(_cells, _solution);
+        }
+        public List<Cell> GetIncorrectCells()
+        {
+            List<Cell> cells = new List<Cell>();
+            for (int index = 0; index < _cells.Count; index++)
+            {
+                if (_cells[index].Value != _solution[index])
+                    cells.Add(_cells[index]);
+            }
+            return cells;
+        }
+
         private void BaseCellInit()
         {
             int cubeIndex = 0;
@@ -124,10 +155,9 @@ namespace Sudoku.Model
                 _cells.Add(cell);
             }
         }
-
         private void Cell_ContentChanged(Cell obj)
         {
-            OnFieldContentChanged?.Invoke();
+            CellContentChanged?.Invoke(obj);
         }
     }
     enum Difficulty
