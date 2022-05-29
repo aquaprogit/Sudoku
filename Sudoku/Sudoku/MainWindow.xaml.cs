@@ -75,6 +75,7 @@ namespace Sudoku
             get => _autoCheck;
             set {
                 _autoCheck = value;
+                OnFieldContentChanged();
                 (AutoMode_Button.Content as Image).Source = _autoCheck ? _automodeImageEnable : _automodeImageDisable;
             }
         }
@@ -108,6 +109,10 @@ namespace Sudoku
             _field.CellContentChanged += OnCellContentChanged;
             _toSolveField = new Field(0);
             _field.GenerateNewField(_currentDifficulty);
+
+            GameMode_Grid.Visibility = Visibility.Visible;
+            SolveMode_Grid.Visibility = Visibility.Hidden;
+            Playground.Focus();
         }
 
         private void GameGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -115,7 +120,6 @@ namespace Sudoku
             Grid grid = (Grid)sender;
             _field.MoveSelection(_gameGrids.First(p => p.Value == grid).Key);
         }
-
         private void OnCellContentChanged(Cell cell)
         {
             var tb = _gameGrids[cell.Coordinate].FindVisualChildren<TextBlock>().First();
@@ -123,8 +127,9 @@ namespace Sudoku
             tb.FontSize = cell.Value == 0 ? 13 : 24;
             tb.Opacity = cell.Value == 0 ? 0.8 : 1;
             tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
+            if (_field.Selector.SelectedCell != null)
+                OnFieldContentChanged();
         }
-
         private void InitBitmapImage(ref BitmapImage image, string source)
         {
             if (image == null)
@@ -133,11 +138,11 @@ namespace Sudoku
             image.UriSource = new Uri(source, UriKind.Relative);
             image.EndInit();
         }
-
         private void OnFieldContentChanged()
         {
             FieldPrinter.PrintCells(_gameGrids.Values, FieldPrinter.WhiteBrush);
             BrushLinked();
+            BrushSameValue();
             if (AutoCheck)
                 BrushSolved();
             _gameGrids[_field.Selector.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
@@ -147,17 +152,18 @@ namespace Sudoku
         private void BrushLinked()
         {
             var linked = _field.GetAllLinked().Select(cell => _gameGrids[cell.Coordinate]);
-            var sameToSelected = _field.GetSameValues().Select(cell => _gameGrids[cell.Coordinate]);
             FieldPrinter.PrintCells(linked, FieldPrinter.PrintedBrush);
+        }
+        private void BrushSameValue()
+        {
+            var sameToSelected = _field.GetSameValues().Select(cell => _gameGrids[cell.Coordinate]);
             FieldPrinter.PrintCells(sameToSelected, FieldPrinter.SameNumberBrush);
         }
-
         private void BrushSolved()
         {
             var correctParts = _field.GetCorrectAreas().Select(cell => _gameGrids[cell.Coordinate]);
             FieldPrinter.PrintCells(correctParts, FieldPrinter.SolvedPartBrush);
         }
-
         private void BrushIncorrect()
         {
             _field.GetIncorrectCells().ForEach(cell => _gameGrids[cell.Coordinate].Background = FieldPrinter.IncorrectNumberBrush);
@@ -179,6 +185,10 @@ namespace Sudoku
             if (e.Key == Key.Tab)
             {
                 SwitchTabs();
+            }
+            else if (e.Key == Key.E)
+            {
+                IsSurmiseMode = !IsSurmiseMode;
             }
             else
             {
@@ -258,7 +268,7 @@ namespace Sudoku
             {
                 _toSolveField.Solve();
             }
-            catch(ArgumentException ex)
+            catch (ArgumentException ex)
             {
                 MyMessageBox.Show(ex.Message);
             }

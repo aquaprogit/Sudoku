@@ -113,7 +113,7 @@ namespace Sudoku.Model
             }
             return transposed;
         }
-        public Cell CellForHint(List<Cell> cells)
+        public Cell CellForHint(List<Cell> cells, List<int> key)
         {
             if (cells.Any(c => c.Surmises?.Count > 0))
                 return cells.OrderByDescending(c => c.Surmises?.Count).First();
@@ -121,9 +121,10 @@ namespace Sudoku.Model
             var rows = GetAreas(Area.Row, cells);
             var cols = GetAreas(Area.Column, cells);
             var squares = GetAreas(Area.Square, cells);
-            Cell withLessNeighbors = cells.Where(c => c.IsGenerated == false).First();
+            var allPosible = cells.Where(c => c.Value != key[cells.IndexOf(c)] || c.Value == 0);
+            Cell withLessNeighbors = allPosible.First();
             int minCount = 81;
-            foreach (Cell cell in cells)
+            foreach (Cell cell in allPosible)
             {
                 var thisRow = rows.Find(r => r.Contains(cell)).Where(c => c.Value != 0 && c.Equals(cell) == false);
                 var thisCol = cols.Find(c => c.Contains(cell)).Where(c => c.Value != 0 && c.Equals(cell) == false);

@@ -95,7 +95,7 @@ namespace Sudoku.Model
         {
             if (IsSolved == false && HintsLeft > 0)
             {
-                Cell toShow = Selector.CellForHint(_cells);
+                Cell toShow = Selector.CellForHint(_cells, _solution);
                 int index = _cells.IndexOf(toShow);
                 toShow.Value = _solution[index];
             }
@@ -136,7 +136,7 @@ namespace Sudoku.Model
             List<Cell> cells = new List<Cell>();
             for (int index = 0; index < _cells.Count; index++)
             {
-                if (_cells[index].Value != _solution[index])
+                if (_cells[index].Value != 0 && _cells[index].Value != _solution[index])
                     cells.Add(_cells[index]);
             }
             return cells;
