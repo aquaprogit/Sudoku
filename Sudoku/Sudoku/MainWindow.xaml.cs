@@ -100,6 +100,7 @@ namespace Sudoku
                     _gameGrids.Add((cubeIndex, innerIndex), game[listIndex]);
                     game[listIndex].MouseLeftButtonUp += GameGrid_MouseLeftButtonUp;
                     _solveGrids.Add((cubeIndex, innerIndex), solve[listIndex]);
+                    solve[listIndex].MouseLeftButtonUp += SolveGrid_MouseLeftButtonUp;
                 }
             }
             _currentDifficulty = Difficulty.Hard;
@@ -108,11 +109,41 @@ namespace Sudoku
             _field.OnFieldContentChanged += OnFieldContentChanged;
             _field.CellContentChanged += OnCellContentChanged;
             _toSolveField = new Field(0);
+            _toSolveField.OnFieldContentChanged += OnSolveFieldContentChanged;
+            _toSolveField.CellContentChanged += OnSolveCellContentChanged;
             _field.GenerateNewField(_currentDifficulty);
 
             GameMode_Grid.Visibility = Visibility.Visible;
             SolveMode_Grid.Visibility = Visibility.Hidden;
             Playground.Focus();
+            OnSolveFieldContentChanged();
+        }
+
+        private void OnCellContentChanged(Cell cell)
+        {
+            UpdateCell(_field, cell, _gameGrids, OnFieldContentChanged);
+        }
+        private void OnSolveCellContentChanged(Cell cell)
+        {
+            UpdateCell((Field)_toSolveField, cell, _solveGrids, OnSolveFieldContentChanged);
+        }
+
+        private void OnFieldContentChanged()
+        {
+            FieldPrinter.PrintCells(_gameGrids.Values, FieldPrinter.WhiteBrush);
+            BrushLinked(_field, _gameGrids);
+            BrushSameValue();
+            if (AutoCheck)
+                BrushSolved();
+            _gameGrids[_field.Selector.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
+            if (AutoCheck)
+                BrushIncorrect();
+        }
+        private void OnSolveFieldContentChanged()
+        {
+            FieldPrinter.PrintCells(_solveGrids.Values, FieldPrinter.WhiteBrush);
+            BrushLinked((Field)_toSolveField, _solveGrids);
+            _solveGrids[((Field)_toSolveField).Selector.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
         }
 
         private void GameGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -120,16 +151,12 @@ namespace Sudoku
             Grid grid = (Grid)sender;
             _field.MoveSelection(_gameGrids.First(p => p.Value == grid).Key);
         }
-        private void OnCellContentChanged(Cell cell)
+        private void SolveGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            var tb = _gameGrids[cell.Coordinate].FindVisualChildren<TextBlock>().First();
-            tb.Text = cell.GetCellContent();
-            tb.FontSize = cell.Value == 0 ? 13 : 24;
-            tb.Opacity = cell.Value == 0 ? 0.8 : 1;
-            tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
-            if (_field.Selector.SelectedCell != null)
-                OnFieldContentChanged();
+            Grid grid = (Grid)sender;
+            _toSolveField.MoveSelection(_solveGrids.First(p => p.Value == grid).Key);
         }
+
         private void InitBitmapImage(ref BitmapImage image, string source)
         {
             if (image == null)
@@ -138,20 +165,20 @@ namespace Sudoku
             image.UriSource = new Uri(source, UriKind.Relative);
             image.EndInit();
         }
-        private void OnFieldContentChanged()
+
+        private void UpdateCell(Field field, Cell cell, Dictionary<(int, int), Grid> grids, FieldContentChangedHandler handler)
         {
-            FieldPrinter.PrintCells(_gameGrids.Values, FieldPrinter.WhiteBrush);
-            BrushLinked();
-            BrushSameValue();
-            if (AutoCheck)
-                BrushSolved();
-            _gameGrids[_field.Selector.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
-            if (AutoCheck)
-                BrushIncorrect();
+            var tb = grids[cell.Coordinate].FindVisualChildren<TextBlock>().First();
+            tb.Text = cell.GetCellContent();
+            tb.FontSize = cell.Value == 0 ? 13 : 24;
+            tb.Opacity = cell.Value == 0 ? 0.8 : 1;
+            tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
+            if (field.Selector.SelectedCell != null)
+                handler();
         }
-        private void BrushLinked()
+        private void BrushLinked(Field field, Dictionary<(int, int), Grid> grids)
         {
-            var linked = _field.GetAllLinked().Select(cell => _gameGrids[cell.Coordinate]);
+            var linked = field.GetAllLinked().Select(cell => grids[cell.Coordinate]);
             FieldPrinter.PrintCells(linked, FieldPrinter.PrintedBrush);
         }
         private void BrushSameValue()
@@ -168,18 +195,30 @@ namespace Sudoku
         {
             _field.GetIncorrectCells().ForEach(cell => _gameGrids[cell.Coordinate].Background = FieldPrinter.IncorrectNumberBrush);
         }
+
         private void OnSolvingFinished()
         {
             if (MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
                 _field.GenerateNewField(_currentDifficulty);
         }
-        private void Playground_KeyUp(object sender, KeyEventArgs e)
+
+        private void SwitchTabs()
         {
-            if (_keysValues.Keys.Contains(e.Key))
-                _field.TypeValue(_keysValues[e.Key], IsSurmiseMode);
-            else if (_navigationKeys.Keys.Contains(e.Key))
-                _field.MoveSelection(_navigationKeys[e.Key]);
+            if (GameMode_Grid.Visibility != Visibility.Visible)
+            {
+                GameMode_Grid.Visibility = Visibility.Visible;
+                SolveMode_Grid.Visibility = Visibility.Hidden;
+                Playground.Focus();
+            }
+            else
+            {
+                SolveMode_Grid.Visibility = Visibility.Visible;
+                GameMode_Grid.Visibility = Visibility.Hidden;
+                SolveField.Focus();
+            }
         }
+
+        #region Common Control Methods
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Tab)
@@ -198,67 +237,54 @@ namespace Sudoku
                     Playground.Focus();
             }
         }
-        private void SurmiseModeButton_Click(object sender, RoutedEventArgs e)
-        {
-            IsSurmiseMode = !IsSurmiseMode;
-        }
-        private void Undo_Button_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                _field.Undo();
-            }
-            catch (InvalidOperationException)
-            {
-                MyMessageBox.Show("Nothing to undo.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            AutoCheck = !AutoCheck;
-        }
-        private void Hint_Button_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                _field.GiveHint();
-            }
-            catch (InvalidOperationException)
-            {
-                MyMessageBox.Show("No hints left.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-        private void Solve_Button_Click(object sender, RoutedEventArgs e)
-        {
-            _field.FinishSolving();
-        }
-        private void Regen_Button_Click(object sender, RoutedEventArgs e)
-        {
-            _field.GenerateNewField(Difficulty.Hard);
-        }
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             SwitchTabs();
         }
-        private void SwitchTabs()
+        #endregion
+
+        #region Game Control Methods
+        private void Playground_KeyUp(object sender, KeyEventArgs e)
         {
-            if (GameMode_Grid.Visibility == Visibility.Visible)
-            {
-                GameMode_Grid.Visibility = Visibility.Hidden;
-                SolveMode_Grid.Visibility = Visibility.Visible;
-                SolveField.Focus();
-            }
-            else
-            {
-                GameMode_Grid.Visibility = Visibility.Visible;
-                SolveMode_Grid.Visibility = Visibility.Hidden;
-                Playground.Focus();
-            }
+            if (_keysValues.Keys.Contains(e.Key))
+                _field.TypeValue(_keysValues[e.Key], IsSurmiseMode);
+            else if (_navigationKeys.Keys.Contains(e.Key))
+                _field.MoveSelection(_navigationKeys[e.Key]);
         }
+        private void SurmiseModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            IsSurmiseMode = !IsSurmiseMode;
+        }
+        private void UndoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_field.Undo() == false)
+                MyMessageBox.Show("Nothing to undo.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        private void AutoModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            AutoCheck = !AutoCheck;
+        }
+        private void HintButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_field.HintsLeft > 0)
+                _field.GiveHint();
+            else
+                MyMessageBox.Show("No hints left.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        private void SolveButton_Click(object sender, RoutedEventArgs e)
+        {
+            _field.FinishSolving();
+        }
+        private void RegenButton_Click(object sender, RoutedEventArgs e)
+        {
+            _field.GenerateNewField(_currentDifficulty);
+        }
+        #endregion
+        #region Solve Control Methods
         private void SolveField_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             if (_keysValues.Keys.Contains(e.Key))
-                _toSolveField.TypeValue(_keysValues[e.Key], IsSurmiseMode);
+                _toSolveField.TypeValue(_keysValues[e.Key], false);
             else if (_navigationKeys.Keys.Contains(e.Key))
                 _toSolveField.MoveSelection(_navigationKeys[e.Key]);
         }
@@ -277,6 +303,7 @@ namespace Sudoku
         {
             _toSolveField.Clear();
         }
+        #endregion
 
     }
 }

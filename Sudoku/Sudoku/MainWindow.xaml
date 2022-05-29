@@ -629,7 +629,7 @@
                             <Image Source="/Assets/edit_u.png" />
                         </Button>
                         <Button x:Name="AutoMode_Button"
-                                Click="Button_Click">
+                                Click="AutoModeButton_Click">
                             <Button.ToolTip>
                                 <ToolTip Style="{StaticResource ToolTipStyle}"
                                          Content="Auto-check mode" />
@@ -637,7 +637,7 @@
                             <Image Source="/Assets/search_u.png" />
                         </Button>
                         <Button x:Name="Undo_Button"
-                                Click="Undo_Button_Click">
+                                Click="UndoButton_Click">
                             <Button.ToolTip>
                                 <ToolTip Style="{StaticResource ToolTipStyle}"
                                          Content="Undo" />
@@ -645,7 +645,7 @@
                             <Image Source="/Assets/undo.png" />
                         </Button>
                         <Button x:Name="Hint_Button"
-                                Click="Hint_Button_Click">
+                                Click="HintButton_Click">
                             <Button.ToolTip>
                                 <ToolTip Style="{StaticResource ToolTipStyle}"
                                          Content="Give hint" />
@@ -653,7 +653,7 @@
                             <Image Source="/Assets/bulb_b.png" />
                         </Button>
                         <Button x:Name="Solve_Button"
-                                Click="Solve_Button_Click">
+                                Click="SolveButton_Click">
                             <Button.ToolTip>
                                 <ToolTip Style="{StaticResource ToolTipStyle}"
                                          Content="Finish solving" />
@@ -661,7 +661,7 @@
                             <Image Source="/Assets/solve.png" />
                         </Button>
                         <Button x:Name="Regen_Button"
-                                Click="Regen_Button_Click">
+                                Click="RegenButton_Click">
                             <Button.ToolTip>
                                 <ToolTip Style="{StaticResource ToolTipStyle}"
                                          Content="Generate new field" />
