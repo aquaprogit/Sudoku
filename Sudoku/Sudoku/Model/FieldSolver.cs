@@ -15,8 +15,7 @@ namespace Sudoku.Model
 
             for (int columnIndex = 0; columnIndex < columns.Count; columnIndex++)
                 for (int rowIndex = 0; rowIndex < columns[columnIndex].Count; rowIndex++)
-                    if (columns[columnIndex][rowIndex].IsGenerated)
-                        values[rowIndex, columnIndex] = columns[rowIndex][columnIndex].Value;
+                        values[columnIndex, rowIndex] = columns[columnIndex][rowIndex].Value;
 
             DancingLinksX.Sudoku sudoku = new DancingLinksX.Sudoku(values);
             bool result = sudoku.Solve(isSinglePossible);
@@ -24,8 +23,8 @@ namespace Sudoku.Model
             {
                 for (int columnIndex = 0; columnIndex < columns.Count; columnIndex++)
                     for (int rowIndex = 0; rowIndex < columns[columnIndex].Count; rowIndex++)
-                        if (columns[rowIndex][columnIndex].IsGenerated == false)
-                            columns[rowIndex][columnIndex].Value = values[rowIndex, columnIndex];
+                        if (columns[columnIndex][rowIndex].IsGenerated == false)
+                            columns[columnIndex][rowIndex].Value = values[columnIndex, rowIndex];
             }
             return result;
         }

@@ -7,7 +7,8 @@
         Title="Sudoku"
         WindowStartupLocation="CenterScreen"
         Height="650"
-        Width="550">
+        Width="550"
+        KeyUp="Window_KeyUp">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Border">
