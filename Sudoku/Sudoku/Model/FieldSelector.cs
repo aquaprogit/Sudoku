@@ -11,7 +11,15 @@ namespace Sudoku.Model
         private List<List<Cell>> _columns;
         private List<List<Cell>> _squares;
 
-        public Cell SelectedCell { get; set; }
+        private Cell _selectedCell;
+
+        public Cell SelectedCell { 
+            get => _selectedCell;
+            set {
+                if (_cells.Contains(value))
+                    _selectedCell = _cells.First(c => c.Coordinate == value.Coordinate);
+            }
+        }
 
         public void MoveSelection(Direction dir, List<Cell> cells)
         {
@@ -112,6 +120,30 @@ namespace Sudoku.Model
                 }
             }
             return transposed;
+        }
+        public Cell CellForHint(List<Cell> cells)
+        {
+            if (cells.Any(c => c.Surmises.Count > 0))
+                return cells.OrderByDescending(c => c.Surmises?.Count).First();
+
+            var rows = GetAreas(Area.Row, cells);
+            var cols = GetAreas(Area.Column, cells);
+            var squares = GetAreas(Area.Square, cells);
+            Cell withLessNeighbors = cells.First();
+            int minCount = 81;
+            foreach (Cell cell in cells)
+            {
+                var thisRow = rows.Find(r => r.Contains(cell)).Where(c => c.Value != 0 && c.Equals(cell) == false);
+                var thisCol = cols.Find(c => c.Contains(cell)).Where(c => c.Value != 0 && c.Equals(cell) == false);
+                var thisSquare = squares.Find(s => s.Contains(cell)).Where(c => c.Value != 0 && c.Equals(cell) == false);
+                int curCount = thisRow.Count() + thisCol.Count() + thisSquare.Count();
+                if (curCount < minCount)
+                {
+                    minCount = curCount;
+                    withLessNeighbors = cell;
+                }
+            }
+            return withLessNeighbors;
         }
         private List<List<Cell>> GetRows(List<Cell> cells)
         {
