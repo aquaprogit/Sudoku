@@ -110,11 +110,7 @@ namespace Sudoku
             _toSolveField = new Field(0);
             _toSolveField.OnFieldContentChanged += OnSolveFieldContentChanged;
             _toSolveField.CellContentChanged += OnSolveCellContentChanged;
-
-            for (int i = 0; i < 100; i++)
-            {
-                _field.GenerateNewField(_currentDifficulty);
-            }
+            _field.GenerateNewField(_currentDifficulty);
 
             GameMode_Grid.Visibility = Visibility.Visible;
             SolveMode_Grid.Visibility = Visibility.Hidden;
@@ -138,7 +134,7 @@ namespace Sudoku
             BrushSameValue();
             if (AutoCheck)
                 BrushSolved();
-            _gameGrids[_field.Selector.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
+            _gameGrids[_field.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
             if (AutoCheck)
                 BrushIncorrect();
         }
@@ -146,7 +142,7 @@ namespace Sudoku
         {
             FieldPrinter.PrintCells(_solveGrids.Values, FieldPrinter.WhiteBrush);
             BrushLinked((Field)_toSolveField, _solveGrids);
-            _solveGrids[((Field)_toSolveField).Selector.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
+            _solveGrids[((Field)_toSolveField).SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
         }
 
         private void GameGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -176,7 +172,7 @@ namespace Sudoku
             tb.FontSize = cell.Value == 0 ? 13 : 24;
             tb.Opacity = cell.Value == 0 ? 0.8 : 1;
             tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
-            if (field.Selector.SelectedCell != null)
+            if (field.SelectedCell != null)
                 handler();
         }
         private void BrushLinked(Field field, Dictionary<(int, int), Grid> grids)
@@ -248,7 +244,6 @@ namespace Sudoku
         {
             MenuItem item = (MenuItem)sender;
             _currentDifficulty = (Difficulty)int.Parse(item.Tag.ToString());
-
         }
         #endregion
 

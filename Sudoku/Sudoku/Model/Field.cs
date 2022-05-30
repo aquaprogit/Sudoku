@@ -19,14 +19,18 @@ namespace Sudoku.Model
         private FieldGenerator _generator;
         private FieldSolver _solver;
         private int _hintsMaxCount;
-
+        private FieldSelector _selector;
         private bool IsSolved => _cells.All(cell => {
             int index = _cells.IndexOf(cell);
             return cell.Value == _solution[index];
         });
 
         public int HintsLeft { get; private set; }
-        public FieldSelector Selector { get; private set; }
+        public Cell SelectedCell {
+            get => _selector.SelectedCell;
+            private set => _selector.SelectedCell = value;
+        }
+
         public event SolvingFinishedHandler OnSolvingFinished;
         public event FieldContentChangedHandler OnFieldContentChanged;
         public event CellContentChangedHandler CellContentChanged;
@@ -38,9 +42,9 @@ namespace Sudoku.Model
             _commandLog = new Stack<ICommand>();
             _hintsMaxCount = hintsCount;
             HintsLeft = hintsCount;
-            Selector = new FieldSelector();
+            _selector = new FieldSelector();
             BaseCellInit();
-            Selector.SelectedCell = _cells.Find(c => c.Coordinate == (4, 4));
+            SelectedCell = _cells.Find(c => c.Coordinate == (4, 4));
         }
 
         public void GenerateNewField(Difficulty difficulty)
@@ -64,20 +68,20 @@ namespace Sudoku.Model
 
         public void MoveSelection(Direction dir)
         {
-            Selector.MoveSelection(dir, _cells);
+            _selector.MoveSelection(dir, _cells);
             OnFieldContentChanged?.Invoke();
         }
         public void MoveSelection((int, int) coordinate)
         {
-            Selector.SelectedCell = _cells.First(cell => cell.Coordinate == coordinate);
+            SelectedCell = _cells.First(cell => cell.Coordinate == coordinate);
             OnFieldContentChanged?.Invoke();
         }
         public void TypeValue(int value, bool isSurmise = false)
         {
-            TypeValueCommand command = new TypeValueCommand(Selector.SelectedCell);
+            TypeValueCommand command = new TypeValueCommand(SelectedCell);
             command.Execute(value, isSurmise);
             _commandLog.Push(command);
-            Cell_ContentChanged(Selector.SelectedCell);
+            Cell_ContentChanged(SelectedCell);
             if (_solution.Count != 0 && IsSolved)
                 OnSolvingFinished?.Invoke();
         }
@@ -88,15 +92,15 @@ namespace Sudoku.Model
             ICommand command = _commandLog.Pop();
             Cell previousCell = command.Undo();
             Cell_ContentChanged(previousCell);
-            Selector.SelectedCell.Set(previousCell);
-            Cell_ContentChanged(Selector.SelectedCell);
+            SelectedCell.Set(previousCell);
+            Cell_ContentChanged(SelectedCell);
             return true;
         }
         public void GiveHint()
         {
             if (IsSolved == false && HintsLeft > 0)
             {
-                Cell toShow = Selector.CellForHint(_cells, _solution);
+                Cell toShow = _selector.CellForHint(_cells, _solution);
                 int index = _cells.IndexOf(toShow);
                 toShow.Value = _solution[index];
             }
@@ -121,15 +125,15 @@ namespace Sudoku.Model
 
         public List<Cell> GetSameValues()
         {
-            return Selector.GetSameValues(_cells);
+            return _selector.GetSameValues(_cells);
         }
         public List<Cell> GetAllLinked()
         {
-            return Selector.GetAllLinked(_cells);
+            return _selector.GetAllLinked(_cells);
         }
         public List<Cell> GetCorrectAreas()
         {
-            return Selector.GetCorrectAreas(_cells, _solution);
+            return _selector.GetCorrectAreas(_cells, _solution);
         }
         public List<Cell> GetIncorrectCells()
         {
