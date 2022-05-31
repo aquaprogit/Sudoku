@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -135,10 +136,10 @@ namespace Sudoku
             OnSolveFieldContentChanged();
 
 
-            var timer = new DispatcherTimer() {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-            timer.Tick += GameTime.UpdateCurrent;
+            var timer = new Timer(1000);
+            timer.Enabled = true;
+            timer.Elapsed += GameTime.UpdateCurrent;
+            timer.AutoReset = true;
             timer.Start();
         }
 
