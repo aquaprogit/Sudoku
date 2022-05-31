@@ -17,8 +17,6 @@ namespace Sudoku
     /// </summary>
     public partial class MainWindow : Window
     {
-        public GameTimer Timer { get; set; }
-
         private readonly Dictionary<Key, int> _keysValues = new Dictionary<Key, int>() {
             {Key.D0, 0},
             {Key.D1, 1},
@@ -52,12 +50,13 @@ namespace Sudoku
             { Key.A,     Direction.Left  },
             { Key.D,     Direction.Right }
         };
+        private readonly string _userPath = @"user_stats.json";
 
         private Field _field;
         private IBaseField _toSolveField;
+
         private bool _isSurmiseMode;
         private bool _autoCheck;
-        private readonly string _userPath = @"user_stats.json";
 
         private BitmapImage _surmiseImageEnable;
         private BitmapImage _surmiseImageDisable;
@@ -66,7 +65,14 @@ namespace Sudoku
 
         private Dictionary<(int, int), Grid> _gameGrids;
         private Dictionary<(int, int), Grid> _solveGrids;
-
+        internal GameTimer Timer { get; set; }
+        internal UserViewModel UserViewModel { get; set; }
+        internal Difficulty CurrentDifficulty {
+            get => UserViewModel.CurrentDifficulty;
+            set {
+                UserViewModel.CurrentDifficulty = value;
+            }
+        }
         public bool IsSurmiseMode {
             get => _isSurmiseMode;
             set {
@@ -83,13 +89,6 @@ namespace Sudoku
             }
         }
 
-        internal UserViewModel UserViewModel { get; set; }
-        internal Difficulty CurrentDifficulty {
-            get => UserViewModel.CurrentDifficulty;
-            set {
-                UserViewModel.CurrentDifficulty = value;
-            }
-        }
         public MainWindow()
         {
             Timer = new GameTimer();
@@ -110,19 +109,24 @@ namespace Sudoku
             _field.OnSolvingFinished += OnSolvingFinished;
             _field.OnFieldContentChanged += OnFieldContentChanged;
             _field.CellContentChanged += OnCellContentChanged;
+            GenerateNewField();
+
             _toSolveField = new Field(0);
             _toSolveField.OnFieldContentChanged += OnSolveFieldContentChanged;
             _toSolveField.CellContentChanged += OnSolveCellContentChanged;
-            _field.GenerateNewField(CurrentDifficulty);
 
             GameMode_Grid.Visibility = Visibility.Visible;
             SolveMode_Grid.Visibility = Visibility.Hidden;
             Playground.Focus();
             OnSolveFieldContentChanged();
 
+        }
+        #region Help methods
+        private void GenerateNewField()
+        {
+            _field.GenerateNewField(CurrentDifficulty);
             Timer.Start();
         }
-
         private void InitDictionary(List<Grid> grids, out Dictionary<(int, int), Grid> dict, MouseButtonEventHandler handler)
         {
             dict = new Dictionary<(int, int), Grid>();
@@ -137,12 +141,47 @@ namespace Sudoku
                 }
             }
         }
-
         private List<Grid> GetSmallGrids(Grid generalGrid)
         {
             return generalGrid.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
         }
-
+        private void InitBitmapImage(ref BitmapImage image, string source)
+        {
+            if (image == null)
+                image = new BitmapImage();
+            image.BeginInit();
+            image.UriSource = new Uri(source, UriKind.Relative);
+            image.EndInit();
+        }
+        private void UpdateCell(Field field, Cell cell, Dictionary<(int, int), Grid> grids, FieldContentChangedHandler handler)
+        {
+            var tb = grids[cell.Coordinate].FindVisualChildren<TextBlock>().First();
+            tb.Text = cell.GetCellContent();
+            tb.FontSize = cell.Value == 0 ? 13 : 24;
+            tb.Opacity = cell.Value == 0 ? 0.8 : 1;
+            tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
+            if (field.SelectedCell != null)
+                handler();
+        }
+        private void SwitchTabs()
+        {
+            if (GameMode_Grid.Visibility != Visibility.Visible)
+            {
+                GameMode_Grid.Visibility = Visibility.Visible;
+                SolveMode_Grid.Visibility = Visibility.Hidden;
+                Playground.Focus();
+                Timer.Resume();
+            }
+            else
+            {
+                SolveMode_Grid.Visibility = Visibility.Visible;
+                GameMode_Grid.Visibility = Visibility.Hidden;
+                SolveField.Focus();
+                Timer.Pause();
+            }
+        } 
+        #endregion
+        #region User Responsibility
         private List<Info> LoadUser()
         {
             if (File.Exists(_userPath) == false)
@@ -154,65 +193,9 @@ namespace Sudoku
         {
             string data = Newtonsoft.Json.JsonConvert.SerializeObject(User.Instance.Info, Newtonsoft.Json.Formatting.Indented);
             File.WriteAllText(_userPath, data);
-        }
-
-        private void OnCellContentChanged(Cell cell)
-        {
-            UpdateCell(_field, cell, _gameGrids, OnFieldContentChanged);
-        }
-        private void OnSolveCellContentChanged(Cell cell)
-        {
-            UpdateCell((Field)_toSolveField, cell, _solveGrids, OnSolveFieldContentChanged);
-        }
-
-        private void OnFieldContentChanged()
-        {
-            FieldPrinter.PrintCells(_gameGrids.Values, FieldPrinter.WhiteBrush);
-            BrushLinked(_field, _gameGrids);
-            BrushSameValue();
-            if (AutoCheck)
-                BrushSolved();
-            _gameGrids[_field.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
-            if (AutoCheck)
-                BrushIncorrect();
-        }
-        private void OnSolveFieldContentChanged()
-        {
-            FieldPrinter.PrintCells(_solveGrids.Values, FieldPrinter.WhiteBrush);
-            BrushLinked((Field)_toSolveField, _solveGrids);
-            _solveGrids[((Field)_toSolveField).SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
-        }
-
-        private void GameGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            Grid grid = (Grid)sender;
-            _field.MoveSelection(_gameGrids.First(p => p.Value == grid).Key);
-        }
-        private void SolveGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            Grid grid = (Grid)sender;
-            _toSolveField.MoveSelection(_solveGrids.First(p => p.Value == grid).Key);
-        }
-
-        private void InitBitmapImage(ref BitmapImage image, string source)
-        {
-            if (image == null)
-                image = new BitmapImage();
-            image.BeginInit();
-            image.UriSource = new Uri(source, UriKind.Relative);
-            image.EndInit();
-        }
-
-        private void UpdateCell(Field field, Cell cell, Dictionary<(int, int), Grid> grids, FieldContentChangedHandler handler)
-        {
-            var tb = grids[cell.Coordinate].FindVisualChildren<TextBlock>().First();
-            tb.Text = cell.GetCellContent();
-            tb.FontSize = cell.Value == 0 ? 13 : 24;
-            tb.Opacity = cell.Value == 0 ? 0.8 : 1;
-            tb.Foreground = cell.IsGenerated ? FieldPrinter.BlackBrush : FieldPrinter.NonGeneratedBrush;
-            if (field.SelectedCell != null)
-                handler();
-        }
+        } 
+        #endregion
+        #region Brush Responsibility
         private void BrushLinked(Field field, Dictionary<(int, int), Grid> grids)
         {
             var linked = field.GetAllLinked().Select(cell => grids[cell.Coordinate]);
@@ -231,37 +214,8 @@ namespace Sudoku
         private void BrushIncorrect()
         {
             _field.GetIncorrectCells().ForEach(cell => _gameGrids[cell.Coordinate].Background = FieldPrinter.IncorrectNumberBrush);
-        }
-
-        private void OnSolvingFinished(bool user)
-        {
-            TimeSpan result = Timer.Stop();
-            var messageBoxResult = MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-            if (messageBoxResult == MessageBoxResult.OK)
-            {
-                _field.GenerateNewField(CurrentDifficulty);
-                Timer.Start();
-            }
-            if (user)
-                User.Instance.RecordInfo(CurrentDifficulty, (int)result.TotalSeconds);
-        }
-
-        private void SwitchTabs()
-        {
-            if (GameMode_Grid.Visibility != Visibility.Visible)
-            {
-                GameMode_Grid.Visibility = Visibility.Visible;
-                SolveMode_Grid.Visibility = Visibility.Hidden;
-                Playground.Focus();
-            }
-            else
-            {
-                SolveMode_Grid.Visibility = Visibility.Visible;
-                GameMode_Grid.Visibility = Visibility.Hidden;
-                SolveField.Focus();
-            }
-        }
-
+        } 
+        #endregion
         #region Common Control Methods
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
@@ -285,6 +239,10 @@ namespace Sudoku
         {
             SwitchTabs();
         }
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            UnloadUser();
+        }
         private void DifficultyMenuItem_Click(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
@@ -292,6 +250,42 @@ namespace Sudoku
         }
         #endregion
 
+        #region GamePart
+        private void OnSolvingFinished(bool user)
+        {
+            TimeSpan result = Timer.Stop();
+            var messageBoxResult = MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+            if (messageBoxResult == MessageBoxResult.OK)
+            {
+                GenerateNewField();
+            }
+            if (user)
+                User.Instance.RecordInfo(CurrentDifficulty, (int)result.TotalSeconds);
+        }
+        private void GameGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Grid grid = (Grid)sender;
+            _field.MoveSelection(_gameGrids.First(p => p.Value == grid).Key);
+        }
+        private void OnCellContentChanged(Cell cell)
+        {
+            UpdateCell(_field, cell, _gameGrids, OnFieldContentChanged);
+        }
+        private void OnSolveCellContentChanged(Cell cell)
+        {
+            UpdateCell((Field)_toSolveField, cell, _solveGrids, OnSolveFieldContentChanged);
+        }
+        private void OnFieldContentChanged()
+        {
+            FieldPrinter.PrintCells(_gameGrids.Values, FieldPrinter.WhiteBrush);
+            BrushLinked(_field, _gameGrids);
+            BrushSameValue();
+            if (AutoCheck)
+                BrushSolved();
+            _gameGrids[_field.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
+            if (AutoCheck)
+                BrushIncorrect();
+        }
         #region Game Control Methods
         private void Playground_KeyUp(object sender, KeyEventArgs e)
         {
@@ -326,10 +320,23 @@ namespace Sudoku
         }
         private void RegenButton_Click(object sender, RoutedEventArgs e)
         {
-            _field.GenerateNewField(CurrentDifficulty);
-            Timer.Start();
+            GenerateNewField();
         }
         #endregion
+        #endregion
+
+        #region SolvePart
+        private void OnSolveFieldContentChanged()
+        {
+            FieldPrinter.PrintCells(_solveGrids.Values, FieldPrinter.WhiteBrush);
+            BrushLinked((Field)_toSolveField, _solveGrids);
+            _solveGrids[((Field)_toSolveField).SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
+        }
+        private void SolveGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Grid grid = (Grid)sender;
+            _toSolveField.MoveSelection(_solveGrids.First(p => p.Value == grid).Key);
+        }
         #region Solve Control Methods
         private void SolveField_PreviewKeyUp(object sender, KeyEventArgs e)
         {
@@ -353,11 +360,7 @@ namespace Sudoku
         {
             _toSolveField.Clear();
         }
+        #endregion 
         #endregion
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            UnloadUser();
-        }
     }
 }
