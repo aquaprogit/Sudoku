@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 using Sudoku.Model;
 using Sudoku.Model.UserData;
@@ -19,7 +18,7 @@ namespace Sudoku
     /// </summary>
     public partial class MainWindow : Window
     {
-        public GameTimer GameTime { get; set; }
+        public GameTimer Timer { get; set; }
 
         private readonly Dictionary<Key, int> _keysValues = new Dictionary<Key, int>() {
             {Key.D0, 0},
@@ -94,7 +93,7 @@ namespace Sudoku
         }
         public MainWindow()
         {
-            GameTime = new GameTimer();
+            Timer = new GameTimer();
             InitBitmapImage(ref _automodeImageDisable, "/Assets/search_u.png");
             InitBitmapImage(ref _automodeImageEnable, "/Assets/search_f.png");
             InitBitmapImage(ref _surmiseImageEnable, "/Assets/edit_f.png");
@@ -135,14 +134,8 @@ namespace Sudoku
             Playground.Focus();
             OnSolveFieldContentChanged();
 
-
-            var timer = new Timer(1000);
-            timer.Enabled = true;
-            timer.Elapsed += GameTime.UpdateCurrent;
-            timer.AutoReset = true;
-            timer.Start();
+            Timer.Start();
         }
-
 
         private List<Info> LoadUser()
         {
@@ -234,12 +227,15 @@ namespace Sudoku
 
         private void OnSolvingFinished(bool user)
         {
-            if (user)
+            var messageBoxResult = MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information);
+            Timer.Stop();
+            if (messageBoxResult == MessageBoxResult.OK)
             {
-                User.Instance.RecordInfo(CurrentDifficulty, (int)TimeSpan.Parse(GameTime.Time).TotalSeconds);
-                if (MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
-                    _field.GenerateNewField(CurrentDifficulty);
+                _field.GenerateNewField(CurrentDifficulty);
+                Timer.Start();
             }
+            if (user)
+                User.Instance.RecordInfo(CurrentDifficulty, (int)TimeSpan.Parse(Timer.Time).TotalSeconds);
         }
 
         private void SwitchTabs()
@@ -323,6 +319,7 @@ namespace Sudoku
         private void RegenButton_Click(object sender, RoutedEventArgs e)
         {
             _field.GenerateNewField(CurrentDifficulty);
+            Timer.Start();
         }
         #endregion
         #region Solve Control Methods

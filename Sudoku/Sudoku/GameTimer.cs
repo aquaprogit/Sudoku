@@ -7,33 +7,66 @@ namespace Sudoku
 {
     public class GameTimer : INotifyPropertyChanged
     {
-        private readonly DateTime _start;
-        private DateTime _current;
+        private Timer _timer;
+        private TimeSpan _current;
+        private bool _isEnabled;
 
-        public string Time
-        {
-            get
-            {
-                TimeSpan time = _current - _start;
-                return $"{time.Hours}:{time.Minutes}:{time.Seconds}";
+        public bool IsEnabled {
+            get {
+                return _isEnabled;
+            }
+            private set {
+                _isEnabled = value;
+                if (_isEnabled)
+                    _timer?.Start();
+                else
+                    _timer?.Stop();
+                OnPropertyChanged();
+            }
+        }
+        public string Time {
+            get {
+                return $"{_current.Hours.ToString().PadLeft(2, '0')}:" +
+                       $"{_current.Minutes.ToString().PadLeft(2, '0')}:" +
+                       $"{_current.Seconds.ToString().PadLeft(2, '0')}";
             }
         }
 
         public GameTimer()
         {
-            _start = DateTime.Now;
-            _current = _start;
+            _timer = new Timer(1000) {
+                Enabled = true,
+                AutoReset = true
+            };
+            _timer.Elapsed += (object a, ElapsedEventArgs e) => {
+                if (IsEnabled)
+                {
+                    _current += TimeSpan.FromSeconds(1);
+                    OnPropertyChanged(nameof(Time));
+                }
+            };
         }
 
-        public void UpdateCurrent(object unused, ElapsedEventArgs args)
+        public void Start()
         {
-            _current = DateTime.Now;
-            OnPropertyChanged(nameof(Time));
+            IsEnabled = true;
+            _current = TimeSpan.Zero;
         }
-
+        public void Stop()
+        {
+            IsEnabled = false;
+        }
+        public void Pause()
+        {
+            IsEnabled = false;
+        }
+        public void Resume()
+        {
+            IsEnabled = true;
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
