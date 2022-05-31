@@ -702,6 +702,8 @@
                             </Button.ContextMenu>
                             <Image Source="/Assets/refresh.png" />
                         </Button>
+                        <TextBlock x:Name="TextTimer"
+                                   Text="{Binding Path=Time}"/>
                     </StackPanel>
                 </Grid>
             </Grid>

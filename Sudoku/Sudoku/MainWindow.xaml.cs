@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,6 +20,8 @@ namespace Sudoku
     /// </summary>
     public partial class MainWindow : Window
     {
+        public GameTimer GameTime { get; set; }
+        
         private readonly Dictionary<Key, int> _keysValues = new Dictionary<Key, int>() {
             {Key.D0, 0},
             {Key.D1, 1},
@@ -92,6 +95,7 @@ namespace Sudoku
         }
         public MainWindow()
         {
+            GameTime = new GameTimer();
             InitBitmapImage(ref _automodeImageDisable, "/Assets/search_u.png");
             InitBitmapImage(ref _automodeImageEnable, "/Assets/search_f.png");
             InitBitmapImage(ref _surmiseImageEnable, "/Assets/edit_f.png");
@@ -114,6 +118,7 @@ namespace Sudoku
                 }
             }
             _field = new Field(3);
+            
             UserViewModel = new UserViewModel();
             DataContext = UserViewModel;
             LoadUser().ForEach(i => User.Instance.RecordInfo(i.Difficulty, (int)i.Time.TotalSeconds));
@@ -130,6 +135,12 @@ namespace Sudoku
             SolveMode_Grid.Visibility = Visibility.Hidden;
             Playground.Focus();
             OnSolveFieldContentChanged();
+
+
+            var timer = new Timer(1000);
+            timer.Elapsed += GameTime.UpdateCurrent;
+            timer.Enabled = true;
+            timer.Start();
         }
 
 
