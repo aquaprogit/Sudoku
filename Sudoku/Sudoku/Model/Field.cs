@@ -103,6 +103,7 @@ namespace Sudoku.Model
                 Cell toShow = _selector.CellForHint(_cells, _solution);
                 int index = _cells.IndexOf(toShow);
                 toShow.Value = _solution[index];
+                HintsLeft--;
             }
         }
         public void FinishSolving()

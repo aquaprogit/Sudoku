@@ -65,7 +65,7 @@ namespace Sudoku
 
         private Dictionary<(int, int), Grid> _gameGrids;
         private Dictionary<(int, int), Grid> _solveGrids;
-        internal GameTimer Timer { get; set; }
+        public GameTimer Timer { get; set; }
         internal UserViewModel UserViewModel { get; set; }
         internal Difficulty CurrentDifficulty {
             get => UserViewModel.CurrentDifficulty;
