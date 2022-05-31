@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,7 +19,7 @@ namespace Sudoku
     public partial class MainWindow : Window
     {
         public GameTimer GameTime { get; set; }
-        
+
         private readonly Dictionary<Key, int> _keysValues = new Dictionary<Key, int>() {
             {Key.D0, 0},
             {Key.D1, 1},
@@ -118,7 +116,7 @@ namespace Sudoku
                 }
             }
             _field = new Field(3);
-            
+
             UserViewModel = new UserViewModel();
             DataContext = UserViewModel;
             LoadUser().ForEach(i => User.Instance.RecordInfo(i.Difficulty, (int)i.Time.TotalSeconds));
@@ -137,9 +135,10 @@ namespace Sudoku
             OnSolveFieldContentChanged();
 
 
-            var timer = new Timer(1000);
-            timer.Elapsed += GameTime.UpdateCurrent;
-            timer.Enabled = true;
+            var timer = new DispatcherTimer() {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            timer.Tick += GameTime.UpdateCurrent;
             timer.Start();
         }
 
@@ -236,7 +235,7 @@ namespace Sudoku
         {
             if (user)
             {
-                User.Instance.RecordInfo(CurrentDifficulty, (int)_stopWatch.Elapsed.TotalSeconds);
+                User.Instance.RecordInfo(CurrentDifficulty, (int)TimeSpan.Parse(GameTime.Time).TotalSeconds);
                 if (MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
                     _field.GenerateNewField(CurrentDifficulty);
             }
