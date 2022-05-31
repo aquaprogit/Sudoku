@@ -12,9 +12,6 @@
         Width="900"
         KeyUp="Window_KeyUp"
         Closed="Window_Closed">
-    <Window.DataContext>
-        <local:UserViewModel />
-    </Window.DataContext>
     <Grid Margin="0,0,10,15">
         <Grid.Resources>
             <Style TargetType="{x:Type Border}">
@@ -1274,6 +1271,9 @@
                     </Style>
                 </StackPanel.Resources>
                 <Grid>
+                    <Grid.DataContext>
+                        <local:UserViewModel/>
+                    </Grid.DataContext>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
@@ -1284,6 +1284,9 @@
                                Grid.Column="1" />
                 </Grid>
                 <Grid>
+                    <Grid.DataContext>
+                        <local:UserViewModel/>
+                    </Grid.DataContext>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
@@ -1295,12 +1298,10 @@
                                Margin="10,0,0,0" />
                 </Grid>
                 <Grid Margin="0,100"
-                      HorizontalAlignment="Center">
-                    <Grid.DataContext>
-                        <local1:GameTimer />
-                    </Grid.DataContext>
+                      HorizontalAlignment="Center"
+                      DataContext="{Binding Path=GameTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local1:MainWindow}}">
                     <TextBlock x:Name="Timer_TextBlock"
-                               Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}" />
+                               Text="{Binding Path=Time}" />
                 </Grid>
             </StackPanel>
         </Grid>

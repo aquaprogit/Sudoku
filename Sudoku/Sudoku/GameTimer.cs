@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Timers;
 
 namespace Sudoku
 {
@@ -9,8 +10,10 @@ namespace Sudoku
         private readonly DateTime _start;
         private DateTime _current;
 
-        public string Time {
-            get {
+        public string Time
+        {
+            get
+            {
                 TimeSpan time = _current - _start;
                 return $"{time.Hours}:{time.Minutes}:{time.Seconds}";
             }
@@ -22,7 +25,7 @@ namespace Sudoku
             _current = _start;
         }
 
-        public void UpdateCurrent(object unused, EventArgs args)
+        public void UpdateCurrent(object unused, ElapsedEventArgs args)
         {
             _current = DateTime.Now;
             OnPropertyChanged(nameof(Time));
