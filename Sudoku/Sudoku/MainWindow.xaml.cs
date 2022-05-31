@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 using Sudoku.Model;
+using Sudoku.Model.UserData;
 
 namespace Sudoku
 {
@@ -56,7 +60,7 @@ namespace Sudoku
         private IBaseField _toSolveField;
         private bool _isSurmiseMode;
         private bool _autoCheck;
-        private Difficulty _currentDifficulty;
+        private readonly string _userPath = @"user_stats.json";
 
         private BitmapImage _surmiseImageEnable;
         private BitmapImage _surmiseImageDisable;
@@ -82,6 +86,13 @@ namespace Sudoku
             }
         }
 
+        internal UserViewModel UserViewModel { get; set; }
+        internal Difficulty CurrentDifficulty {
+            get => UserViewModel.CurrentDifficulty;
+            set {
+                UserViewModel.CurrentDifficulty = value;
+            }
+        }
         public MainWindow()
         {
             GameTime = new GameTimer();
@@ -106,15 +117,19 @@ namespace Sudoku
                     solve[listIndex].MouseLeftButtonUp += SolveGrid_MouseLeftButtonUp;
                 }
             }
-            _currentDifficulty = Difficulty.Easy;
             _field = new Field(3);
-            //_field.OnSolvingFinished += OnSolvingFinished;
+            
+            UserViewModel = new UserViewModel();
+            DataContext = UserViewModel;
+            LoadUser().ForEach(i => User.Instance.RecordInfo(i.Difficulty, (int)i.Time.TotalSeconds));
+            UserViewModel.CurrentDifficulty = CurrentDifficulty;
+            _field.OnSolvingFinished += OnSolvingFinished;
             _field.OnFieldContentChanged += OnFieldContentChanged;
             _field.CellContentChanged += OnCellContentChanged;
             _toSolveField = new Field(0);
             _toSolveField.OnFieldContentChanged += OnSolveFieldContentChanged;
             _toSolveField.CellContentChanged += OnSolveCellContentChanged;
-            _field.GenerateNewField(_currentDifficulty);
+            _field.GenerateNewField(CurrentDifficulty);
 
             GameMode_Grid.Visibility = Visibility.Visible;
             SolveMode_Grid.Visibility = Visibility.Hidden;
@@ -126,6 +141,18 @@ namespace Sudoku
             timer.Elapsed += GameTime.UpdateCurrent;
             timer.Enabled = true;
             timer.Start();
+        }
+
+
+        private List<Info> LoadUser()
+        {
+            string data = File.ReadAllText(_userPath);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<List<Info>>(data) ?? new List<Info>();
+        }
+        private void UnloadUser()
+        {
+            string data = Newtonsoft.Json.JsonConvert.SerializeObject(User.Instance.Info, Newtonsoft.Json.Formatting.Indented);
+            File.WriteAllText(_userPath, data);
         }
 
         private void OnCellContentChanged(Cell cell)
@@ -205,10 +232,14 @@ namespace Sudoku
             _field.GetIncorrectCells().ForEach(cell => _gameGrids[cell.Coordinate].Background = FieldPrinter.IncorrectNumberBrush);
         }
 
-        private void OnSolvingFinished()
+        private void OnSolvingFinished(bool user)
         {
-            if (MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
-                _field.GenerateNewField(_currentDifficulty);
+            if (user)
+            {
+                User.Instance.RecordInfo(CurrentDifficulty, (int)_stopWatch.Elapsed.TotalSeconds);
+                if (MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
+                    _field.GenerateNewField(CurrentDifficulty);
+            }
         }
 
         private void SwitchTabs()
@@ -253,7 +284,7 @@ namespace Sudoku
         private void DifficultyMenuItem_Click(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
-            _currentDifficulty = (Difficulty)int.Parse(item.Tag.ToString());
+            CurrentDifficulty = (Difficulty)int.Parse(item.Tag.ToString());
         }
         #endregion
 
@@ -291,7 +322,7 @@ namespace Sudoku
         }
         private void RegenButton_Click(object sender, RoutedEventArgs e)
         {
-            _field.GenerateNewField(_currentDifficulty);
+            _field.GenerateNewField(CurrentDifficulty);
         }
         #endregion
         #region Solve Control Methods
@@ -319,5 +350,9 @@ namespace Sudoku
         }
         #endregion
 
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            UnloadUser();
+        }
     }
 }
