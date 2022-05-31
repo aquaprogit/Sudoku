@@ -8,7 +8,7 @@ using Sudoku.Model.Generator;
 
 namespace Sudoku.Model
 {
-    public delegate void SolvingFinishedHandler();
+    public delegate void SolvingFinishedHandler(bool user);
     public delegate void FieldContentChangedHandler();
 
     internal class Field : IBaseField
@@ -83,7 +83,7 @@ namespace Sudoku.Model
             _commandLog.Push(command);
             Cell_ContentChanged(SelectedCell);
             if (_solution.Count != 0 && IsSolved)
-                OnSolvingFinished?.Invoke();
+                OnSolvingFinished?.Invoke(true);
         }
         public bool Undo()
         {
@@ -112,6 +112,7 @@ namespace Sudoku.Model
                 if (_cells[index].IsGenerated == false)
                     _cells[index].Value = _solution[index];
             }
+            OnSolvingFinished?.Invoke(false);
         }
         bool IBaseField.Solve()
         {
@@ -164,7 +165,7 @@ namespace Sudoku.Model
             CellContentChanged?.Invoke(obj);
         }
     }
-    enum Difficulty
+    public enum Difficulty
     {
         Easy,
         Normal,
