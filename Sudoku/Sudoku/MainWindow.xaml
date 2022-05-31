@@ -1270,10 +1270,10 @@
                                 Value="Consolas" />
                     </Style>
                 </StackPanel.Resources>
+                <StackPanel.DataContext>
+                    <local:UserViewModel />
+                </StackPanel.DataContext>
                 <Grid>
-                    <Grid.DataContext>
-                        <local:UserViewModel/>
-                    </Grid.DataContext>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
@@ -1284,9 +1284,6 @@
                                Grid.Column="1" />
                 </Grid>
                 <Grid>
-                    <Grid.DataContext>
-                        <local:UserViewModel/>
-                    </Grid.DataContext>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 using Sudoku.Model;
@@ -100,27 +99,14 @@ namespace Sudoku
             InitBitmapImage(ref _surmiseImageDisable, "/Assets/edit_u.png");
 
             InitializeComponent();
-            var game = Playground.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
-            var solve = SolveField.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
-            _gameGrids = new Dictionary<(int, int), Grid>();
-            _solveGrids = new Dictionary<(int, int), Grid>();
-            for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++)
-            {
-                for (int innerIndex = 0; innerIndex < 9; innerIndex++)
-                {
-                    int listIndex = cubeIndex * 9 + innerIndex;
-                    _gameGrids.Add((cubeIndex, innerIndex), game[listIndex]);
-                    game[listIndex].MouseLeftButtonUp += GameGrid_MouseLeftButtonUp;
-                    _solveGrids.Add((cubeIndex, innerIndex), solve[listIndex]);
-                    solve[listIndex].MouseLeftButtonUp += SolveGrid_MouseLeftButtonUp;
-                }
-            }
-            _field = new Field(3);
+            InitDictionary(GetSmallGrids(Playground), out _gameGrids, GameGrid_MouseLeftButtonUp);
+            InitDictionary(GetSmallGrids(SolveField), out _solveGrids, SolveGrid_MouseLeftButtonUp);
 
             UserViewModel = new UserViewModel();
             DataContext = UserViewModel;
             LoadUser().ForEach(i => User.Instance.RecordInfo(i.Difficulty, (int)i.Time.TotalSeconds));
-            UserViewModel.CurrentDifficulty = CurrentDifficulty;
+
+            _field = new Field(3);
             _field.OnSolvingFinished += OnSolvingFinished;
             _field.OnFieldContentChanged += OnFieldContentChanged;
             _field.CellContentChanged += OnCellContentChanged;
@@ -137,8 +123,30 @@ namespace Sudoku
             Timer.Start();
         }
 
+        private void InitDictionary(List<Grid> grids, out Dictionary<(int, int), Grid> dict, MouseButtonEventHandler handler)
+        {
+            dict = new Dictionary<(int, int), Grid>();
+
+            for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++)
+            {
+                for (int innerIndex = 0; innerIndex < 9; innerIndex++)
+                {
+                    int listIndex = cubeIndex * 9 + innerIndex;
+                    dict.Add((cubeIndex, innerIndex), grids[listIndex]);
+                    grids[listIndex].MouseLeftButtonUp += handler;
+                }
+            }
+        }
+
+        private List<Grid> GetSmallGrids(Grid generalGrid)
+        {
+            return generalGrid.FindVisualChildren<Grid>().Where(g => g.Height == 50).ToList();
+        }
+
         private List<Info> LoadUser()
         {
+            if (File.Exists(_userPath) == false)
+                File.WriteAllText(_userPath, "[]");
             string data = File.ReadAllText(_userPath);
             return Newtonsoft.Json.JsonConvert.DeserializeObject<List<Info>>(data) ?? new List<Info>();
         }
