@@ -64,6 +64,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GameTimer.cs" />
     <Compile Include="Model\DancingLinksX\DLX.cs" />
     <Compile Include="Model\DancingLinksX\ExactCover.cs" />
     <Compile Include="Model\DancingLinksX\ICSPSolver.cs" />
