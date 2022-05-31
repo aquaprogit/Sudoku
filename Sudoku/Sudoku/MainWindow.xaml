@@ -3,12 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Sudoku"
         mc:Ignorable="d"
         Title="Sudoku"
         WindowStartupLocation="CenterScreen"
         Height="650"
         Width="550"
-        KeyUp="Window_KeyUp">
+        KeyUp="Window_KeyUp"
+        DataContext="{Binding Path=GameTime, RelativeSource={RelativeSource Self}}"
+        >
     <Grid>
         <Grid.Resources>
             <Style TargetType="Border">
@@ -684,6 +687,8 @@
                             </Button.ContextMenu>
                             <Image Source="/Assets/refresh.png" />
                         </Button>
+                        <TextBlock x:Name="TextTimer"
+                                   Text="{Binding Path=Time}"/>
                     </StackPanel>
                 </Grid>
             </Grid>
