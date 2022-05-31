@@ -19,7 +19,8 @@ namespace Sudoku.Model.UserData
 
         private void Instance_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            OnPropertyChanged(nameof(AvarageTime));
+            if (e.PropertyName == "Info")
+                OnPropertyChanged(nameof(AvarageTime));
         }
 
         public Difficulty CurrentDifficulty {
@@ -32,7 +33,11 @@ namespace Sudoku.Model.UserData
         }
         public TimeSpan AvarageTime {
             get {
-                var result = User.Instance.Info.GroupBy(i => i.Difficulty).Select(g => new { difficulty = g.Key, avarage = g.Sum(a => (int)a.Time.TotalSeconds) / g.Count() });
+                var result = User.Instance.Info.GroupBy(i => i.Difficulty)
+                            .Select(g => new {
+                            difficulty = g.Key,
+                            avarage = g.Sum(a => (int)a.Time.TotalSeconds) / g.Count()
+                    });
                 int seconds = result.Count(a => a.difficulty == _currentDifficulty) > 0 ? result.FirstOrDefault(a => a.difficulty == _currentDifficulty).avarage : 0;
                 return TimeSpan.FromSeconds(seconds);
             }

@@ -52,9 +52,10 @@ namespace Sudoku
             IsEnabled = true;
             _current = TimeSpan.Zero;
         }
-        public void Stop()
+        public TimeSpan Stop()
         {
             IsEnabled = false;
+            return _current;
         }
         public void Pause()
         {

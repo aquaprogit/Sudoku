@@ -23,7 +23,11 @@ namespace Sudoku.Model.UserData
             _info.Add(new Info(difficulty, seconds));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Info"));
         }
-        public List<Info> Info => _info;
+        public List<Info> Info {
+            get {
+                return _info;
+            }
+        }
     }
 
     public class Info

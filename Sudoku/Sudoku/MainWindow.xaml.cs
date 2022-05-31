@@ -227,15 +227,15 @@ namespace Sudoku
 
         private void OnSolvingFinished(bool user)
         {
+            TimeSpan result = Timer.Stop();
             var messageBoxResult = MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information);
-            Timer.Stop();
             if (messageBoxResult == MessageBoxResult.OK)
             {
                 _field.GenerateNewField(CurrentDifficulty);
                 Timer.Start();
             }
             if (user)
-                User.Instance.RecordInfo(CurrentDifficulty, (int)TimeSpan.Parse(Timer.Time).TotalSeconds);
+                User.Instance.RecordInfo(CurrentDifficulty, (int)result.TotalSeconds);
         }
 
         private void SwitchTabs()
