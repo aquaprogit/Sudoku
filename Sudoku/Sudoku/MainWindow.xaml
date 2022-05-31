@@ -1270,9 +1270,6 @@
                                 Value="Consolas" />
                     </Style>
                 </StackPanel.Resources>
-                <StackPanel.DataContext>
-                    <local:UserViewModel />
-                </StackPanel.DataContext>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
