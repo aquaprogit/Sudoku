@@ -278,10 +278,10 @@ namespace Sudoku
         private void OnFieldContentChanged()
         {
             FieldPrinter.PrintCells(_gameGrids.Values, FieldPrinter.WhiteBrush);
-            BrushLinked(_field, _gameGrids);
-            BrushSameValue();
             if (AutoCheck)
                 BrushSolved();
+            BrushLinked(_field, _gameGrids);
+            BrushSameValue();
             _gameGrids[_field.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
             if (AutoCheck)
                 BrushIncorrect();
