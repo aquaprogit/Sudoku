@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -7,7 +8,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using Sudoku.Model;
+using Sudoku.Model.DancingLinksX;
 using Sudoku.Model.UserData;
 
 namespace Sudoku
@@ -168,6 +173,7 @@ namespace Sudoku
             if (GameMode_Grid.Visibility != Visibility.Visible)
             {
                 GameMode_Grid.Visibility = Visibility.Visible;
+                Stats_StackPanel.Visibility = Visibility.Visible;
                 SolveMode_Grid.Visibility = Visibility.Hidden;
                 Playground.Focus();
                 Timer.Resume();
@@ -176,10 +182,11 @@ namespace Sudoku
             {
                 SolveMode_Grid.Visibility = Visibility.Visible;
                 GameMode_Grid.Visibility = Visibility.Hidden;
+                Stats_StackPanel.Visibility = Visibility.Hidden;
                 SolveField.Focus();
                 Timer.Pause();
             }
-        } 
+        }
         #endregion
         #region User Responsibility
         private List<Info> LoadUser()
@@ -187,13 +194,34 @@ namespace Sudoku
             if (File.Exists(_userPath) == false)
                 File.WriteAllText(_userPath, "[]");
             string data = File.ReadAllText(_userPath);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<List<Info>>(data) ?? new List<Info>();
+            if (ValidateJSON(data))
+            {
+                return JsonConvert.DeserializeObject<List<Info>>(data) ?? new List<Info>();
+            }
+            else
+            {
+                File.WriteAllText(_userPath, "[]");
+                return new List<Info>();
+            }
+            bool ValidateJSON(string s)
+            {
+                try
+                {
+                    JToken.Parse(s);
+                    return true;
+                }
+                catch (JsonReaderException ex)
+                {
+                    Trace.WriteLine(ex);
+                    return false;
+                }
+            }
         }
         private void UnloadUser()
         {
-            string data = Newtonsoft.Json.JsonConvert.SerializeObject(User.Instance.Info, Newtonsoft.Json.Formatting.Indented);
+            string data = JsonConvert.SerializeObject(User.Instance.Info, Formatting.Indented);
             File.WriteAllText(_userPath, data);
-        } 
+        }
         #endregion
         #region Brush Responsibility
         private void BrushLinked(Field field, Dictionary<(int, int), Grid> grids)
@@ -214,7 +242,7 @@ namespace Sudoku
         private void BrushIncorrect()
         {
             _field.GetIncorrectCells().ForEach(cell => _gameGrids[cell.Coordinate].Background = FieldPrinter.IncorrectNumberBrush);
-        } 
+        }
         #endregion
         #region Common Control Methods
         private void Window_KeyUp(object sender, KeyEventArgs e)
@@ -226,6 +254,10 @@ namespace Sudoku
             else if (e.Key == Key.E)
             {
                 IsSurmiseMode = !IsSurmiseMode;
+            }
+            else if (e.Key == Key.C)
+            {
+                AutoCheck = !AutoCheck;
             }
             else
             {
@@ -247,6 +279,7 @@ namespace Sudoku
         {
             MenuItem item = (MenuItem)sender;
             CurrentDifficulty = (Difficulty)int.Parse(item.Tag.ToString());
+            GenerateNewField();
         }
         #endregion
 
@@ -278,9 +311,9 @@ namespace Sudoku
         private void OnFieldContentChanged()
         {
             FieldPrinter.PrintCells(_gameGrids.Values, FieldPrinter.WhiteBrush);
+            BrushLinked(_field, _gameGrids);
             if (AutoCheck)
                 BrushSolved();
-            BrushLinked(_field, _gameGrids);
             BrushSameValue();
             _gameGrids[_field.SelectedCell.Coordinate].Background = FieldPrinter.SelectedCellBrush;
             if (AutoCheck)
@@ -310,13 +343,25 @@ namespace Sudoku
         private void HintButton_Click(object sender, RoutedEventArgs e)
         {
             if (_field.HintsLeft > 0)
-                _field.GiveHint();
+            {
+                try
+                {
+                    _field.GiveHint();
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MyMessageBox.Show(ex.Message, "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
             else
+            {
                 MyMessageBox.Show("No hints left.", "Invalid operation error.", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         private void SolveButton_Click(object sender, RoutedEventArgs e)
         {
-            _field.FinishSolving();
+            if (MyMessageBox.Show("Are you sure you want to finish solving?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                _field.FinishSolving();
         }
         private void RegenButton_Click(object sender, RoutedEventArgs e)
         {
@@ -349,7 +394,11 @@ namespace Sudoku
         {
             try
             {
-                _toSolveField.Solve();
+                var sudokuResultState = _toSolveField.Solve();
+                if (sudokuResultState == SudokuResultState.HasTooManySolutions)
+                    MyMessageBox.Show("This field has more than one solution", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                else if (sudokuResultState == SudokuResultState.HasNoSolution)
+                    MyMessageBox.Show("This field has no solutions", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (ArgumentException ex)
             {
@@ -360,7 +409,7 @@ namespace Sudoku
         {
             _toSolveField.Clear();
         }
-        #endregion 
+        #endregion
         #endregion
     }
 }
