@@ -5,22 +5,36 @@ namespace Sudoku.Model.Generator
 {
     internal class EasyFieldGenerator : FieldGenerator
     {
+        /// <summary>
+        /// Initialize new instance of <see cref="EasyFieldGenerator"/>
+        /// </summary>
+        /// <param name="cells">Cells to fill</param>
+        /// <param name="cluesCount">Count of clues that has to be left</param>
         public EasyFieldGenerator(List<Cell> cells, int cluesCount = 30) : base(cells, cluesCount) { }
 
+        /// <summary>
+        /// Creates base pattern of field
+        /// </summary>
         protected override void CreatePattern()
         {
             FillBase();
             Shuffle();
         }
+        /// <summary>
+        /// Shuffles field area 
+        /// </summary>
         private void Shuffle()
         {
             for (int i = 0; i < 10; i++)
             {
                 ShuffleSmallArea((Area)_random.Next(0, 2));
             }
-                if (_random.Next(0, 4) == 0)
-                    Transpose();
+            if (_random.Next(0, 4) == 0)
+                Transpose();
         }
+        /// <summary>
+        /// Fills field with base pattern from 1 to 9 with offset in each row
+        /// </summary>
         private void FillBase()
         {
             var rows = _selector.GetAreas(Area.Square, _cells);
@@ -33,6 +47,10 @@ namespace Sudoku.Model.Generator
                 }
             }
         }
+        /// <summary>
+        /// Shuffles between each others rows and columns in their section 3*9 and 9*3 accordingly
+        /// </summary>
+        /// <param name="area"></param>
         private void ShuffleSmallArea(Area area)
         {
             if (area == Area.Square) return;
@@ -51,6 +69,9 @@ namespace Sudoku.Model.Generator
                 }
             }
         }
+        /// <summary>
+        /// Raplces rows with columns and columns with rows.
+        /// </summary>
         private void Transpose()
         {
             var transposed = _selector.Transpose(_cells);
