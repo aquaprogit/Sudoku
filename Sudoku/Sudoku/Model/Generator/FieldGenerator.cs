@@ -10,6 +10,7 @@ namespace Sudoku.Model.Generator
     {
         private int _cluesCount;
         protected FieldSelector _selector;
+        protected FieldSolver _solver;
         protected Random _random;
         protected List<Cell> _cells;
         protected List<int> _solution;
@@ -22,6 +23,7 @@ namespace Sudoku.Model.Generator
         {
             _cells = cells;
             _cluesCount = cluesCount;
+            _solver = new FieldSolver();
             _selector = new FieldSelector();
             _random = new Random();
         }

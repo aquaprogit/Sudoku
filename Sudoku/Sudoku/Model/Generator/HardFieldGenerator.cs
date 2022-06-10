@@ -5,7 +5,6 @@ namespace Sudoku.Model.Generator
 {
     internal class HardFieldGenerator : FieldGenerator
     {
-        private FieldSolver _solver;
         /// <summary>
         /// Initialize new instance of <see cref="HardFieldGenerator"/>
         /// </summary>
