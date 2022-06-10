@@ -11,22 +11,27 @@ namespace Sudoku.Model.DancingLinksX
         {
             Board = board;
         }
-        public bool Solve(bool isSinglePossible = true)
+        public SudokuResultState Solve(bool isSinglePossible = true)
         {
             var problem = Reduce(Board);
             var readOnlyCollection = problem.Solve(
                                 new DLX(), new SolverOptions { MaxSolutions = isSinglePossible ? 2 : 1 });
-            if (readOnlyCollection.Count != 1)
-                return false;
+
+            if (readOnlyCollection.Count > 1)
+                return SudokuResultState.HasTooManySolutions;
+            if (readOnlyCollection.Count == 0)
+                return SudokuResultState.HasNoSolution;
+
             var solution = readOnlyCollection.Single();
-            Augment(Board, solution);
-            return true;
+            Augment(solution);
+
+            return SudokuResultState.Solved;
 
         }
 
-        internal void Augment(int[,] board, ISet<int> solution)
+        internal void Augment(ISet<int> solution)
         {
-            int n2 = board.Length;
+            int n2 = Board.Length;
             int n = (int)Math.Sqrt(n2);
 
             foreach (int match in solution)
@@ -35,7 +40,7 @@ namespace Sudoku.Model.DancingLinksX
                 int column = match / n % n;
                 int number = match % n;
 
-                board[row, column] = number + 1;
+                Board[row, column] = number + 1;
             }
         }
 
@@ -88,5 +93,11 @@ namespace Sudoku.Model.DancingLinksX
 
             return problem;
         }
+    }
+    public enum SudokuResultState
+    {
+        Solved,
+        HasTooManySolutions,
+        HasNoSolution
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Sudoku.Model.DancingLinksX;
+
 namespace Sudoku.Model
 {
     internal class FieldSolver
     {
         private Random _random;
-        public bool Solve(List<Cell> _cells, bool clearField = true, bool isSinglePossible = true)
+        public SudokuResultState Solve(List<Cell> _cells, bool clearField = true, bool isSinglePossible = true)
         {
             _random = new Random();
             int[,] values = new int[9, 9];
@@ -18,7 +20,7 @@ namespace Sudoku.Model
                         values[columnIndex, rowIndex] = columns[columnIndex][rowIndex].Value;
 
             DancingLinksX.Sudoku sudoku = new DancingLinksX.Sudoku(values);
-            bool result = sudoku.Solve(isSinglePossible);
+            SudokuResultState result = sudoku.Solve(isSinglePossible);
             if (clearField == false)
             {
                 for (int columnIndex = 0; columnIndex < columns.Count; columnIndex++)

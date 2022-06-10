@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Input;
 
+using Sudoku.Model.DancingLinksX;
 using Sudoku.Model.Generator;
 
 namespace Sudoku.Model
@@ -98,6 +97,8 @@ namespace Sudoku.Model
         }
         public void GiveHint()
         {
+            if (IsSolved)
+                throw new InvalidOperationException("Field is already solved. Can not apply hint");
             if (IsSolved == false && HintsLeft > 0)
             {
                 Cell toShow = _selector.CellForHint(_cells, _solution);
@@ -115,10 +116,10 @@ namespace Sudoku.Model
             }
             OnSolvingFinished?.Invoke(false);
         }
-        bool IBaseField.Solve()
+        SudokuResultState IBaseField.Solve()
         {
             _cells.Where(c => c.Value != 0).ToList().ForEach(cell => cell.LockValue());
-            return _solver.Solve(_cells, false, false) != false;
+            return _solver.Solve(_cells, false, true);
         }
         void IBaseField.Clear()
         {

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Sudoku.Model.DancingLinksX;
+
 namespace Sudoku.Model.Generator
 {
     internal abstract class FieldGenerator
@@ -44,7 +46,7 @@ namespace Sudoku.Model.Generator
                 int previousValue = toRemove.Value;
 
                 toRemove.UnlockValue();
-                if (_solver.Solve(_cells) == false)
+                if (_solver.Solve(_cells) == SudokuResultState.HasTooManySolutions)
                 {
                     toRemove.Value = previousValue;
                     toRemove.LockValue();
