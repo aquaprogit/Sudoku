@@ -43,14 +43,16 @@ namespace Sudoku.Model
                 ? new List<Cell>()
                 : cells.Where(cell => cell.Value == SelectedCell.Value && cell != SelectedCell).ToList();
         }
-        public List<Cell> GetAllLinked(List<Cell> cells)
+        public List<Cell> GetAllLinked(List<Cell> cells, Cell cell = null)
         {
+            if (cell == null)
+                cell = SelectedCell;
             List<Cell> result = new List<Cell>();
             foreach (Area area in Enum.GetValues(typeof(Area)))
             {
-                result.AddRange(GetAreas(area, cells).First(list => list.Contains(SelectedCell)));
+                result.AddRange(GetAreas(area, cells).First(list => list.Contains(cell)));
             }
-            result.Remove(SelectedCell);
+            result.Remove(cell);
             return result;
         }
         public List<Cell> GetCorrectAreas(List<Cell> cells, List<int> key)
@@ -115,21 +117,22 @@ namespace Sudoku.Model
         }
         public Cell CellForHint(List<Cell> cells, List<int> key)
         {
-            if (cells.Any(c => c.Surmises?.Count > 0))
-                return cells.OrderByDescending(c => c.Surmises?.Count).First();
+            //With incorrect value
+            var incorrect = cells.Where(c => c.Value != key[cells.IndexOf(c)] && c.Value != 0).ToList();
+            if (incorrect.Count > 0)
+                return incorrect[new Random().Next(incorrect.Count)];
 
-            var rows = GetAreas(Area.Row, cells);
-            var cols = GetAreas(Area.Column, cells);
-            var squares = GetAreas(Area.Square, cells);
-            var allPosible = cells.Where(c => c.Value != key[cells.IndexOf(c)] || c.Value == 0);
+            //With less surmise count
+            if (cells.Any(c => c.Surmises?.Count > 0))
+                return cells.Where(c => c.Surmises?.Count != null && c.Surmises?.Count != 0).OrderByDescending(c => c.Surmises?.Count).First();
+            
+            //With less neighbors
+            var allPosible = cells.Where(c => c.Value == 0);
             Cell withLessNeighbors = allPosible.First();
             int minCount = 81;
             foreach (Cell cell in allPosible)
             {
-                var thisRow = rows.Find(r => r.Contains(cell)).Where(c => c.Value != 0 && c.Equals(cell) == false);
-                var thisCol = cols.Find(c => c.Contains(cell)).Where(c => c.Value != 0 && c.Equals(cell) == false);
-                var thisSquare = squares.Find(s => s.Contains(cell)).Where(c => c.Value != 0 && c.Equals(cell) == false);
-                int curCount = thisRow.Count() + thisCol.Count() + thisSquare.Count();
+                int curCount = GetAllLinked(cells, cell).Count(c => c.Value != 0 && c.Value == key[cells.IndexOf(c)]);
                 if (curCount < minCount)
                 {
                     minCount = curCount;
