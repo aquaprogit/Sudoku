@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -12,14 +13,23 @@ namespace Sudoku.Model
     internal delegate void ActHandler();
     internal static class Extensions
     {
+        /// <summary>
+        /// Measures method's time, taken to execute
+        /// </summary>
+        /// <param name="handler">Delegate of method which time should be measured</param>
         public static void Time(ActHandler handler)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
             handler.Invoke();
             sw.Stop();
-            Debug.WriteLine(handler.Method.Name + " time is: " + sw.ElapsedMilliseconds);
+            Debug.WriteLine(handler.Method.Name + " time is: " + Math.Round(sw.ElapsedMilliseconds / 1000D, 2) + " s.");
         }
+        /// <summary>
+        /// Converts <see cref="List{Cell}"/> of <see cref="Cell"/> to 2D array according to their placemnt on the field
+        /// </summary>
+        /// <param name="self">List of <see cref="Cell"/></param>
+        /// <returns>Matrix of <see cref="Cell"/> with their proper indexes</returns>
         public static Cell[,] To2DArray(this List<Cell> self)
         {
             Cell[,] cells = new Cell[9, 9];
@@ -35,6 +45,12 @@ namespace Sudoku.Model
             return cells;
 
         }
+        /// <summary>
+        /// Finds all visual children of element.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="depObj">Parent element to find children in</param>
+        /// <returns>Sequence of children of specified element</returns>
         public static IEnumerable<T> FindVisualChildren<T>(this DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)
@@ -53,6 +69,11 @@ namespace Sudoku.Model
                 }
             }
         }
+        /// <summary>
+        /// Gets major <see cref="Cell"/> content depending on it's <see cref="Cell.Value"/>
+        /// </summary>
+        /// <param name="cell"><see cref="Cell"/> to get content from</param>
+        /// <returns><see cref="Cell.Value"/> if it is not zero, otherwise elements of <see cref="Cell.Surmises"/> in matrix format</returns>
         public static string GetCellContent(this Cell cell)
         {
             if (cell == null) return null;
@@ -71,6 +92,11 @@ namespace Sudoku.Model
                 return cell.Value.ToString();
             }
         }
+        /// <summary>
+        /// Converts <see cref="Icon"/> to <see cref="ImageSource"/> using Windows support for creating image objects
+        /// </summary>
+        /// <param name="icon"><see cref="Icon"/> to convert from</param>
+        /// <returns><see cref="ImageSource"/> representation of Icon</returns>
         internal static ImageSource ToImageSource(this Icon icon)
         {
             ImageSource imageSource = Imaging.CreateBitmapSourceFromHIcon(
@@ -80,6 +106,11 @@ namespace Sudoku.Model
 
             return imageSource;
         }
+        /// <summary>
+        /// Sets to string accellerator if it has not already applied to string
+        /// </summary>
+        /// <param name="input">String to add accellerator to</param>
+        /// <returns>String with keyboard accellerator</returns>
         internal static string TryAddKeyboardAccellerator(this string input)
         {
             const string ACCELLERATOR = "_";
