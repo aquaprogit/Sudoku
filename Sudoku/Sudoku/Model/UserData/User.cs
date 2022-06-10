@@ -9,31 +9,33 @@ namespace Sudoku.Model.UserData
     public class User : INotifyPropertyChanged
     {
         private static User _instance;
-        [JsonRequired] private List<Info> _info;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        [JsonRequired]
+        private List<Info> _info;
         private User()
         {
             _info = new List<Info>();
         }
-        [JsonIgnore] public static User Instance => _instance ?? (_instance = new User());
-        public void RecordInfo(Difficulty difficulty, int seconds)
-        {
-            _info.Add(new Info(difficulty, seconds));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Info"));
-        }
+        [JsonIgnore]
+        public static User Instance => _instance ?? (_instance = new User());
         public List<Info> Info {
             get {
                 return _info;
             }
         }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void RecordInfo(Difficulty difficulty, int seconds)
+        {
+            _info.Add(new Info(difficulty, seconds));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Info"));
+        }
     }
 
     public class Info
     {
-        [JsonRequired] private Difficulty _difficulty;
-        [JsonRequired] private TimeSpan _seconds;
+        [JsonRequired]
+        private Difficulty _difficulty;
+        [JsonRequired]
+        private TimeSpan _seconds;
 
         public Info(Difficulty difficulty, int seconds)
         {
@@ -41,7 +43,9 @@ namespace Sudoku.Model.UserData
             _seconds = new TimeSpan(0, 0, seconds);
         }
 
-        [JsonIgnore] public Difficulty Difficulty { get => _difficulty; }
-        [JsonIgnore] public TimeSpan Time { get => _seconds; }
+        [JsonIgnore]
+        public Difficulty Difficulty { get => _difficulty; }
+        [JsonIgnore]
+        public TimeSpan Time { get => _seconds; }
     }
 }
