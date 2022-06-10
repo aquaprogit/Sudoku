@@ -1,19 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Sudoku.Model.Generator
 {
     internal class HardFieldGenerator : FieldGenerator
     {
-        public HardFieldGenerator(List<Cell> cells, int cluesCount) : base(cells, cluesCount) { }
-
+        private FieldSolver _solver;
+        /// <summary>
+        /// Initialize new instance of <see cref="HardFieldGenerator"/>
+        /// </summary>
+        /// <param name="cells">Cells to fill</param>
+        /// <param name="cluesCount">Count of clues that has to be left</param>
+        public HardFieldGenerator(List<Cell> cells, int cluesCount) : base(cells, cluesCount)
+        {
+            _solver = new FieldSolver();
+        }
+        /// <summary>
+        /// Creates base pattern of field
+        /// </summary>
         protected override void CreatePattern()
         {
             FillCenter();
             FillOtherCells();
         }
-
         private void FillCenter()
         {
             var center = _selector.GetAreas(Area.Square, _cells)[4];

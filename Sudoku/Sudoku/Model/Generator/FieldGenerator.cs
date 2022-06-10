@@ -9,20 +9,26 @@ namespace Sudoku.Model.Generator
     internal abstract class FieldGenerator
     {
         private int _cluesCount;
-
-        protected FieldSolver _solver;
         protected FieldSelector _selector;
         protected Random _random;
         protected List<Cell> _cells;
         protected List<int> _solution;
+        /// <summary>
+        /// Initialize new instance of <see cref="FieldGenerator"/>
+        /// </summary>
+        /// <param name="cells">Cells to fill</param>
+        /// <param name="cluesCount">Count of clues that has to be left</param>
         public FieldGenerator(List<Cell> cells, int cluesCount)
         {
             _cells = cells;
             _cluesCount = cluesCount;
             _selector = new FieldSelector();
-            _solver = new FieldSolver();
             _random = new Random();
         }
+        /// <summary>
+        /// Generates new values for cells
+        /// </summary>
+        /// <returns>Solution key of generated map</returns>
         public List<int> GenerateMap()
         {
             _cells.ForEach(c => c.UnlockValue());
@@ -32,7 +38,13 @@ namespace Sudoku.Model.Generator
             LeaveCluesOnly();
             return _solution;
         }
+        /// <summary>
+        /// Creates base pattern of field
+        /// </summary>
         protected abstract void CreatePattern();
+        /// <summary>
+        /// Removes all cells' values except specified count of clues
+        /// </summary>
         protected void LeaveCluesOnly()
         {
             int countOfRemoves = 81 - _cluesCount % 81;
