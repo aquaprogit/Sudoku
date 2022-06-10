@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
+using Sudoku.Model;
 
 namespace Sudoku
 {
@@ -18,27 +17,22 @@ namespace Sudoku
             get => Title;
             set => Title = value;
         }
-
         internal string Message {
             get => TextBlock_Message.Text;
             set => TextBlock_Message.Text = value;
         }
-
         internal string OkButtonText {
             get => Label_Ok.Content.ToString();
             set => Label_Ok.Content = value.TryAddKeyboardAccellerator();
         }
-
         internal string CancelButtonText {
             get => Label_Cancel.Content.ToString();
             set => Label_Cancel.Content = value.TryAddKeyboardAccellerator();
         }
-
         internal string YesButtonText {
             get => Label_Yes.Content.ToString();
             set => Label_Yes.Content = value.TryAddKeyboardAccellerator();
         }
-
         internal string NoButtonText {
             get => Label_No.Content.ToString();
             set => Label_No.Content = value.TryAddKeyboardAccellerator();
@@ -62,7 +56,6 @@ namespace Sudoku
             Image_MessageBox.Visibility = Visibility.Collapsed;
             DisplayButtons(MessageBoxButton.OK);
         }
-
         internal MyMessageBox(string message, string caption, MessageBoxButton button)
         {
             InitializeComponent();
@@ -73,7 +66,6 @@ namespace Sudoku
 
             DisplayButtons(button);
         }
-
         internal MyMessageBox(string message, string caption, MessageBoxImage image)
         {
             InitializeComponent();
@@ -83,7 +75,6 @@ namespace Sudoku
             DisplayImage(image);
             DisplayButtons(MessageBoxButton.OK);
         }
-
         internal MyMessageBox(string message, string caption, MessageBoxButton button, MessageBoxImage image)
         {
             InitializeComponent();
@@ -120,7 +111,6 @@ namespace Sudoku
             }
             HideExept(dependencyButton[button]);
         }
-
         private void DisplayImage(MessageBoxImage image)
         {
             string path;
@@ -144,25 +134,21 @@ namespace Sudoku
             Image_MessageBox.Source = new BitmapImage(new Uri(path, UriKind.Relative));
             Image_MessageBox.Visibility = Visibility.Visible;
         }
-
         private void Button_OK_Click(object sender, RoutedEventArgs e)
         {
             Result = MessageBoxResult.OK;
             Close();
         }
-
         private void Button_Cancel_Click(object sender, RoutedEventArgs e)
         {
             Result = MessageBoxResult.Cancel;
             Close();
         }
-
         private void Button_Yes_Click(object sender, RoutedEventArgs e)
         {
             Result = MessageBoxResult.Yes;
             Close();
         }
-
         private void Button_No_Click(object sender, RoutedEventArgs e)
         {
             Result = MessageBoxResult.No;
@@ -432,35 +418,5 @@ namespace Sudoku
             return msg.Result;
         }
 
-    }
-    internal static class Util
-    {
-        internal static ImageSource ToImageSource(this Icon icon)
-        {
-            ImageSource imageSource = Imaging.CreateBitmapSourceFromHIcon(
-                icon.Handle,
-                Int32Rect.Empty,
-                BitmapSizeOptions.FromEmptyOptions());
-
-            return imageSource;
-        }
-
-        /// <summary>
-        /// Keyboard Accellerators are used in Windows to allow easy shortcuts to controls like Buttons and 
-        /// MenuItems. These allow users to press the Alt key, and a shortcut key will be highlighted on the 
-        /// control. If the user presses that key, that control will be activated.
-        /// This method checks a string if it contains a keyboard accellerator. If it doesn't, it adds one to the
-        /// beginning of the string. If there are two strings with the same accellerator, Windows handles it.
-        /// The keyboard accellerator character for WPF is underscore (_). It will not be visible.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        internal static string TryAddKeyboardAccellerator(this string input)
-        {
-            // This is the default WPF accellerator symbol - used to be & in WinForms
-            const string ACCELLERATOR = "_";
-            // If it already contains an accellerator, do nothing
-            return input.Contains(ACCELLERATOR) ? input : ACCELLERATOR + input;
-        }
     }
 }

@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Sudoku.Model
 {
     internal delegate void ActHandler();
-    internal static class Extrentions
+    internal static class Extensions
     {
         public static void Time(ActHandler handler)
         {
@@ -67,6 +70,20 @@ namespace Sudoku.Model
             {
                 return cell.Value.ToString();
             }
+        }
+        internal static ImageSource ToImageSource(this Icon icon)
+        {
+            ImageSource imageSource = Imaging.CreateBitmapSourceFromHIcon(
+                icon.Handle,
+                Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions());
+
+            return imageSource;
+        }
+        internal static string TryAddKeyboardAccellerator(this string input)
+        {
+            const string ACCELLERATOR = "_";
+            return input.Contains(ACCELLERATOR) ? input : ACCELLERATOR + input;
         }
     }
 }
