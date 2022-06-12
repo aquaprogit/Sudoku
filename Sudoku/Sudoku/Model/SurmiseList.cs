@@ -7,7 +7,7 @@ using System.Linq;
 namespace Sudoku.Model
 {
 
-    internal class SurmiseList : IEnumerable<int>, IEquatable<SurmiseList>
+    internal class SurmiseList : IEnumerable<int>, IEquatable<SurmiseList>, ICollection<int>
     {
         private List<int> _surmises;
 
@@ -24,6 +24,8 @@ namespace Sudoku.Model
 
         public event NotifyCollectionChangedEventHandler OnCollectionChanged;
         public int Count => _surmises.Count;
+
+        public bool IsReadOnly => ((ICollection<int>)_surmises).IsReadOnly;
 
         public void Add(int surmise)
         {
@@ -91,6 +93,11 @@ namespace Sudoku.Model
                 source ^= (int)Math.Pow(2, i - 1);
             }
             return source;
+        }
+
+        public void CopyTo(int[] array, int arrayIndex)
+        {
+            ((ICollection<int>)_surmises).CopyTo(array, arrayIndex);
         }
     }
 }

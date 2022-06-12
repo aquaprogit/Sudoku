@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Specialized;
 
+using Newtonsoft.Json;
+
 namespace Sudoku.Model
 {
     internal delegate void CellContentChangedHandler(Cell obj);
@@ -31,7 +33,7 @@ namespace Sudoku.Model
         /// <summary>
         /// Returns tuple of <see cref="Cell"/> coordinates
         /// </summary>
-        public (int CubeIndex, int CellIndex) Coordinate { get; private set; }
+        [JsonRequired] public (int CubeIndex, int CellIndex) Coordinate { get; private set; }
         /// <summary>
         /// Major <see cref="Cell"/> value in range from 0 to 9. Default value - 0
         /// </summary>
@@ -48,7 +50,7 @@ namespace Sudoku.Model
         /// <summary>
         /// Returns whether <see cref="Cell"/> <see cref="Value"/> is editable.
         /// </summary>
-        public bool IsGenerated {
+        [JsonRequired] public bool IsGenerated {
             get => _isGenerated;
             private set {
                 _isGenerated = value;
@@ -76,7 +78,10 @@ namespace Sudoku.Model
         /// <param name="obj"><see cref="Cell"/> to get values from</param>
         public void Set(Cell obj)
         {
+            UnlockValue();
             Value = obj.Value;
+            LockValue();
+            IsGenerated = obj.IsGenerated;
             _surmises.Clear();
             _surmises.Add(obj._surmises);
             Coordinate = obj.Coordinate;
