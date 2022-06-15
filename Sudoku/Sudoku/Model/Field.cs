@@ -127,6 +127,7 @@ namespace Sudoku.Model
             ICommand command = _commandLog.Pop();
             Cell previousCell = command.Undo();
             Cell_ContentChanged(previousCell);
+            MoveSelection(previousCell.Coordinate);
             SelectedCell.Set(previousCell);
             Cell_ContentChanged(SelectedCell);
             return true;
