@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿using Sudoku.Common.Models;
 using Sudoku.DancingLinksX;
 
-namespace Sudoku.Model;
+namespace Sudoku.Common.Helper;
 
 internal class FieldSolver
 {
-    private Random _random;
+    private Random _random = new Random();
     public SudokuResultState Solve(List<Cell> _cells, bool clearField = true, bool isSinglePossible = true)
     {
         _random = new Random();

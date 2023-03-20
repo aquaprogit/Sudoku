@@ -11,8 +11,11 @@ using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using Sudoku.Common.Helper;
+using Sudoku.Common.Helper.Extensions;
+using Sudoku.Common.Models;
 using Sudoku.DancingLinksX;
-using Sudoku.Model;
+using Sudoku.FieldComponents;
 using Sudoku.Model.UserData;
 
 namespace Sudoku
@@ -153,8 +156,7 @@ namespace Sudoku
         }
         private void InitBitmapImage(ref BitmapImage image, string source)
         {
-            if (image == null)
-                image = new BitmapImage();
+            image ??= new BitmapImage();
             image.BeginInit();
             image.UriSource = new Uri(source, UriKind.Relative);
             image.EndInit();

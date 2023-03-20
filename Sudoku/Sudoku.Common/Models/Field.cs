@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
+﻿using Sudoku.Common.Commands;
+using Sudoku.Common.Generators;
+using Sudoku.Common.Helper;
 using Sudoku.DancingLinksX;
-using Sudoku.Model.Generator;
 
-namespace Sudoku.Model;
+namespace Sudoku.Common.Models;
 
 public delegate void SolvingFinishedHandler(bool user);
 public delegate void FieldContentChangedHandler();
 
-internal class Field : IBaseField
+public class Field : IBaseField
 {
     private List<Cell> _cells;
     private List<int> _solution;
     private Stack<ICommand> _commandLog;
-    private FieldGenerator _generator;
+    private FieldGenerator _generator = null!;
     private FieldSolver _solver;
     private int _hintsMaxCount;
     private FieldSelector _selector;
@@ -38,15 +36,15 @@ internal class Field : IBaseField
     /// <summary>
     /// Event to notify when <see cref="Field"/> solving is finished.
     /// </summary>
-    public event SolvingFinishedHandler OnSolvingFinished;
+    public event SolvingFinishedHandler? OnSolvingFinished;
     /// <summary>
     /// Event to notify when <see cref="Field"/> content is changed.
     /// </summary>
-    public event FieldContentChangedHandler OnFieldContentChanged;
+    public event FieldContentChangedHandler? OnFieldContentChanged;
     /// <summary>
     /// Event to notify when any <see cref="Cell"/> on <see cref="Field"/> content is changed.
     /// </summary>
-    public event CellContentChangedHandler CellContentChanged;
+    public event CellContentChangedHandler? CellContentChanged;
     /// <summary>
     /// Returns new instance of <see cref="Field"/> with specified limit of hints for user
     /// </summary>
@@ -61,7 +59,7 @@ internal class Field : IBaseField
         HintsLeft = hintsCount;
         _selector = new FieldSelector();
         InitCellsBase();
-        SelectedCell = _cells.Find(c => c.Coordinate == (4, 4));
+        SelectedCell = _cells.Find(c => c.Coordinate == (4, 4))!;
     }
     /// <summary>
     /// Generates new <see cref="Field"/> content depending on specified <see cref="Difficulty"/>.
@@ -165,7 +163,7 @@ internal class Field : IBaseField
     /// Solves entered content using solver
     /// </summary>
     /// <returns>Sudoku solving result</returns>
-    SudokuResultState IBaseField.Solve()
+    public SudokuResultState Solve()
     {
         _cells.Where(c => c.Value != 0).ToList().ForEach(cell => cell.LockValue());
         return _solver.Solve(_cells, false, true);
@@ -173,7 +171,7 @@ internal class Field : IBaseField
     /// <summary>
     /// Clears content for new enterings
     /// </summary>
-    void IBaseField.Clear()
+    public void Clear()
     {
         _cells.ForEach(cell => cell.UnlockValue());
     }

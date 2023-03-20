@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
+﻿using Sudoku.Common.Helper;
+using Sudoku.Common.Models;
 using Sudoku.DancingLinksX;
 
-namespace Sudoku.Model.Generator;
+namespace Sudoku.Common.Generators;
 
 internal abstract class FieldGenerator
 {
@@ -13,7 +11,7 @@ internal abstract class FieldGenerator
     protected FieldSolver _solver;
     protected Random _random;
     protected List<Cell> _cells;
-    protected List<int> _solution;
+    protected List<int> _solution = null!;
     /// <summary>
     /// Initialize new instance of <see cref="FieldGenerator"/>
     /// </summary>

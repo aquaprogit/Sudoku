@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Sudoku.Common.Models;
 
-namespace Sudoku.Model;
+namespace Sudoku.Common.Helper;
 
-internal class FieldSelector
+public class FieldSelector
 {
-    private List<Cell> _cells;
-    private List<List<Cell>> _rows;
-    private List<List<Cell>> _columns;
-    private List<List<Cell>> _squares;
+    private List<Cell>? _cells;
+    private List<List<Cell>>? _rows;
+    private List<List<Cell>>? _columns;
+    private List<List<Cell>>? _squares;
 
-    public Cell SelectedCell { get; set; }
+    public Cell SelectedCell { get; set; } = null!;
 
     public void MoveSelection(Direction dir, List<Cell> cells)
     {
-        if (SelectedCell == null) 
+        if (SelectedCell == null)
             return;
         var column = GetAreas(Area.Column, cells).First(list => list.Contains(SelectedCell));
         var row = GetAreas(Area.Row, cells).First(list => list.Contains(SelectedCell));
@@ -44,7 +42,7 @@ internal class FieldSelector
             ? new List<Cell>()
             : cells.Where(cell => cell.Value == SelectedCell.Value && cell != SelectedCell).ToList();
     }
-    public List<Cell> GetAllLinked(List<Cell> cells, Cell cell = null)
+    public List<Cell> GetAllLinked(List<Cell> cells, Cell? cell = null)
     {
         cell ??= SelectedCell;
         List<Cell> result = new List<Cell>();
@@ -80,9 +78,9 @@ internal class FieldSelector
         }
 
         return area switch {
-            Area.Row => _rows,
-            Area.Column => _columns,
-            Area.Square => _squares,
+            Area.Row => _rows!,
+            Area.Column => _columns!,
+            Area.Square => _squares!,
             _ => throw new ArgumentOutOfRangeException(nameof(area)),
         };
     }
@@ -169,7 +167,7 @@ internal class FieldSelector
     }
 }
 
-internal enum Direction
+public enum Direction
 {
     Up,
     Down,
@@ -177,7 +175,7 @@ internal enum Direction
     Right
 }
 
-internal enum Area
+public enum Area
 {
     Row,
     Column,

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Sudoku.Model;
+namespace Sudoku.FieldComponents;
 
 internal static class FieldPrinter
 {

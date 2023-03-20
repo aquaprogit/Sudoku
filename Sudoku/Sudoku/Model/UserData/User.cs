@@ -4,6 +4,8 @@ using System.ComponentModel;
 
 using Newtonsoft.Json;
 
+using Sudoku.Common.Models;
+
 namespace Sudoku.Model.UserData
 {
     public class User : INotifyPropertyChanged

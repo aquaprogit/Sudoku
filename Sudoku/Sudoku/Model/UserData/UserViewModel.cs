@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
+using Sudoku.Common.Models;
+
 namespace Sudoku.Model.UserData
 {
     public class UserViewModel : INotifyPropertyChanged

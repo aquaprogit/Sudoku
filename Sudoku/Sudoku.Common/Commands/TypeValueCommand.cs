@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Sudoku.Common.Models;
 
-namespace Sudoku.Model;
+namespace Sudoku.Common.Commands;
 
 internal class TypeValueCommand : ICommand
 {
     private Cell _cell;
-    private Cell _previousCell;
+    private Cell? _previousCell;
     public TypeValueCommand(Cell cell)
     {
         _cell = cell;
@@ -13,10 +13,10 @@ internal class TypeValueCommand : ICommand
     public void Execute(int value, bool isSurmise)
     {
         _previousCell = _cell.Clone();
-        if (value is < 0 or > 9) 
+        if (value is < 0 or > 9)
             throw new ArgumentOutOfRangeException(nameof(value));
 
-        if (_cell.IsGenerated) 
+        if (_cell.IsGenerated)
             return;
 
         if (isSurmise == false)
@@ -25,6 +25,9 @@ internal class TypeValueCommand : ICommand
         }
         else
         {
+            if (_cell.Surmises == null)
+                return;
+
             if (_cell.Surmises.Contains(value))
                 _cell.Surmises.Remove(value);
             else
@@ -34,6 +37,6 @@ internal class TypeValueCommand : ICommand
 
     public Cell Undo()
     {
-        return _previousCell;
+        return _previousCell ?? throw new Exception(nameof(_previousCell));
     }
 }

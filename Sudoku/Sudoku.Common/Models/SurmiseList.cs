@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Collections.Specialized;
-using System.Linq;
 
-namespace Sudoku.Model;
+namespace Sudoku.Common.Models;
 
-internal class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
+public class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
 {
     private List<int> _surmises;
 
@@ -21,7 +18,7 @@ internal class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
         Add(surmises);
     }
 
-    public event NotifyCollectionChangedEventHandler OnCollectionChanged;
+    public event NotifyCollectionChangedEventHandler? OnCollectionChanged;
     public int Count => _surmises.Count;
 
     public bool IsReadOnly => ((ICollection<int>)_surmises).IsReadOnly;
@@ -79,9 +76,9 @@ internal class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
         return GetEnumerator();
     }
 
-    public bool Equals(SurmiseList other)
+    public bool Equals(SurmiseList? other)
     {
-        return other._surmises.SequenceEqual(_surmises);
+        return other != null && other._surmises.SequenceEqual(_surmises);
     }
 
     public override int GetHashCode()
@@ -99,7 +96,7 @@ internal class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
         ((ICollection<int>)_surmises).CopyTo(array, arrayIndex);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return Equals(obj as SurmiseList);
     }

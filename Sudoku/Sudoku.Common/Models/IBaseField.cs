@@ -1,8 +1,9 @@
-﻿using Sudoku.DancingLinksX;
+﻿using Sudoku.Common.Helper;
+using Sudoku.DancingLinksX;
 
-namespace Sudoku.Model;
+namespace Sudoku.Common.Models;
 
-internal interface IBaseField
+public interface IBaseField
 {
     void MoveSelection(Direction dir);
     void MoveSelection((int, int) coordinate);

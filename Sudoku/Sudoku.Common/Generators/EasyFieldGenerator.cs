@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Sudoku.Common.Helper;
+using Sudoku.Common.Models;
 
-namespace Sudoku.Model.Generator;
+namespace Sudoku.Common.Generators;
 
 internal class EasyFieldGenerator : FieldGenerator
 {
@@ -53,7 +53,7 @@ internal class EasyFieldGenerator : FieldGenerator
     /// <param name="area"></param>
     private void ShuffleSmallArea(Area area)
     {
-        if (area == Area.Square) 
+        if (area == Area.Square)
             return;
 
         var areas = _selector.GetAreas(area, _cells);
