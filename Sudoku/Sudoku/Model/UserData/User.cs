@@ -19,15 +19,11 @@ namespace Sudoku.Model.UserData
         /// Returns unique instance of <see cref="User"/> if it alreany initialized, othewise creates new one and returns it
         /// </summary>
         [JsonIgnore]
-        public static User Instance => _instance ?? (_instance = new User());
+        public static User Instance => _instance ??= new User();
         /// <summary>
         /// List of statistics of user with difficulties and it's time, taken to solve
         /// </summary>
-        public List<Info> Info {
-            get {
-                return _info;
-            }
-        }
+        public List<Info> Info => _info;
         /// <summary>
         /// Property changed event for INPC
         /// </summary>
@@ -65,11 +61,11 @@ namespace Sudoku.Model.UserData
         /// Difficulty of current <see cref="Info"/>
         /// </summary>
         [JsonIgnore]
-        public Difficulty Difficulty { get => _difficulty; }
+        public Difficulty Difficulty => _difficulty;
         /// <summary>
         /// Time in seconds, taken to solve this record of <see cref="Info"/>
         /// </summary>
         [JsonIgnore]
-        public TimeSpan Time { get => _seconds; }
+        public TimeSpan Time => _seconds;
     }
 }

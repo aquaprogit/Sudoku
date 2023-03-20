@@ -11,10 +11,9 @@ namespace Sudoku
         private TimeSpan _current;
         private bool _isEnabled;
 
-        public bool IsEnabled {
-            get {
-                return _isEnabled;
-            }
+        public bool IsEnabled
+        {
+            get => _isEnabled;
             private set {
                 _isEnabled = value;
                 if (_isEnabled)
@@ -24,13 +23,9 @@ namespace Sudoku
                 OnPropertyChanged();
             }
         }
-        public string Time {
-            get {
-                return $"{_current.Hours.ToString().PadLeft(2, '0')}:" +
+        public string Time => $"{_current.Hours.ToString().PadLeft(2, '0')}:" +
                        $"{_current.Minutes.ToString().PadLeft(2, '0')}:" +
                        $"{_current.Seconds.ToString().PadLeft(2, '0')}";
-            }
-        }
 
         public GameTimer()
         {

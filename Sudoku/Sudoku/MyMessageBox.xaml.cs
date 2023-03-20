@@ -13,27 +13,33 @@ namespace Sudoku
     /// </summary>
     public partial class MyMessageBox : Window
     {
-        internal string Caption {
+        internal string Caption
+        {
             get => Title;
             set => Title = value;
         }
-        internal string Message {
+        internal string Message
+        {
             get => TextBlock_Message.Text;
             set => TextBlock_Message.Text = value;
         }
-        internal string OkButtonText {
+        internal string OkButtonText
+        {
             get => Label_Ok.Content.ToString();
             set => Label_Ok.Content = value.TryAddKeyboardAccellerator();
         }
-        internal string CancelButtonText {
+        internal string CancelButtonText
+        {
             get => Label_Cancel.Content.ToString();
             set => Label_Cancel.Content = value.TryAddKeyboardAccellerator();
         }
-        internal string YesButtonText {
+        internal string YesButtonText
+        {
             get => Label_Yes.Content.ToString();
             set => Label_Yes.Content = value.TryAddKeyboardAccellerator();
         }
-        internal string NoButtonText {
+        internal string NoButtonText
+        {
             get => Label_No.Content.ToString();
             set => Label_No.Content = value.TryAddKeyboardAccellerator();
         }

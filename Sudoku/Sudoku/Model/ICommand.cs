@@ -1,8 +1,7 @@
-﻿namespace Sudoku.Model
+﻿namespace Sudoku.Model;
+
+internal interface ICommand
 {
-    internal interface ICommand
-    {
-        void Execute(int value, bool isSurmise);
-        Cell Undo();
-    }
+    void Execute(int value, bool isSurmise);
+    Cell Undo();
 }

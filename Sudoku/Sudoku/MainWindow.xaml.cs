@@ -11,8 +11,8 @@ using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using Sudoku.DancingLinksX;
 using Sudoku.Model;
-using Sudoku.Model.DancingLinksX;
 using Sudoku.Model.UserData;
 
 namespace Sudoku
@@ -72,20 +72,21 @@ namespace Sudoku
         private Dictionary<(int, int), Grid> _solveGrids;
         public GameTimer Timer { get; set; }
         internal UserViewModel UserViewModel { get; set; }
-        internal Difficulty CurrentDifficulty {
+        internal Difficulty CurrentDifficulty
+        {
             get => UserViewModel.CurrentDifficulty;
-            set {
-                UserViewModel.CurrentDifficulty = value;
-            }
+            set => UserViewModel.CurrentDifficulty = value;
         }
-        public bool IsSurmiseMode {
+        public bool IsSurmiseMode
+        {
             get => _isSurmiseMode;
             set {
                 _isSurmiseMode = value;
                 (SurmiseMode_Button.Content as Image).Source = _isSurmiseMode ? _surmiseImageEnable : _surmiseImageDisable;
             }
         }
-        public bool AutoCheck {
+        public bool AutoCheck
+        {
             get => _autoCheck;
             set {
                 _autoCheck = value;
@@ -286,7 +287,7 @@ namespace Sudoku
         #region GamePart
         private void OnSolvingFinished(bool user)
         {
-            TimeSpan result = Timer.Stop();
+            var result = Timer.Stop();
             var messageBoxResult = MyMessageBox.Show("Well done!\nWant to create new field?", "Finished solving", MessageBoxButton.OKCancel, MessageBoxImage.Information);
             if (messageBoxResult == MessageBoxResult.OK)
             {

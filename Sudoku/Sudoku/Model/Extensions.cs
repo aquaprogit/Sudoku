@@ -10,14 +10,13 @@ using System.Windows.Media.Imaging;
 
 namespace Sudoku.Model
 {
-    internal delegate void ActHandler();
     internal static class Extensions
     {
         /// <summary>
         /// Measures method's time, taken to execute
         /// </summary>
         /// <param name="handler">Delegate of method which time should be measured</param>
-        public static void Time(ActHandler handler)
+        public static void Time(Action handler)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -58,7 +57,7 @@ namespace Sudoku.Model
                 for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
                 {
                     var child = VisualTreeHelper.GetChild(depObj, i);
-                    if (child != null && child is T t)
+                    if (child is not null and T t)
                     {
                         yield return t;
                     }
@@ -76,7 +75,8 @@ namespace Sudoku.Model
         /// <returns><see cref="Cell.Value"/> if it is not zero, otherwise elements of <see cref="Cell.Surmises"/> in matrix format</returns>
         public static string GetCellContent(this Cell cell)
         {
-            if (cell == null) return null;
+            if (cell == null) 
+                return null;
             string result = "1 2 3\n4 5 6\n7 8 9";
 
             if (cell.Value == 0)
@@ -91,20 +91,6 @@ namespace Sudoku.Model
             {
                 return cell.Value.ToString();
             }
-        }
-        /// <summary>
-        /// Converts <see cref="Icon"/> to <see cref="ImageSource"/> using Windows support for creating image objects
-        /// </summary>
-        /// <param name="icon"><see cref="Icon"/> to convert from</param>
-        /// <returns><see cref="ImageSource"/> representation of Icon</returns>
-        internal static ImageSource ToImageSource(this Icon icon)
-        {
-            ImageSource imageSource = Imaging.CreateBitmapSourceFromHIcon(
-                icon.Handle,
-                Int32Rect.Empty,
-                BitmapSizeOptions.FromEmptyOptions());
-
-            return imageSource;
         }
         /// <summary>
         /// Sets to string accellerator if it has not already applied to string

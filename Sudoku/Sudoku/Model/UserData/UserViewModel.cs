@@ -24,8 +24,9 @@ namespace Sudoku.Model.UserData
         /// <summary>
         /// Current selected difficulty
         /// </summary>
-        public Difficulty CurrentDifficulty {
-            get { return _currentDifficulty; }
+        public Difficulty CurrentDifficulty
+        {
+            get => _currentDifficulty;
             set {
                 _currentDifficulty = value;
                 OnPropertyChanged();
@@ -35,7 +36,8 @@ namespace Sudoku.Model.UserData
         /// <summary>
         /// Avarage time taken by user to solve <see cref="CurrentDifficulty"/> field
         /// </summary>
-        public TimeSpan AvarageTime {
+        public TimeSpan AvarageTime
+        {
             get {
                 var result = User.Instance.Info.GroupBy(i => i.Difficulty)
                             .Select(g => new {

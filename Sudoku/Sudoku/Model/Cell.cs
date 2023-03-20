@@ -37,11 +37,14 @@ namespace Sudoku.Model
         /// <summary>
         /// Major <see cref="Cell"/> value in range from 0 to 9. Default value - 0
         /// </summary>
-        public int Value {
+        public int Value
+        {
             get => _value;
             set {
-                if (value < 0 || value >= 10) throw new ArgumentOutOfRangeException(nameof(value));
-                if (IsGenerated) throw new InvalidOperationException(nameof(IsGenerated));
+                if (value is < 0 or >= 10)
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                if (IsGenerated) 
+                    throw new InvalidOperationException(nameof(IsGenerated));
                 _value = value;
                 _surmises.Clear();
                 OnPropertyChanged();
@@ -50,7 +53,9 @@ namespace Sudoku.Model
         /// <summary>
         /// Returns whether <see cref="Cell"/> <see cref="Value"/> is editable.
         /// </summary>
-        [JsonRequired] public bool IsGenerated {
+        [JsonRequired]
+        public bool IsGenerated
+        {
             get => _isGenerated;
             private set {
                 _isGenerated = value;
