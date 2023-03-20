@@ -21,8 +21,8 @@ internal abstract class FieldGenerator
     {
         _cells = cells;
         _cluesCount = cluesCount;
-        _solver = new FieldSolver();
-        _selector = new FieldSelector();
+        _selector = new FieldSelector(cells);
+        _solver = new FieldSolver(_selector);
         _random = new Random();
     }
     /// <summary>
@@ -58,7 +58,7 @@ internal abstract class FieldGenerator
             int previousValue = toRemove.Value;
 
             toRemove.UnlockValue();
-            if (_solver.Solve(_cells) == SudokuResultState.HasTooManySolutions)
+            if (_solver.Solve() == SudokuResultState.HasTooManySolutions)
             {
                 toRemove.Value = previousValue;
                 toRemove.LockValue();

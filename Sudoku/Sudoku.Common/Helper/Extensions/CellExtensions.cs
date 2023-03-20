@@ -35,8 +35,8 @@ public static class CellExtensions
     public static Cell[,] To2DArray(this List<Cell> self)
     {
         Cell[,] cells = new Cell[9, 9];
-        FieldSelector selector = new FieldSelector();
-        var columns = selector.GetAreas(Area.Column, self);
+        FieldSelector selector = new FieldSelector(self);
+        var columns = selector.GetAreas(Area.Column);
         for (int columnIndex = 0; columnIndex < 9; columnIndex++)
         {
             for (int rowIndex = 0; rowIndex < 9; rowIndex++)
