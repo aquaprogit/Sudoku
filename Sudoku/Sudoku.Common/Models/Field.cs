@@ -53,12 +53,12 @@ public class Field : IBaseField
     {
         _cells = new List<Cell>(81);
         _solution = new List<int>();
-        _solver = new FieldSolver();
         _commandLog = new Stack<ICommand>();
         _hintsMaxCount = hintsCount;
         HintsLeft = hintsCount;
-        _selector = new FieldSelector();
         InitCellsBase();
+        _selector = new FieldSelector(_cells);
+        _solver = new FieldSolver(_selector);
         SelectedCell = _cells.Find(c => c.Coordinate == (4, 4))!;
     }
     /// <summary>
@@ -89,7 +89,7 @@ public class Field : IBaseField
     /// <param name="dir"><see cref="Direction"/> to move selection to</param>
     public void MoveSelection(Direction dir)
     {
-        _selector.MoveSelection(dir, _cells);
+        _selector.MoveSelection(dir);
         OnFieldContentChanged?.Invoke();
     }
     /// <summary>
@@ -141,7 +141,7 @@ public class Field : IBaseField
             throw new InvalidOperationException("Field is already solved. Can not apply hint");
         if (HintsLeft > 0)
         {
-            var toShow = _selector.CellForHint(_cells, _solution);
+            var toShow = _selector.CellForHint(_solution);
             int index = _cells.IndexOf(toShow);
             toShow.Value = _solution[index];
             HintsLeft--;
@@ -166,7 +166,7 @@ public class Field : IBaseField
     public SudokuResultState Solve()
     {
         _cells.Where(c => c.Value != 0).ToList().ForEach(cell => cell.LockValue());
-        return _solver.Solve(_cells, false, true);
+        return _solver.Solve(false, true);
     }
     /// <summary>
     /// Clears content for new enterings
@@ -181,7 +181,7 @@ public class Field : IBaseField
     /// <returns>Cells with same value to <see cref="SelectedCell"/></returns>
     public List<Cell> GetSameValues()
     {
-        return _selector.GetSameValues(_cells);
+        return _selector.GetSameValues();
     }
     /// <summary>
     /// Gets <see cref="Cell"/>s within one area with <see cref="SelectedCell"/>
@@ -189,7 +189,7 @@ public class Field : IBaseField
     /// <returns>All <see cref="Cell"/>s in same area with <see cref="SelectedCell"/></returns>
     public List<Cell> GetAllLinked()
     {
-        return _selector.GetAllLinked(_cells);
+        return _selector.GetAllLinked();
     }
     /// <summary>
     /// Gets <see cref="Cell"/>s where values same to solution keys
@@ -197,7 +197,7 @@ public class Field : IBaseField
     /// <returns><see cref="Cell"/>s where values same to solution keys</returns>
     public List<Cell> GetCorrectAreas()
     {
-        return _selector.GetCorrectAreas(_cells, _solution);
+        return _selector.GetCorrectAreas(_solution);
     }
     /// <summary>
     /// Gets <see cref="Cell"/>s where values are not same to solution keys

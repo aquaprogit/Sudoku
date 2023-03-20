@@ -6,12 +6,17 @@ namespace Sudoku.Common.Helper;
 internal class FieldSolver
 {
     private Random _random = new Random();
-    public SudokuResultState Solve(List<Cell> _cells, bool clearField = true, bool isSinglePossible = true)
+
+    private FieldSelector _selector;
+    public FieldSolver(FieldSelector selector)
+    {
+        _selector = selector;
+    }
+    public SudokuResultState Solve(bool clearField = true, bool isSinglePossible = true)
     {
         _random = new Random();
         int[,] values = new int[9, 9];
-        FieldSelector selector = new FieldSelector();
-        var columns = selector.GetAreas(Area.Column, _cells);
+        var columns = _selector.GetAreas(Area.Column);
 
         for (int columnIndex = 0; columnIndex < columns.Count; columnIndex++)
         {

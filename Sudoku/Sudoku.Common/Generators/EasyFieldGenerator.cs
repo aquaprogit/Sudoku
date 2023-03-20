@@ -37,7 +37,7 @@ internal class EasyFieldGenerator : FieldGenerator
     /// </summary>
     private void FillBase()
     {
-        var rows = _selector.GetAreas(Area.Square, _cells);
+        var rows = _selector.GetAreas(Area.Square);
         for (int rowIndex = 0; rowIndex < 9; rowIndex++)
         {
             int i = rowIndex;
@@ -56,7 +56,7 @@ internal class EasyFieldGenerator : FieldGenerator
         if (area == Area.Square)
             return;
 
-        var areas = _selector.GetAreas(area, _cells);
+        var areas = _selector.GetAreas(area);
         int sector = _random.Next(3);
         int len = 3;
         while (len > 1)
@@ -75,7 +75,7 @@ internal class EasyFieldGenerator : FieldGenerator
     /// </summary>
     private void Transpose()
     {
-        var transposed = _selector.Transpose(_cells);
+        var transposed = _selector.Transpose();
         for (int i = 0; i < 81; i++)
         {
             var curr = _cells[i];

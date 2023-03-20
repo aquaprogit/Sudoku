@@ -10,10 +10,7 @@ internal class HardFieldGenerator : FieldGenerator
     /// </summary>
     /// <param name="cells">Cells to fill</param>
     /// <param name="cluesCount">Count of clues that has to be left</param>
-    public HardFieldGenerator(List<Cell> cells, int cluesCount) : base(cells, cluesCount)
-    {
-        _solver = new FieldSolver();
-    }
+    public HardFieldGenerator(List<Cell> cells, int cluesCount) : base(cells, cluesCount) { }
     /// <summary>
     /// Creates base pattern of field
     /// </summary>
@@ -24,7 +21,7 @@ internal class HardFieldGenerator : FieldGenerator
     }
     private void FillCenter()
     {
-        var center = _selector.GetAreas(Area.Square, _cells)[4];
+        var center = _selector.GetAreas(Area.Square)[4];
         List<int> set = Enumerable.Range(1, 9).OrderBy(x => _random.Next()).ToList();
         for (int i = 0; i < set.Count; i++)
         {
@@ -33,6 +30,6 @@ internal class HardFieldGenerator : FieldGenerator
     }
     private void FillOtherCells()
     {
-        _solver.Solve(_cells, false, false);
+        _solver.Solve(false, false);
     }
 }
