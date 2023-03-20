@@ -350,3 +350,4 @@ MigrationBackup/
 .ionide/
 /Sudoku/Sudoku/ClassDiagram1.cd
 *.cd
+/Sudoku.backup/Sudoku
