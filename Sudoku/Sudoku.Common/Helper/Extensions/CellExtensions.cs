@@ -1,4 +1,6 @@
-﻿using Sudoku.Common.Models;
+﻿using System.Text;
+
+using Sudoku.Common.Models;
 
 namespace Sudoku.Common.Helper.Extensions;
 public static class CellExtensions
@@ -12,20 +14,24 @@ public static class CellExtensions
     {
         if (cell == null)
             return null;
-        string result = "1 2 3\n4 5 6\n7 8 9";
 
-        if (cell.Value == 0)
-        {
-            foreach (int i in Enumerable.Range(1, 9).Except(cell.Surmises ?? new SurmiseList()))
-            {
-                result = result.Replace(i.ToString(), " ");
-            }
-            return result;
-        }
-        else
-        {
+        if (cell.Value != 0)
             return cell.Value.ToString();
+
+        var surmises = cell.Surmises ?? new SurmiseList();
+
+        var result = new StringBuilder();
+        for (int i = 1; i <= 9; i++)
+        {
+            var value = surmises.Contains(i) ? i.ToString() : " ";
+            result.Append(value);
+            if (i % 3 == 0)
+                result.Append('\n');
+            else
+                result.Append(' ');
         }
+
+        return result.ToString().TrimEnd('\n');
     }
     /// <summary>
     /// Converts <see cref="List{Cell}"/> of <see cref="Cell"/> to 2D array according to their placemnt on the field
