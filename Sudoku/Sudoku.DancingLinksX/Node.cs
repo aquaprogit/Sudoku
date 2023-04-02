@@ -6,12 +6,11 @@ internal class Node
     internal Node up, down, left, right;
     internal int constraint, set, rowCount;
 
+    internal bool IsLast => right == this;
     internal Node()
     {
         up = down = left = right = header = row = this;
     }
-
-    internal bool IsLast => right == this;
 
     internal void AddLast(Node node)
     {
@@ -47,7 +46,6 @@ internal class Node
         {
             yield return node;
             node = direction(node);
-
         } while (node != this);
     }
 

@@ -23,6 +23,7 @@ namespace Sudoku
                 OnPropertyChanged();
             }
         }
+
         public string Time => $"{_current.Hours.ToString().PadLeft(2, '0')}:" +
                        $"{_current.Minutes.ToString().PadLeft(2, '0')}:" +
                        $"{_current.Seconds.ToString().PadLeft(2, '0')}";
@@ -42,29 +43,33 @@ namespace Sudoku
             };
         }
 
-        public void Start()
-        {
-            IsEnabled = true;
-            _current = TimeSpan.Zero;
-        }
-        public TimeSpan Stop()
-        {
-            IsEnabled = false;
-            return _current;
-        }
-        public void Pause()
-        {
-            IsEnabled = false;
-        }
-        public void Resume()
-        {
-            IsEnabled = true;
-        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Start()
+        {
+            IsEnabled = true;
+            _current = TimeSpan.Zero;
+        }
+
+        public TimeSpan Stop()
+        {
+            IsEnabled = false;
+            return _current;
+        }
+
+        public void Pause()
+        {
+            IsEnabled = false;
+        }
+
+        public void Resume()
+        {
+            IsEnabled = true;
         }
     }
 }

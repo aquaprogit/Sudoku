@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Sudoku.DancingLinksX;
+﻿namespace Sudoku.DancingLinksX;
 
 public interface ICSPSolver
 {

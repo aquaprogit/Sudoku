@@ -12,11 +12,6 @@ internal abstract class FieldGenerator
     protected Random _random;
     protected List<Cell> _cells;
     protected List<int> _solution = null!;
-    /// <summary>
-    /// Initialize new instance of <see cref="FieldGenerator"/>
-    /// </summary>
-    /// <param name="cells">Cells to fill</param>
-    /// <param name="cluesCount">Count of clues that has to be left</param>
     public FieldGenerator(List<Cell> cells, int cluesCount)
     {
         _cells = cells;
@@ -25,26 +20,9 @@ internal abstract class FieldGenerator
         _solver = new FieldSolver(_selector);
         _random = new Random();
     }
-    /// <summary>
-    /// Generates new values for cells
-    /// </summary>
-    /// <returns>Solution key of generated map</returns>
-    public List<int> GenerateMap()
-    {
-        _cells.ForEach(c => c.UnlockValue());
-        CreatePattern();
-        _cells.ForEach(c => c.LockValue());
-        _solution = _cells.Select(c => c.Value).ToList();
-        LeaveCluesOnly();
-        return _solution;
-    }
-    /// <summary>
-    /// Creates base pattern of field
-    /// </summary>
+
     protected abstract void CreatePattern();
-    /// <summary>
-    /// Removes all cells' values except specified count of clues
-    /// </summary>
+
     protected void LeaveCluesOnly()
     {
         int countOfRemoves = 81 - _cluesCount % 81;
@@ -66,4 +44,13 @@ internal abstract class FieldGenerator
         }
     }
 
+    public List<int> GenerateMap()
+    {
+        _cells.ForEach(c => c.UnlockValue());
+        CreatePattern();
+        _cells.ForEach(c => c.LockValue());
+        _solution = _cells.Select(c => c.Value).ToList();
+        LeaveCluesOnly();
+        return _solution;
+    }
 }

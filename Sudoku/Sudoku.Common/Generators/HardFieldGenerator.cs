@@ -5,20 +5,10 @@ namespace Sudoku.Common.Generators;
 
 internal class HardFieldGenerator : FieldGenerator
 {
-    /// <summary>
-    /// Initialize new instance of <see cref="HardFieldGenerator"/>
-    /// </summary>
-    /// <param name="cells">Cells to fill</param>
-    /// <param name="cluesCount">Count of clues that has to be left</param>
-    public HardFieldGenerator(List<Cell> cells, int cluesCount) : base(cells, cluesCount) { }
-    /// <summary>
-    /// Creates base pattern of field
-    /// </summary>
-    protected override void CreatePattern()
+    public HardFieldGenerator(List<Cell> cells, int cluesCount) : base(cells, cluesCount)
     {
-        FillCenter();
-        FillOtherCells();
     }
+
     private void FillCenter()
     {
         var center = _selector.GetAreas(Area.Square)[4];
@@ -28,8 +18,15 @@ internal class HardFieldGenerator : FieldGenerator
             center[i].Value = set[i];
         }
     }
+
     private void FillOtherCells()
     {
         _solver.Solve(false, false);
+    }
+
+    protected override void CreatePattern()
+    {
+        FillCenter();
+        FillOtherCells();
     }
 }

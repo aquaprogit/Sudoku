@@ -2,10 +2,9 @@
 
 public class SolverOptions
 {
+    public bool IncludeCluesInSolution = false;
     public int MaxRecursion { get; set; } = -1;
     public int MaxSolutions { get; set; } = -1;
-    public bool IncludeCluesInSolution = false;
-
     public bool HasRecursionLevelExceeded(int recursionLevel)
     {
         return MaxRecursion > -1 && recursionLevel > MaxRecursion;

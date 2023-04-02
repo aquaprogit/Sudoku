@@ -5,11 +5,6 @@ using Sudoku.Common.Models;
 namespace Sudoku.Common.Helper.Extensions;
 public static class CellExtensions
 {
-    /// <summary>
-    /// Gets major <see cref="Cell"/> content depending on it's <see cref="Cell.Value"/>
-    /// </summary>
-    /// <param name="cell"><see cref="Cell"/> to get content from</param>
-    /// <returns><see cref="Cell.Value"/> if it is not zero, otherwise elements of <see cref="Cell.Surmises"/> in matrix format</returns>
     public static string? GetCellContent(this Cell cell)
     {
         if (cell == null)
@@ -33,11 +28,7 @@ public static class CellExtensions
 
         return result.ToString().TrimEnd('\n');
     }
-    /// <summary>
-    /// Converts <see cref="List{Cell}"/> of <see cref="Cell"/> to 2D array according to their placemnt on the field
-    /// </summary>
-    /// <param name="self">List of <see cref="Cell"/></param>
-    /// <returns>Matrix of <see cref="Cell"/> with their proper indexes</returns>
+
     public static Cell[,] To2DArray(this List<Cell> self)
     {
         Cell[,] cells = new Cell[9, 9];
@@ -51,6 +42,5 @@ public static class CellExtensions
             }
         }
         return cells;
-
     }
 }

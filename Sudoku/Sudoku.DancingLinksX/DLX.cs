@@ -2,18 +2,6 @@
 
 public class DLX : ICSPSolver
 {
-    public IReadOnlyCollection<ISet<int>> Solve(ExactCover problem, SolverOptions options)
-    {
-        var root = Parse(problem);
-        List<ISet<int>> solutions = new List<ISet<int>>();
-        Stack<int> currentSolution = new Stack<int>();
-        int recursionLevel = 0;
-
-        Explore(root, solutions, currentSolution, problem.Clues, recursionLevel, options);
-
-        return solutions.AsReadOnly();
-    }
-
     internal bool CheckForSolution(Node root, IList<ISet<int>> solutions, Stack<int> currentSolution, ISet<int> clues, int recursionLevel, SolverOptions options)
     {
         if (root.IsLast || options.HasRecursionLevelExceeded(recursionLevel) || options.HasSolutionsExceeded(solutions))
@@ -36,6 +24,7 @@ public class DLX : ICSPSolver
 
         return false;
     }
+
     internal Node? GetHeaderWithMinimumRowCount(Node root)
     {
         Node? next = null;
@@ -81,7 +70,7 @@ public class DLX : ICSPSolver
 
     internal void Cover(Node node)
     {
-        if (node.row == node) 
+        if (node.row == node)
             return;
 
         var header = node.header;
@@ -101,7 +90,7 @@ public class DLX : ICSPSolver
 
     internal void Uncover(Node node)
     {
-        if (node.row == node) 
+        if (node.row == node)
             return;
 
         var header = node.header;
@@ -154,5 +143,17 @@ public class DLX : ICSPSolver
         }
 
         return root;
+    }
+
+    public IReadOnlyCollection<ISet<int>> Solve(ExactCover problem, SolverOptions options)
+    {
+        var root = Parse(problem);
+        List<ISet<int>> solutions = new List<ISet<int>>();
+        Stack<int> currentSolution = new Stack<int>();
+        int recursionLevel = 0;
+
+        Explore(root, solutions, currentSolution, problem.Clues, recursionLevel, options);
+
+        return solutions.AsReadOnly();
     }
 }

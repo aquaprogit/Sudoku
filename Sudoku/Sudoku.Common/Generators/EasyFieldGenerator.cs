@@ -5,24 +5,10 @@ namespace Sudoku.Common.Generators;
 
 internal class EasyFieldGenerator : FieldGenerator
 {
-    /// <summary>
-    /// Initialize new instance of <see cref="EasyFieldGenerator"/>
-    /// </summary>
-    /// <param name="cells">Cells to fill</param>
-    /// <param name="cluesCount">Count of clues that has to be left</param>
-    public EasyFieldGenerator(List<Cell> cells, int cluesCount = 30) : base(cells, cluesCount) { }
-
-    /// <summary>
-    /// Creates base pattern of field
-    /// </summary>
-    protected override void CreatePattern()
+    public EasyFieldGenerator(List<Cell> cells, int cluesCount = 30) : base(cells, cluesCount)
     {
-        FillBase();
-        Shuffle();
     }
-    /// <summary>
-    /// Shuffles field area 
-    /// </summary>
+
     private void Shuffle()
     {
         for (int i = 0; i < 10; i++)
@@ -32,9 +18,7 @@ internal class EasyFieldGenerator : FieldGenerator
         if (_random.Next(0, 4) == 0)
             Transpose();
     }
-    /// <summary>
-    /// Fills field with base pattern from 1 to 9 with offset in each row
-    /// </summary>
+
     private void FillBase()
     {
         var rows = _selector.GetAreas(Area.Square);
@@ -47,10 +31,7 @@ internal class EasyFieldGenerator : FieldGenerator
             }
         }
     }
-    /// <summary>
-    /// Shuffles between each others rows and columns in their section 3*9 and 9*3 accordingly
-    /// </summary>
-    /// <param name="area"></param>
+
     private void ShuffleSmallArea(Area area)
     {
         if (area == Area.Square)
@@ -70,9 +51,7 @@ internal class EasyFieldGenerator : FieldGenerator
             }
         }
     }
-    /// <summary>
-    /// Raplces rows with columns and columns with rows.
-    /// </summary>
+
     private void Transpose()
     {
         var transposed = _selector.Transpose();
@@ -81,5 +60,11 @@ internal class EasyFieldGenerator : FieldGenerator
             var curr = _cells[i];
             _cells[i].Value = transposed.First(cell => cell.Coordinate == curr.Coordinate).Value;
         }
+    }
+
+    protected override void CreatePattern()
+    {
+        FillBase();
+        Shuffle();
     }
 }

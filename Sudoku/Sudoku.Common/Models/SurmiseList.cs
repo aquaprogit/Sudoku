@@ -8,10 +8,13 @@ public class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
     private List<int> _surmises;
 
     public int this[int index] => _surmises[index];
+    public int Count => _surmises.Count;
+    public bool IsReadOnly => ((ICollection<int>)_surmises).IsReadOnly;
     public SurmiseList()
     {
         _surmises = new List<int>();
     }
+
     public SurmiseList(List<int> surmises)
     {
         _surmises = new List<int>();
@@ -19,9 +22,6 @@ public class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
     }
 
     public event NotifyCollectionChangedEventHandler? OnCollectionChanged;
-    public int Count => _surmises.Count;
-
-    public bool IsReadOnly => ((ICollection<int>)_surmises).IsReadOnly;
 
     public void Add(int surmise)
     {
@@ -37,11 +37,13 @@ public class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
         _surmises.Add(surmise);
         OnCollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<int>() { surmise }));
     }
+
     public void Add(IEnumerable<int> surmises)
     {
         foreach (int surmise in surmises)
             Add(surmise);
     }
+
     public bool Remove(int surmise)
     {
         bool result = _surmises.Remove(surmise);
@@ -49,6 +51,7 @@ public class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
             OnCollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new List<int>() { surmise }));
         return result;
     }
+
     public void Remove(IEnumerable<int> surmises)
     {
         foreach (int surmise in surmises)
@@ -69,11 +72,6 @@ public class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
     public IEnumerator<int> GetEnumerator()
     {
         return _surmises.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
     }
 
     public bool Equals(SurmiseList? other)
@@ -99,5 +97,10 @@ public class SurmiseList : IEquatable<SurmiseList>, ICollection<int>
     public override bool Equals(object? obj)
     {
         return Equals(obj as SurmiseList);
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

@@ -14,6 +14,46 @@ public class FieldSelector
     public FieldSelector(List<Cell> cells)
     {
         _cells = cells;
+        SelectedCell = _cells.First(c => c.Coordinate == (4, 4));
+    }
+
+    private List<List<Cell>> GetRows()
+    {
+        _rows = new List<List<Cell>>();
+        _cells = new List<Cell>(_cells);
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+                _rows.Add(_cells.Where(c => c.Coordinate.CellIndex / 3 == j && c.Coordinate.CubeIndex / 3 == i).ToList());
+        }
+
+        return _rows;
+    }
+
+    private List<List<Cell>> GetColumns()
+    {
+        _columns = new List<List<Cell>>();
+        var rows = GetAreas(Area.Row);
+        foreach (var row in rows)
+        {
+            for (int i = 0; i < row.Count; i++)
+            {
+                if (_columns.Count == i)
+                    _columns.Add(new List<Cell>());
+                _columns[i].Add(row[i]);
+            }
+        }
+        return _columns;
+    }
+
+    private List<List<Cell>> GetSquares()
+    {
+        _squares = new List<List<Cell>>();
+        _cells = new List<Cell>(_cells);
+        foreach (var item in _cells.GroupBy(c => c.Coordinate.CubeIndex))
+            _squares.Add(item.Select(c => c).ToList());
+
+        return _squares;
     }
 
     public void MoveSelection(Direction dir)
@@ -41,12 +81,14 @@ public class FieldSelector
                 SelectedCell = row[index + 1];
         }
     }
+
     public List<Cell> GetSameValues()
     {
         return SelectedCell.Value == 0
             ? new List<Cell>()
             : _cells.Where(cell => cell.Value == SelectedCell.Value && cell != SelectedCell).ToList();
     }
+
     public List<Cell> GetAllLinked(Cell? cell = null)
     {
         cell ??= SelectedCell;
@@ -60,18 +102,19 @@ public class FieldSelector
         result.Remove(cell);
         return result;
     }
+
     public List<Cell> GetCorrectAreas(List<int> key)
     {
         List<Cell> solvedParts = new List<Cell>();
         foreach (Area area in Enum.GetValues(typeof(Area)))
         {
             solvedParts.AddRange(GetAreas(area)
-                .Where(list => list.All(cell => cell.Value != 0
-                                 && _cells[_cells.IndexOf(cell)].Value == key[_cells.IndexOf(cell)]))
+                .Where(list => list.All(cell => _cells[_cells.IndexOf(cell)].Value == key[_cells.IndexOf(cell)]))
                 .SelectMany(l => l));
         }
         return solvedParts;
     }
+
     public List<List<Cell>> GetAreas(Area area)
     {
         return area switch {
@@ -81,6 +124,7 @@ public class FieldSelector
             _ => throw new ArgumentOutOfRangeException(nameof(area)),
         };
     }
+
     public List<Cell> Transpose()
     {
         List<Cell> transposed = _cells.Select(c => new Cell(c.Coordinate, c.Value)).ToList();
@@ -100,6 +144,7 @@ public class FieldSelector
         }
         return transposed;
     }
+
     public Cell CellForHint(List<int> key)
     {
         //With incorrect value
@@ -125,42 +170,6 @@ public class FieldSelector
             }
         }
         return withLessNeighbors;
-    }
-    private List<List<Cell>> GetRows()
-    {
-        _rows = new List<List<Cell>>();
-        _cells = new List<Cell>(_cells);
-        for (int i = 0; i < 3; i++)
-        {
-            for (int j = 0; j < 3; j++)
-                _rows.Add(_cells.Where(c => c.Coordinate.CellIndex / 3 == j && c.Coordinate.CubeIndex / 3 == i).ToList());
-        }
-
-        return _rows;
-    }
-    private List<List<Cell>> GetColumns()
-    {
-        _columns = new List<List<Cell>>();
-        var rows = GetAreas(Area.Row);
-        foreach (var row in rows)
-        {
-            for (int i = 0; i < row.Count; i++)
-            {
-                if (_columns.Count == i)
-                    _columns.Add(new List<Cell>());
-                _columns[i].Add(row[i]);
-            }
-        }
-        return _columns;
-    }
-    private List<List<Cell>> GetSquares()
-    {
-        _squares = new List<List<Cell>>();
-        _cells = new List<Cell>(_cells);
-        foreach (var item in _cells.GroupBy(c => c.Coordinate.CubeIndex))
-            _squares.Add(item.Select(c => c).ToList());
-
-        return _squares;
     }
 }
 

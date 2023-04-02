@@ -20,16 +20,16 @@
         MaxWidth="500">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0"
               Background="White"
               MinHeight="69">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="25*" />
-                    <ColumnDefinition Width="86*" />
+                    <ColumnDefinition Width="25*"/>
+                    <ColumnDefinition Width="86*"/>
                 </Grid.ColumnDefinitions>
                 <Image Name="Image_MessageBox"
                        Width="70"
@@ -41,7 +41,7 @@
                        RenderOptions.BitmapScalingMode="HighQuality">
                     <Image.Source>
                         <BitmapImage x:Name="ImageBitMap"
-                                     UriSource="/Assets/info.png" />
+                                     UriSource="/Assets/info.png"/>
                     </Image.Source>
                 </Image>
                 <TextBlock Name="TextBlock_Message"
@@ -52,7 +52,7 @@
                            TextWrapping="WrapWithOverflow"
                            Text=""
                            VerticalAlignment="Top"
-                           Margin="10,55,20,0" />
+                           Margin="10,55,20,0"/>
             </Grid>
         </Grid>
         <Grid Grid.Row="1"

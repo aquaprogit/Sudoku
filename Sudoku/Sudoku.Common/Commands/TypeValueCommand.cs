@@ -10,6 +10,7 @@ internal class TypeValueCommand : ICommand
     {
         _cell = cell;
     }
+
     public void Execute(int value, bool isSurmise)
     {
         _previousCell = _cell.Clone();

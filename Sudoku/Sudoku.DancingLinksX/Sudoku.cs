@@ -7,23 +7,6 @@ public class Sudoku
     {
         Board = board;
     }
-    public SudokuResultState Solve(bool isSinglePossible = true)
-    {
-        var problem = Reduce(Board);
-        var readOnlyCollection = problem.Solve(
-                            new DLX(), new SolverOptions { MaxSolutions = isSinglePossible ? 2 : 1 });
-
-        if (readOnlyCollection.Count > 1)
-            return SudokuResultState.HasTooManySolutions;
-        if (readOnlyCollection.Count == 0)
-            return SudokuResultState.HasNoSolution;
-
-        var solution = readOnlyCollection.Single();
-        Augment(solution);
-
-        return SudokuResultState.Solved;
-
-    }
 
     internal void Augment(ISet<int> solution)
     {
@@ -88,6 +71,23 @@ public class Sudoku
         ExactCover problem = new ExactCover(constraints, sets, clues);
 
         return problem;
+    }
+
+    public SudokuResultState Solve(bool isSinglePossible = true)
+    {
+        var problem = Reduce(Board);
+        var readOnlyCollection = problem.Solve(
+                            new DLX(), new SolverOptions { MaxSolutions = isSinglePossible ? 2 : 1 });
+
+        if (readOnlyCollection.Count > 1)
+            return SudokuResultState.HasTooManySolutions;
+        if (readOnlyCollection.Count == 0)
+            return SudokuResultState.HasNoSolution;
+
+        var solution = readOnlyCollection.Single();
+        Augment(solution);
+
+        return SudokuResultState.Solved;
     }
 }
 public enum SudokuResultState

@@ -10,22 +10,6 @@ namespace Sudoku.Model.UserData
     public class UserViewModel : INotifyPropertyChanged
     {
         private Difficulty _currentDifficulty;
-        /// <summary>
-        /// Returns new instance of <see cref="UserViewModel"/> with default initializion and <see cref="User"/> event subscribtion
-        /// </summary>
-        public UserViewModel()
-        {
-            _currentDifficulty = Difficulty.Easy;
-            User.Instance.PropertyChanged += Instance_PropertyChanged;
-        }
-
-        /// <summary>
-        /// Notifies subscribes that <see cref="UserViewModel"/>'s property changed
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// Current selected difficulty
-        /// </summary>
         public Difficulty CurrentDifficulty
         {
             get => _currentDifficulty;
@@ -35,9 +19,7 @@ namespace Sudoku.Model.UserData
                 OnPropertyChanged(nameof(AvarageTime));
             }
         }
-        /// <summary>
-        /// Avarage time taken by user to solve <see cref="CurrentDifficulty"/> field
-        /// </summary>
+
         public TimeSpan AvarageTime
         {
             get {
@@ -50,11 +32,21 @@ namespace Sudoku.Model.UserData
                 return TimeSpan.FromSeconds(seconds);
             }
         }
+
+        public UserViewModel()
+        {
+            _currentDifficulty = Difficulty.Easy;
+            User.Instance.PropertyChanged += Instance_PropertyChanged;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private void Instance_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Info")
                 OnPropertyChanged(nameof(AvarageTime));
         }
+
         private void OnPropertyChanged([CallerMemberName] string name = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

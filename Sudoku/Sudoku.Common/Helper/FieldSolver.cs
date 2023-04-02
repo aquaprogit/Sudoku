@@ -1,5 +1,4 @@
-﻿using Sudoku.Common.Models;
-using Sudoku.DancingLinksX;
+﻿using Sudoku.DancingLinksX;
 
 namespace Sudoku.Common.Helper;
 
@@ -12,6 +11,7 @@ internal class FieldSolver
     {
         _selector = selector;
     }
+
     public SudokuResultState Solve(bool clearField = true, bool isSinglePossible = true)
     {
         _random = new Random();
